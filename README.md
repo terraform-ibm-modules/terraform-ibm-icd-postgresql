@@ -17,7 +17,6 @@
 
 ```hcl
 module "postgresql_db" {
-  # replace master with version
   source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql?ref=main"
   admin_password    = var.admin_password
   resource_group_id = module.resource_group.resource_group_id
