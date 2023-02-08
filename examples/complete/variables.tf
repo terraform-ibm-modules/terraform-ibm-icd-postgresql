@@ -6,14 +6,14 @@ variable "ibmcloud_api_key" {
 
 variable "region" {
   type        = string
-  description = "Region to provision all resources created by this example"
+  description = "Region to provision all resources created by this example."
   default     = "us-south"
 }
 
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "terraform"
+  default     = "postgres"
 }
 
 variable "resource_group" {
@@ -26,4 +26,16 @@ variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
   default     = []
+}
+
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
+variable "service_credentials" {
+  description = "A list of service credentials that you want to create for the database"
+  type        = list(string)
+  default     = ["postgressql_credential_microservices", "postgressql_credential_dev_1", "postgressql_credential_dev_2"]
 }
