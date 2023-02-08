@@ -287,7 +287,7 @@
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
-      "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.1.0",
+      "source": "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.1.2",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
@@ -310,7 +310,7 @@
           },
           "pos": {
             "filename": ".terraform/modules/cbr_rule/cbr-rule-module/main.tf",
-            "line": 13
+            "line": 7
           }
         }
       },
