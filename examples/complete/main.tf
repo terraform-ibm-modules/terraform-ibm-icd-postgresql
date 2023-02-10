@@ -89,7 +89,7 @@ module "postgresql_db" {
   resource_tags       = var.resource_tags
   cbr_rules = [
     {
-      name             = "${var.prefix}-${var.pg_version}postgres-zone"
+      name             = var.pg_version == null ? "${var.prefix}-postgres-zone" : "${var.prefix}-${var.pg_version}-postgres-zone"
       description      = "sample rule"
       enforcement_mode = "enabled" #Postgresql does not support report mode
       account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
