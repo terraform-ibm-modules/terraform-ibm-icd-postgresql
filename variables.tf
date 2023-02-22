@@ -79,6 +79,12 @@ variable "member_cpu_count" {
   }
 }
 
+variable "service_credentials" {
+  description = "A list of service credentials that you want to create for the database"
+  type        = list(string)
+  default     = null
+}
+
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
 variable "members" {

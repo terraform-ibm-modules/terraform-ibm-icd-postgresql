@@ -59,6 +59,7 @@ You need the following permissions to run this module.
 | Name | Type |
 |------|------|
 | [ibm_database.postgresql_db](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database) | resource |
+| [ibm_resource_key.service_credentials](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/resource_key) | resource |
 
 ## Inputs
 
@@ -80,6 +81,7 @@ You need the following permissions to run this module.
 | <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK if key\_protect\_key\_crn is used | `string` | `"us-south"` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the postgresql will be created | `string` | n/a | yes |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to created resources | `list(string)` | `[]` | no |
+| <a name="input_service_credentials"></a> [service\_credentials](#input\_service\_credentials) | A list of service credentials that you want to create for the database | `list(string)` | `null` | no |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private' | `string` | `"private"` | no |
 
 ## Outputs
@@ -87,6 +89,8 @@ You need the following permissions to run this module.
 | Name | Description |
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | Postgresl instance id |
+| <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | List of service credentials json |
+| <a name="output_service_credentials_object"></a> [service\_credentials\_object](#output\_service\_credentials\_object) | Object of service credentials with username, password, certificate and hostname |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 <!-- BEGIN CONTRIBUTING HOOK -->
