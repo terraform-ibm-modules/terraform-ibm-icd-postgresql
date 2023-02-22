@@ -16,8 +16,8 @@ output "service_credentials_json" {
   description = <<EOT
   Map of service credentials json exposed as
   service_credentials_json = map({
-    service_credential_name_1 = string
-    service_credential_name_2 = string
+    \t service_credential_name_1 = string
+    \t service_credential_name_2 = string
   })
   EOT
   value       = local.service_credentials_json
@@ -28,18 +28,18 @@ output "service_credentials_object" {
   description = <<EOT
   Object of service credentials exposed as
   service_credentials_object = object({
-    hostname = string
-    certificate = string
-    credentials = map({
-      service_credential_name_1 = {
-        username = string
-        password = string
-      }
-      service_credential_name_2 = {
-        username = string
-        password = string
-      }
-    })
+    \t hostname = string
+    \t certificate = string
+    \t credentials = map({
+      \t\t service_credential_name_1 = {
+        \t\t\t username = string
+        \t\t\t password = string
+      \t\t }
+      \t\t service_credential_name_2 = {
+        \t\t\t username = string
+        \t\t\t password = string
+      \t\t }
+    \t })
   })
   EOT
   value       = local.service_credentials_object

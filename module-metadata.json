@@ -255,7 +255,7 @@
     },
     "service_credentials_json": {
       "name": "service_credentials_json",
-      "description": "  Map of service credentials json exposed as\n  service_credentials_json = map({\n    service_credential_name_1 = string\n    service_credential_name_2 = string\n  })\n",
+      "description": "  Map of service credentials json exposed as\n  service_credentials_json = map({\n    \\t service_credential_name_1 = string\n    \\t service_credential_name_2 = string\n  })\n",
       "value": "local.service_credentials_json",
       "sensitive": true,
       "pos": {
@@ -265,7 +265,7 @@
     },
     "service_credentials_object": {
       "name": "service_credentials_object",
-      "description": "  Object of service credentials exposed as\n  service_credentials_object = object({\n    hostname = string\n    certificate = string\n    credentials = map({\n      service_credential_name_1 = {\n        username = string\n        password = string\n      }\n      service_credential_name_2 = {\n        username = string\n        password = string\n      }\n    })\n  })\n",
+      "description": "  Object of service credentials exposed as\n  service_credentials_object = object({\n    \\t hostname = string\n    \\t certificate = string\n    \\t credentials = map({\n      \\t\\t service_credential_name_1 = {\n        \\t\\t\\t username = string\n        \\t\\t\\t password = string\n      \\t\\t }\n      \\t\\t service_credential_name_2 = {\n        \\t\\t\\t username = string\n        \\t\\t\\t password = string\n      \\t\\t }\n    \\t })\n  })\n",
       "value": "local.service_credentials_object",
       "sensitive": true,
       "pos": {
