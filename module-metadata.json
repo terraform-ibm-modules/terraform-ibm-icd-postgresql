@@ -217,6 +217,7 @@
       "name": "service_credentials",
       "type": "list(string)",
       "description": "A list of service credentials that you want to create for the database",
+      "default": [],
       "required": true,
       "source": [
         "ibm_resource_key.service_credentials.count",
