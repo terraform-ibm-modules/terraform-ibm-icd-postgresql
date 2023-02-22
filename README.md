@@ -89,8 +89,8 @@ You need the following permissions to run this module.
 | Name | Description |
 |------|-------------|
 | <a name="output_id"></a> [id](#output\_id) | Postgresl instance id |
-| <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | List of service credentials json |
-| <a name="output_service_credentials_object"></a> [service\_credentials\_object](#output\_service\_credentials\_object) | Object of service credentials with username, password, certificate and hostname |
+| <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | Map of service credentials json exposed as<br>  service\_credentials\_json = map({<br>    service\_credential\_name\_1 = string<br>    service\_credential\_name\_2 = string<br>  }) |
+| <a name="output_service_credentials_object"></a> [service\_credentials\_object](#output\_service\_credentials\_object) | Object of service credentials exposed as<br>  service\_credentials\_object = object({<br>    hostname = string<br>    certificate = string<br>    credentials = map({<br>      service\_credential\_name\_1 = {<br>        username = string<br>        password = string<br>      }<br>      service\_credential\_name\_2 = {<br>        username = string<br>        password = string<br>      }<br>    })<br>  }) |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 <!-- BEGIN CONTRIBUTING HOOK -->

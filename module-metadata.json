@@ -255,8 +255,9 @@
     },
     "service_credentials_json": {
       "name": "service_credentials_json",
-      "description": "List of service credentials json",
+      "description": "  Map of service credentials json exposed as\n  service_credentials_json = map({\n    service_credential_name_1 = string\n    service_credential_name_2 = string\n  })\n",
       "value": "local.service_credentials_json",
+      "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
         "line": 15
@@ -264,11 +265,12 @@
     },
     "service_credentials_object": {
       "name": "service_credentials_object",
-      "description": "Object of service credentials with username, password, certificate and hostname",
+      "description": "  Object of service credentials exposed as\n  service_credentials_object = object({\n    hostname = string\n    certificate = string\n    credentials = map({\n      service_credential_name_1 = {\n        username = string\n        password = string\n      }\n      service_credential_name_2 = {\n        username = string\n        password = string\n      }\n    })\n  })\n",
       "value": "local.service_credentials_object",
+      "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 27
       }
     },
     "version": {

@@ -144,9 +144,10 @@ resource "ibm_resource_key" "service_credentials" {
 }
 
 locals {
-  service_credentials_json = length(var.service_credentials) > 0 ? [
-    for service_credential in ibm_resource_key.service_credentials : service_credential["credentials_json"]
-  ] : null
+  service_credentials_json = length(var.service_credentials) > 0 ? {
+    for service_credential in ibm_resource_key.service_credentials :
+    service_credential["name"] => service_credential["credentials_json"]
+  } : null
 
   service_credentials_object = length(var.service_credentials) > 0 ? {
     hostname    = ibm_resource_key.service_credentials[0].credentials["connection.postgres.hosts.0.hostname"]
