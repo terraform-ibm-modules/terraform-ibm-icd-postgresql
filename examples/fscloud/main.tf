@@ -86,7 +86,7 @@ module "postgresql_db" {
   pg_version          = var.pg_version
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
-  allowlist = var.allowlist
+  allowlist           = var.allowlist
   cbr_rules = [
     {
       name             = var.pg_version == null ? "${var.prefix}-postgres-zone" : "${var.prefix}-${var.pg_version}-postgres-zone"
