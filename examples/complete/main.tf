@@ -92,16 +92,6 @@ module "postgresql_db" {
       description      = "${var.prefix}-postgres access only from vpc"
       enforcement_mode = "enabled" #Postgresql does not support report mode
       account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
-      tags = [
-        {
-          name  = "environment"
-          value = "${var.prefix}-test"
-        },
-        {
-          name  = "terraform-rule"
-          value = "allow-${var.prefix}-vpc-to-${var.prefix}-postgresql"
-        }
-      ]
       rule_contexts = [{
         attributes = [
           {

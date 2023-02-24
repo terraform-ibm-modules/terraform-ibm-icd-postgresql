@@ -115,8 +115,7 @@ module "cbr_rule" {
         value    = "databases-for-postgresql"
         operator = "stringEquals"
       }
-    ],
-    tags = var.cbr_rules[count.index].tags
+    ]
   }]
   operations = [{
     api_types = [

@@ -36,7 +36,7 @@
     },
     "cbr_rules": {
       "name": "cbr_rules",
-      "type": "list(object({\n    description = string\n    account_id  = string\n    rule_contexts = list(object({\n      attributes = optional(list(object({\n        name  = string\n        value = string\n    }))) }))\n    enforcement_mode = string\n    tags = optional(list(object({\n      name  = string\n      value = string\n    })), [])\n  }))",
+      "type": "list(object({\n    description = string\n    account_id  = string\n    rule_contexts = list(object({\n      attributes = optional(list(object({\n        name  = string\n        value = string\n    }))) }))\n    enforcement_mode = string\n  }))",
       "description": "(Optional, list) List of CBR rules to create",
       "default": [],
       "source": [

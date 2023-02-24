@@ -201,10 +201,6 @@ variable "cbr_rules" {
         value = string
     }))) }))
     enforcement_mode = string
-    tags = optional(list(object({
-      name  = string
-      value = string
-    })), [])
   }))
   description = "(Optional, list) List of CBR rules to create"
   default     = []
