@@ -15,7 +15,26 @@
 
 > WARNING: **This module does not support major version upgrade or updates to encryption and backup encryption keys**: To upgrade version create a new postgresql instance with the updated version and follow the [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli)
 
+:exclamation: **Important:** This module enables auto-scaling by default.
+
 ```hcl
+# Auto-scaling disabled
+module "postgresql_db" {
+  # replace main with version
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql?ref=main"
+  admin_password    = var.admin_password
+  resource_group_id = module.resource_group.resource_group_id
+  name              = var.name
+  auto-scaling = {
+    cpu    = {}
+    disk   = {}
+    memory = {}
+  }
+}
+```
+
+```hcl
+# Auto-scaling enabled
 module "postgresql_db" {
   # replace main with version
   source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql?ref=main"
