@@ -39,7 +39,7 @@ You need the following permissions to run this module.
 - [ Autoscale example](examples/autoscale)
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
-- [ FS Cloud profile example](examples/fscloud)
+- [ Financial Services Cloud profile example](examples/fscloud)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -87,7 +87,8 @@ You need the following permissions to run this module.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | Postgresl instance id |
+| <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
+| <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 <!-- BEGIN CONTRIBUTING HOOK -->

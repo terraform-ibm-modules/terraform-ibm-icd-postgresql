@@ -3,8 +3,13 @@
 ##############################################################################
 
 output "id" {
-  description = "Postgresl instance id"
+  description = "Postgresql instance id"
   value       = ibm_database.postgresql_db.id
+}
+
+output "guid" {
+  description = "Postgresql instance guid"
+  value       = ibm_database.postgresql_db.guid
 }
 
 output "version" {

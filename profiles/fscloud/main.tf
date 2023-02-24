@@ -1,7 +1,7 @@
 
 locals {
   # tflint-ignore: terraform_unused_declarations
-  validate_restrictions_set = (var.allowlist == null && var.cbr_rules == null) ? tobool("Allow list and/or CBR Rules must be set") : true
+  validate_restrictions_set = (length(var.allowlist) == 0 && length(var.cbr_rules) == 0) ? tobool("Allow list and/or CBR Rules must be set") : true
 }
 
 module "postgresql_db" {

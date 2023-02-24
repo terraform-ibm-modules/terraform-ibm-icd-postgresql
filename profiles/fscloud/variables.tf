@@ -14,18 +14,9 @@ variable "name" {
 
 variable "pg_version" {
   description = "Version of the postgresql instance"
-  type        = string
-  default     = null
-  validation {
-    condition = anytrue([
-      var.pg_version == null,
-      var.pg_version == "14",
-      var.pg_version == "13",
-      var.pg_version == "12",
-      var.pg_version == "11"
-    ])
-    error_message = "Version must be 11 or 12 or 13 or 14. If null, the current default ICD postgresql version is used"
-  }
+  # Version must be 11 or 12 or 13 or 14. If null, the current default ICD postgresql version is used
+  type    = string
+  default = null
 }
 
 variable "region" {
@@ -36,56 +27,28 @@ variable "region" {
 
 variable "member_memory_mb" {
   type        = string
-  description = "Memory allocation required for postgresql database"
+  description = "Memory allocation required for postgresql database" # member group memory must be >= 1024 and <= 114688
   default     = "1024"
-  validation {
-    condition = alltrue([
-      var.member_memory_mb >= 1024,
-      var.member_memory_mb <= 114688
-    ])
-    error_message = "member group memory must be >= 1024 and <= 114688 in increments of 128"
-  }
 }
 
 variable "member_disk_mb" {
   type        = string
-  description = "Disk allocation required for postgresql database"
+  description = "Disk allocation required for postgresql database" # member group disk must be >= 5120 and <= 4194304
   default     = "5120"
-  validation {
-    condition = alltrue([
-      var.member_disk_mb >= 5120,
-      var.member_disk_mb <= 4194304
-    ])
-    error_message = "member group disk must be >= 5120 and <= 4194304 in increments of 1024"
-  }
 }
 
 variable "member_cpu_count" {
   type        = string
-  description = "CPU allocation required for postgresql database"
+  description = "CPU allocation required for postgresql database" # member group cpu must be >= 3 and <= 28
   default     = "3"
-  validation {
-    condition = alltrue([
-      var.member_cpu_count >= 3,
-      var.member_cpu_count <= 28
-    ])
-    error_message = "member group cpu must be >= 3 and <= 28 in increments of 1"
-  }
 }
 
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
 variable "members" {
   type        = number
-  description = "Number of members"
+  description = "Number of members" # member group members must be >= 3 and <= 20
   default     = 3
-  validation {
-    condition = alltrue([
-      var.members >= 3,
-      var.members <= 20
-    ])
-    error_message = "member group members must be >= 3 and <= 20 in increments of 1"
-  }
 }
 
 variable "resource_tags" {

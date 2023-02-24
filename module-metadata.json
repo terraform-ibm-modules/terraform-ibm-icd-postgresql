@@ -227,9 +227,19 @@
     }
   },
   "outputs": {
+    "guid": {
+      "name": "guid",
+      "description": "Postgresql instance guid",
+      "value": "ibm_database.postgresql_db.guid",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 10
+      },
+      "type": "TypeString"
+    },
     "id": {
       "name": "id",
-      "description": "Postgresl instance id",
+      "description": "Postgresql instance id",
       "value": "ibm_database.postgresql_db.id",
       "pos": {
         "filename": "outputs.tf",
@@ -242,7 +252,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 10
+        "line": 15
       },
       "type": "TypeString"
     }
