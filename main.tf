@@ -107,7 +107,7 @@ module "cbr_rule" {
       },
       {
         name     = "serviceInstance"
-        value    = ibm_database.postgresql_db.id
+        value    = ibm_database.postgresql_db.guid
         operator = "stringEquals"
       },
       {
@@ -116,14 +116,9 @@ module "cbr_rule" {
         operator = "stringEquals"
       }
     ],
-    tags = var.cbr_rules[count.index].tags != null ? var.cbr_rules[count.index].tags : [
-      {
-        name  = "terraform-rule"
-        value = "allow-postgresql"
-      }
-    ]
+    tags = var.cbr_rules[count.index].tags
   }]
-  operations = var.cbr_rules[count.index].operations != null ? var.cbr_rules[count.index].operations : [{
+  operations = [{
     api_types = [
       {
         api_type_id = "crn:v1:bluemix:public:context-based-restrictions::::api-type:data-plane"

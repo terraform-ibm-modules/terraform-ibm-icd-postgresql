@@ -151,14 +151,9 @@ variable "cbr_rules" {
     tags = optional(list(object({
       name  = string
       value = string
-    })))
-    operations = optional(list(object({
-      api_types = list(object({
-        api_type_id = string
-      }))
-    })))
+    })), [])
   }))
-  description = "(Optional, list) List of CBR rules to create, if operations is not set it will default to api-type:data-plane"
+  description = "(Optional, list) List of CBR rules to create"
   default     = []
   # Validation happens in the rule module
 }
