@@ -45,3 +45,40 @@ variable "configuration" {
   })
   default = null
 }
+
+variable "auto_scaling" {
+  type = object({
+    cpu = object({
+      rate_increase_percent       = optional(number)
+      rate_limit_count_per_member = optional(number)
+      rate_period_seconds         = optional(number)
+      rate_units                  = optional(string)
+    })
+    disk = object({
+      capacity_enabled             = optional(bool)
+      free_space_less_than_percent = optional(number)
+      io_above_percent             = optional(number)
+      io_enabled                   = optional(bool)
+      io_over_period               = optional(string)
+      rate_increase_percent        = optional(number)
+      rate_limit_mb_per_member     = optional(number)
+      rate_period_seconds          = optional(number)
+      rate_units                   = optional(string)
+    })
+    memory = object({
+      io_above_percent         = optional(number)
+      io_enabled               = optional(bool)
+      io_over_period           = optional(string)
+      rate_increase_percent    = optional(number)
+      rate_limit_mb_per_member = optional(number)
+      rate_period_seconds      = optional(number)
+      rate_units               = optional(string)
+    })
+  })
+  description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
+  default = {
+    cpu    = {}
+    disk   = {}
+    memory = {}
+  }
+}

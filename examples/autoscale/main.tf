@@ -22,5 +22,4 @@ module "postgresql_db" {
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb
   member_cpu_count  = var.member_cpu_count
-  auto_scaling      = var.auto_scaling
 }
