@@ -270,7 +270,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 15
+        "line": 20
       }
     },
     "service_credentials_object": {
@@ -280,7 +280,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 21
+        "line": 26
       }
     },
     "version": {
@@ -343,7 +343,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 139
+        "line": 133
       }
     }
   },

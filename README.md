@@ -89,11 +89,11 @@ You need the following permissions to run this module.
 
 | Name | Description |
 |------|-------------|
-| <a name="output_id"></a> [id](#output\_id) | Postgresl instance id |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
-| <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
+| <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
 | <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | Service credentials json map |
 | <a name="output_service_credentials_object"></a> [service\_credentials\_object](#output\_service\_credentials\_object) | Service credentials object |
+| <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 <!-- BEGIN CONTRIBUTING HOOK -->
 
