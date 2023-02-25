@@ -36,11 +36,10 @@
     },
     "cbr_rules": {
       "name": "cbr_rules",
-      "type": "list(object({\n    description = string\n    account_id  = string\n    rule_contexts = list(object({\n      attributes = optional(list(object({\n        name  = string\n        value = string\n    }))) }))\n    enforcement_mode = string\n    tags = optional(list(object({\n      name  = string\n      value = string\n    })))\n    operations = optional(list(object({\n      api_types = list(object({\n        api_type_id = string\n      }))\n    })))\n  }))",
-      "description": "(Optional, list) List of CBR rules to create, if operations is not set it will default to api-type:data-plane",
+      "type": "list(object({\n    description = string\n    account_id  = string\n    rule_contexts = list(object({\n      attributes = optional(list(object({\n        name  = string\n        value = string\n    }))) }))\n    enforcement_mode = string\n  }))",
+      "description": "(Optional, list) List of CBR rules to create",
       "default": [],
       "source": [
-        "module.cbr_rule",
         "module.cbr_rule",
         "module.cbr_rule",
         "module.cbr_rule",
@@ -245,9 +244,19 @@
     }
   },
   "outputs": {
+    "guid": {
+      "name": "guid",
+      "description": "Postgresql instance guid",
+      "value": "ibm_database.postgresql_db.guid",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 10
+      },
+      "type": "TypeString"
+    },
     "id": {
       "name": "id",
-      "description": "Postgresl instance id",
+      "description": "Postgresql instance id",
       "value": "ibm_database.postgresql_db.id",
       "pos": {
         "filename": "outputs.tf",
@@ -280,7 +289,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 10
+        "line": 15
       },
       "type": "TypeString"
     }
@@ -346,7 +355,6 @@
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
-        "operations": "cbr_rules",
         "resources": "cbr_rules",
         "rule_contexts": "cbr_rules",
         "rule_description": "cbr_rules"
