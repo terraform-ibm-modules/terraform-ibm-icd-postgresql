@@ -12,6 +12,7 @@ import (
 const resourceGroup = "geretain-test-postgres"
 const defaultExampleTerraformDir = "examples/default"
 const autoscaleExampleTerraformDir = "examples/autoscale"
+const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 
 // Restricting due to limited availability of BYOK in certain regions
@@ -42,6 +43,20 @@ func TestRunAutoscaleExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 	})
 
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunFSCloudExample(t *testing.T) {
+	t.Parallel()
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       fsCloudTerraformDir,
+		Prefix:             "pg-compliant",
+		ResourceGroup:      resourceGroup,
+		BestRegionYAMLPath: regionSelectionPath,
+	})
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
