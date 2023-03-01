@@ -1,14 +1,15 @@
-# Financial Services Cloud profile example
+# Financial Services Cloud Profile Example
 
 :exclamation: This example is only deploying Postgresql in a compliant manner the other infrastructure is not necessarily compliant.
 
 See also the documentation of the [Financial Services ICD Postgresql module](../../profiles/fscloud/).
 
-An example using the fscloud profile to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider to:
+An end-to-end example using the [fscloud profile](../../profiles/fscloud/) to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider and various additional modules to:
 
 - Create a new resource group if one is not passed in.
 - Create a new ICD Postgresql database instance and credentials.
 - Create Key Protect instance with root key.
-- Backend encryption using generated Key Protect key.
-- Create a Sample VPC.
-- Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.
+- Instance encryption using the key protect key.
+- Backups encryption using the key protect.
+- Create a sample VPC (for illustration purpose)
+- Create a Context Based Restriction(CBR) rule that makes the Postgresql instance data plane only accessible from compute resources located in the VPC.
