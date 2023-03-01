@@ -1,6 +1,8 @@
 # Financial Services Cloud profile example
 
-## *Note:* This example is only deploying Postgresql in a compliant manner the other infrastructure is not necessarily compliant.
+:exclamation: This example is only deploying Postgresql in a compliant manner the other infrastructure is not necessarily compliant.
+
+See also the documentation of the [Financial Services ICD Postgresql module](../../profiles/fscloud/).
 
 An example using the fscloud profile to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider to:
 

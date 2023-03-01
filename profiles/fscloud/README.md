@@ -1,15 +1,15 @@
 # Financial Services Controls - IBM Cloud Databases for ICD Postgresql module
 
-This module is a version of the parent root module that comes with pre-defined defaults that meet the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about).
+This module is a version of the [parent root module](../../) that comes with pre-defined defaults that meet the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about).
 
 See the accompanying [fscloud example](../../examples/fscloud/) leveraging this module.
 
 The defaults coming with this module have been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and the Financial Cloud profile for [Security and Compliance Center](https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started). They meet all applicable goals.
 
-:exclamation: The financial services framework mandates the application of an inbound network-based allow-list / fireware in front of the postgres instance. This can be achieved in multiple ways:
+:exclamation: The financial services framework mandates the application of an inbound network-based allow-list in front of the ICD PostGresql instance. This can be achieved in multiple ways:
 - By using the `allowlist` (legacy method) input in the module.
-- By using the `cbr_rules` input in the module, which creates a narrow based context based restriction rule scoped to the ICD PostGresql instance
-- By creating coarse-grained CBR rules (for instance, covering all ICD PostGresql instance in the account) through the [https://github.com/terraform-ibm-modules/terraform-ibm-cbr](terraform-ibm-cbr) module.
+- By using the `cbr_rules` input in the module, which creates a narrow [context-based restriction](https://cloud.ibm.com/docs/account?topic=account-context-restrictions-whatis) rule scoped to the ICD PostGresql instance
+- By creating coarse-grained context-based restriction rules (for instance, covering all ICD PostGresql instance in the account) through the [https://github.com/terraform-ibm-modules/terraform-ibm-cbr](terraform-ibm-cbr) module.
 
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
