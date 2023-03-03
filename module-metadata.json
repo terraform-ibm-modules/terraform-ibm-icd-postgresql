@@ -226,6 +226,14 @@
     }
   },
   "outputs": {
+    "cbrruleid": {
+      "name": "cbrruleid",
+      "description": "CBR created to restrict Postgresql",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 20
+      }
+    },
     "guid": {
       "name": "guid",
       "description": "Postgresql instance guid",

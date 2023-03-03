@@ -16,3 +16,8 @@ output "version" {
   description = "Postgresql instance version"
   value       = ibm_database.postgresql_db.version
 }
+
+output "cbrruleid" {
+  description = "CBR created to restrict Postgresql"
+  value       = module.cbr_rule[*].rule_id
+}

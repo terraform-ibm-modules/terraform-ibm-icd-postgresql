@@ -61,6 +61,64 @@ resource "ibm_is_subnet" "testacc_subnet" {
 }
 
 ##############################################################################
+# VSI
+##############################################################################
+data "ibm_is_image" "ubuntu" {
+  name = "ibm-ubuntu-18-04-6-minimal-amd64-7"
+}
+
+resource "ibm_is_security_group" "sg1" {
+  name = "${var.prefix}-sg1"
+  vpc  = ibm_is_vpc.example_vpc.id
+}
+
+locals {
+  security_group_rules_map = {
+    "rule1" = {
+      "direction" : "inbound",
+      "name" : "allow-all-inbound",
+      "source" : "0.0.0.0/0"
+    },
+    "rule2" = {
+      "direction" : "outbound",
+      "name" : "allow-all-outbound",
+      "source" : "0.0.0.0/0"
+    }
+  }
+}
+
+resource "ibm_is_security_group_rule" "security_group_rules" {
+  for_each  = local.security_group_rules_map
+  group     = ibm_is_security_group.sg1.id
+  direction = each.value.direction
+  remote    = each.value.source
+}
+
+resource "ibm_is_ssh_key" "sshkey" {
+  name       = "ssh1"
+  public_key = var.ssh_key
+}
+
+resource "ibm_is_instance" "vsi1" {
+  name    = "${var.prefix}-vpc-vsi"
+  vpc     = ibm_is_vpc.example_vpc.id
+  zone    = "${var.region}-1"
+  keys    = [ibm_is_ssh_key.sshkey.id]
+  image   = data.ibm_is_image.ubuntu.id
+  profile = "bx2-2x8"
+
+  primary_network_interface {
+    subnet          = ibm_is_subnet.testacc_subnet.id
+    security_groups = [ibm_is_security_group.sg1.id]
+  }
+}
+
+resource "ibm_is_floating_ip" "fip1" {
+  name   = "${var.prefix}-fip1"
+  target = ibm_is_instance.vsi1.primary_network_interface[0].id
+}
+
+##############################################################################
 # Create CBR Zone
 ##############################################################################
 module "cbr_zone" {
@@ -83,7 +141,7 @@ module "postgresql_db" {
   resource_group_id   = module.resource_group.resource_group_id
   name                = "${var.prefix}-postgres"
   region              = var.region
-  service_endpoints   = "private"
+  service_endpoints   = "public-and-private"
   pg_version          = var.pg_version
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
@@ -96,7 +154,7 @@ module "postgresql_db" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "private"
+            "value" : "private,public"
           },
           {
             name  = "networkZoneId"

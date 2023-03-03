@@ -39,3 +39,8 @@ variable "service_credentials" {
   type        = list(string)
   default     = ["postgressql_credential_microservices", "postgressql_credential_dev_1", "postgressql_credential_dev_2"]
 }
+
+variable "ssh_key" {
+  description = "Public SSH Key for VSI creation. Must be a valid SSH key that does not already exist in the deployment region."
+  type        = string
+}
