@@ -53,6 +53,12 @@ variable "member_memory_mb" {
   }
 }
 
+variable "backup_id" {
+  type        = string
+  description = "The CRN of backup source database"
+  default     = null
+}
+
 variable "member_disk_mb" {
   type        = string
   description = "Disk allocation required for postgresql database"

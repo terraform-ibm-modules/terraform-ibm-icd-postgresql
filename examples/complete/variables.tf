@@ -13,7 +13,7 @@ variable "region" {
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "postgres"
+  default     = "rajat-postgres"
 }
 
 variable "resource_group" {
@@ -38,4 +38,10 @@ variable "service_credentials" {
   description = "A list of service credentials that you want to create for the database"
   type        = list(string)
   default     = ["postgressql_credential_microservices", "postgressql_credential_dev_1", "postgressql_credential_dev_2"]
+}
+
+variable "backup_id" {
+  type        = string
+  description = "The CRN of backup source database"
+  default     = null
 }
