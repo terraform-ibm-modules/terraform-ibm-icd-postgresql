@@ -88,6 +88,7 @@ You need the following permissions to run this module.
 | Name | Description |
 |------|-------------|
 | <a name="output_cbrruleid"></a> [cbrruleid](#output\_cbrruleid) | CBR created to restrict Postgresql |
+| <a name="output_crn"></a> [crn](#output\_crn) | Postgresql instance crn |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
 | <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |

@@ -231,8 +231,18 @@
       "description": "CBR created to restrict Postgresql",
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 25
       }
+    },
+    "crn": {
+      "name": "crn",
+      "description": "Postgresql instance crn",
+      "value": "ibm_database.postgresql_db.resource_crn",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 15
+      },
+      "type": "TypeString"
     },
     "guid": {
       "name": "guid",
@@ -259,7 +269,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 15
+        "line": 20
       },
       "type": "TypeString"
     }

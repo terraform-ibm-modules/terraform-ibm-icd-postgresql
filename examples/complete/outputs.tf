@@ -20,8 +20,3 @@ output "cbrruleid" {
   description = "CBR created to restrict Postgresql"
   value       = module.postgresql_db.cbrruleid
 }
-
-output "floatingip" {
-  description = "Floating Ip"
-  value       = ibm_is_floating_ip.fip1.address
-}
