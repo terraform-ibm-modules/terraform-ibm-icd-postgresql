@@ -61,7 +61,7 @@ resource "ibm_is_subnet" "testacc_subnet" {
 # Create CBR Zone
 ##############################################################################
 module "cbr_zone" {
-  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-zone-module?ref=v1.1.2"
+  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-zone-module?ref=v1.1.4"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
