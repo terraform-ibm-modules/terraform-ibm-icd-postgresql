@@ -39,7 +39,7 @@ You need the following permissions to run this module.
 - [ Autoscale example](examples/autoscale)
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
-- [ Financial Services Cloud profile example](examples/fscloud)
+- [ Financial Services Cloud Profile Example](examples/fscloud)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
