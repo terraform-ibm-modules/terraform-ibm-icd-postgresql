@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 119
+        "line": 130
       }
     },
     "auto_scaling": {
@@ -22,7 +22,7 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 157
       }
     },
     "backup_encryption_key_crn": {
@@ -31,7 +31,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 189
+        "line": 200
       }
     },
     "cbr_rules": {
@@ -48,7 +48,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 211
       }
     },
     "configuration": {
@@ -60,7 +60,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 128
+        "line": 139
       }
     },
     "key_protect_key_crn": {
@@ -72,7 +72,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 183
+        "line": 194
       },
       "immutable": true
     },
@@ -113,7 +113,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 90
+        "line": 101
       }
     },
     "name": {
@@ -201,7 +201,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 113
+        "line": 124
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -211,6 +211,20 @@
       "elem": {
         "type": "TypeString"
       }
+    },
+    "service_credential_roles": {
+      "name": "service_credential_roles",
+      "type": "list(string)",
+      "description": "A list of service credentials roles that you want to create for the database, if not provided then role will set as Administrator",
+      "default": [],
+      "source": [
+        "ibm_resource_key.service_credentials.role"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 88
+      },
+      "immutable": true
     },
     "service_credentials": {
       "name": "service_credentials",
@@ -238,7 +252,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 103
+        "line": 114
       },
       "options": "public, private, public-and-private"
     }
@@ -326,7 +340,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 12
+        "line": 19
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -336,6 +350,7 @@
       "attributes": {
         "count": "service_credentials",
         "name": "service_credentials",
+        "role": "service_credential_roles",
         "tags": "resource_tags"
       },
       "provider": {
@@ -343,7 +358,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 140
       }
     }
   },
@@ -406,7 +421,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 95
+        "line": 102
       }
     }
   }

@@ -85,6 +85,17 @@ variable "service_credentials" {
   default     = []
 }
 
+variable "service_credential_roles" {
+  description = "A list of service credentials roles that you want to create for the database, if not provided then role will set as Administrator"
+  type        = list(string)
+  default     = []
+
+  validation {
+    condition     = alltrue([for role in var.service_credential_roles : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
+    error_message = "Valid values for service_credential_roles are 'Administrator', 'Operator', 'Viewer', and 'Editor'"
+  }
+}
+
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
 variable "members" {
