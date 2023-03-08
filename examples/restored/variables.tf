@@ -13,7 +13,7 @@ variable "region" {
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "postgres"
+  default     = "pg-res"
 }
 
 variable "resource_group" {
@@ -28,14 +28,20 @@ variable "resource_tags" {
   default     = []
 }
 
-variable "pg_version" {
-  description = "Version of the postgresql instance"
-  type        = string
-  default     = null
-}
-
-variable "service_credentials" {
-  description = "A list of service credentials that you want to create for the database"
-  type        = list(string)
-  default     = ["postgressql_credential_microservices", "postgressql_credential_dev_1", "postgressql_credential_dev_2"]
+variable "configuration" {
+  description = "(Optional, Json String) Database Configuration in JSON format."
+  type = object({
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    deadlock_timeout           = optional(number)
+    effective_io_concurrency   = optional(number)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
+    shared_buffers             = optional(number)
+    synchronous_commit         = optional(string)
+    wal_level                  = optional(string)
+    archive_timeout            = optional(number)
+    log_min_duration_statement = optional(number)
+  })
+  default = null
 }

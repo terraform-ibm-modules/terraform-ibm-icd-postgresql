@@ -82,7 +82,6 @@ module "postgresql_db" {
   region              = var.region
   service_endpoints   = "private"
   pg_version          = var.pg_version
-  backup_id           = var.backup_id
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
   cbr_rules = [

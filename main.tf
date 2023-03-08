@@ -6,7 +6,6 @@
 
 locals {
   kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
-  backup_id     = var.backup_id != null ? var.backup_id : null
 }
 
 # Create postgresql database
@@ -16,7 +15,7 @@ resource "ibm_database" "postgresql_db" {
   service           = "databases-for-postgresql"
   location          = var.region
   plan              = "standard" # Only standard plan is available for postgres
-  backup_id         = local.backup_id
+  backup_id         = var.backup_crn
   plan_validation   = var.plan_validation
   version           = var.pg_version
   tags              = var.resource_tags

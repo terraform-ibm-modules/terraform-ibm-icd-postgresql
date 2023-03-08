@@ -25,6 +25,18 @@
         "line": 146
       }
     },
+    "backup_crn": {
+      "name": "backup_crn",
+      "type": "string",
+      "description": "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:\u003c…\u003e:backup:. If omitted, the database is provisioned empty.",
+      "source": [
+        "ibm_database.postgresql_db.backup_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 56
+      }
+    },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
@@ -32,15 +44,6 @@
       "pos": {
         "filename": "variables.tf",
         "line": 189
-      }
-    },
-    "backup_id": {
-      "name": "backup_id",
-      "type": "string",
-      "description": "The CRN of backup source database",
-      "pos": {
-        "filename": "variables.tf",
-        "line": 56
       }
     },
     "cbr_rules": {
@@ -282,6 +285,7 @@
       "type": "ibm_database",
       "name": "postgresql_db",
       "attributes": {
+        "backup_id": "backup_crn",
         "configuration": "configuration",
         "key_protect_key": "key_protect_key_crn",
         "location": "region",
@@ -297,7 +301,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 13
+        "line": 12
       }
     }
   },
@@ -360,7 +364,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 97
+        "line": 96
       }
     }
   }
