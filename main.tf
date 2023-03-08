@@ -7,7 +7,7 @@
 locals {
   kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
 
-  #if service_credential_roles is provided then length should be equal to lenth of service_credentials
+  #if service_credential_roles is provided then length should be equal to length of service_credentials
   # tflint-ignore: terraform_unused_declarations
   service_credential_roles_length_validation = (
     length(var.service_credential_roles) > 0 && (length(var.service_credential_roles) != length(var.service_credentials)) ?
