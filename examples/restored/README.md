@@ -1,4 +1,4 @@
-# Default example
+# Restored DB example
 
 An example that uses the module's default variable values. This example uses the IBM Cloud terraform provider to:
 

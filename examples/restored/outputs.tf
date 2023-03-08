@@ -11,7 +11,7 @@ output "version" {
   value       = module.postgresql_db.version
 }
 
-output "backup_crn" {
-  description = "Postgresql backup id"
-  value       = data.ibm_database_backups.backup_database.backups[0].backup_id
+output "restored_postgresql_db_id" {
+  description = "Restored Postgresql instance id"
+  value       = module.restored_postgresql_db.id
 }
