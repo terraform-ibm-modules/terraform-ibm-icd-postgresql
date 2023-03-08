@@ -45,3 +45,9 @@ variable "configuration" {
   })
   default = null
 }
+
+variable "existing_postgresql_db_backup_crn" {
+  type        = string
+  description = "The existing CRN of a backup resource to restore from. If null then it will create a new instance first and then create another instance pointing to the backup of the first instance."
+  default     = null
+}

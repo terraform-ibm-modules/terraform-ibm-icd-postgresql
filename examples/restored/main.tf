@@ -10,6 +10,7 @@ module "resource_group" {
 }
 
 module "postgresql_db" {
+  count             = var.existing_postgresql_db_backup_crn != null ? 0 : 1
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-postgres"
@@ -19,7 +20,8 @@ module "postgresql_db" {
 }
 
 data "ibm_database_backups" "backup_database" {
-  deployment_id = module.postgresql_db.id
+  count         = var.existing_postgresql_db_backup_crn != null ? 0 : 1
+  deployment_id = module.postgresql_db[0].id
 }
 
 # New postgresql instance pointing to the restored instance
@@ -30,5 +32,5 @@ module "restored_postgresql_db" {
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
-  backup_crn        = data.ibm_database_backups.backup_database.backups[0].backup_id
+  backup_crn        = var.existing_postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.existing_postgresql_db_backup_crn
 }
