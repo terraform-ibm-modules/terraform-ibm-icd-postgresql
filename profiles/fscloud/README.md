@@ -1,6 +1,6 @@
 # Financial Services Controls - IBM Cloud Databases for ICD PostgreSQL module
 
-This module is a version of the [parent root module](../../) that comes with pre-defined defaults that meet the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about).
+This module is a version of the [parent root module](../../) that comes with a default configuration that complies with the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about).
 
 See the accompanying [fscloud example](../../examples/fscloud/) leveraging this module.
 
