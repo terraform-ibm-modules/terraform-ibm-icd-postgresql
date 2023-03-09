@@ -84,7 +84,11 @@ module "postgresql_db" {
   pg_version          = var.pg_version
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
-  auto_scaling        = var.auto_scaling
+  auto_scaling = {
+    cpu    = {}
+    disk   = {}
+    memory = {}
+  }
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
