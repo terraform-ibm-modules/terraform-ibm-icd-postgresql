@@ -2,7 +2,7 @@
 
 This module is a version of the [parent root module](../../) that comes with a default configuration that complies with the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about).
 
-See the accompanying [fscloud example](../../examples/fscloud/) leveraging this module.
+For more information, see the accompanying [Financial Services Cloud profile example](../../examples/fscloud/) that uses this module.
 
 The defaults coming with this module have been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and the Financial Cloud profile for [Security and Compliance Center](https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started). They meet all applicable goals.
 
