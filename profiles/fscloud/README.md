@@ -6,7 +6,7 @@ For more information, see the accompanying [Financial Services Cloud profile exa
 
 The default values in this module were scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and the Financial Services Cloud profile for [Security and Compliance Center](https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started). The values meet all applicable goals.
 
-:exclamation: The financial services framework mandates the application of an inbound network-based allow-list in front of the ICD PostGresql instance. This can be achieved in multiple ways:
+:exclamation: **Important:** The Financial Services framework mandates the application of an inbound network-based allowlist in front of the ICD PostgreSQL instance. You can comply in multiple ways:
 - By using the `allowlist` (legacy method) input in the module.
 - By using the `cbr_rules` input in the module, which creates a narrow [context-based restriction](https://cloud.ibm.com/docs/account?topic=account-context-restrictions-whatis) rule scoped to the ICD PostGresql instance
 - By creating coarse-grained context-based restriction rules (for instance, covering all ICD PostGresql instance in the account) through the [https://github.com/terraform-ibm-modules/terraform-ibm-cbr](terraform-ibm-cbr) module.
