@@ -28,25 +28,7 @@ variable "resource_tags" {
   default     = []
 }
 
-variable "configuration" {
-  description = "(Optional, Json String) Database Configuration in JSON format."
-  type = object({
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
-    synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
-  })
-  default = null
-}
-
-variable "existing_postgresql_db_backup_crn" {
+variable "postgresql_db_backup_crn" {
   type        = string
   description = "The existing CRN of a backup resource to restore from. If null then it will create a new instance first and then create another instance pointing to the backup of the first instance."
   default     = null

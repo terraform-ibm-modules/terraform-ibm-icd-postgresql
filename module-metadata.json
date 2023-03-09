@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 119
+        "line": 126
       }
     },
     "auto_scaling": {
@@ -22,7 +22,7 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 153
       }
     },
     "backup_crn": {
@@ -43,7 +43,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 189
+        "line": 196
       }
     },
     "cbr_rules": {
@@ -60,7 +60,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 207
       }
     },
     "configuration": {
@@ -72,7 +72,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 128
+        "line": 135
       }
     },
     "key_protect_key_crn": {
@@ -84,7 +84,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 183
+        "line": 190
       },
       "immutable": true
     },
@@ -95,7 +95,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 75
+        "line": 82
       }
     },
     "member_disk_mb": {
@@ -105,7 +105,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 62
+        "line": 69
       }
     },
     "member_memory_mb": {
@@ -125,7 +125,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 90
+        "line": 97
       }
     },
     "name": {
@@ -212,7 +212,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 113
+        "line": 120
       },
       "min_length": 1,
       "max_length": 128,
@@ -232,7 +232,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 103
+        "line": 110
       },
       "options": "public, private, public-and-private"
     }

@@ -7,7 +7,7 @@ import (
 	"testing"
 )
 
-const restoredTerraformDir = "examples/restored"
+const restoredTerraformDir = "examples/backup"
 
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
@@ -15,7 +15,7 @@ func TestRunRestoredDBExample(t *testing.T) {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  restoredTerraformDir,
-		Prefix:        "pg-restored",
+		Prefix:        "pg-backup",
 		ResourceGroup: resourceGroup,
 	})
 

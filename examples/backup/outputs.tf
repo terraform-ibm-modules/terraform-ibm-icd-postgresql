@@ -3,7 +3,7 @@
 ##############################################################################
 output "id" {
   description = "Postgresql instance id"
-  value       = var.existing_postgresql_db_backup_crn == null ? module.postgresql_db[0].id : null
+  value       = var.postgresql_db_backup_crn == null ? module.postgresql_db[0].id : null
 }
 
 output "restored_postgresql_db_id" {

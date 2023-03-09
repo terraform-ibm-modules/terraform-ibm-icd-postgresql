@@ -37,10 +37,10 @@ You need the following permissions to run this module.
 ## Examples
 
 - [ Autoscale example](examples/autoscale)
+- [ Restore from backup example](examples/backup)
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
 - [ Financial Services Cloud profile example](examples/fscloud)
-- [ Restored DB example](examples/restored)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
