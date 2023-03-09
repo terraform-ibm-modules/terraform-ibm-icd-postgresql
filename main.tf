@@ -15,6 +15,7 @@ resource "ibm_database" "postgresql_db" {
   service           = "databases-for-postgresql"
   location          = var.region
   plan              = "standard" # Only standard plan is available for postgres
+  backup_id         = var.backup_crn
   plan_validation   = var.plan_validation
   version           = var.pg_version
   tags              = var.resource_tags
