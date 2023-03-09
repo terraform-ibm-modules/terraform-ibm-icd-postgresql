@@ -9,7 +9,7 @@ An end-to-end example using the [Financial Services Cloud profile](../../profile
 - Create a resource group if one is not passed in.
 - Create an ICD PostgreSQL database instance and credentials.
 - Create a Key Protect instance with a root key.
-- Instance encryption using the key protect key.
-- Backups encryption using the key protect.
+- Encrypt the instance by using the Key Protect key.
+- Encrypt backups by using Key Protect.
 - Create a sample VPC (for illustration purpose)
-- Create a Context Based Restriction(CBR) rule that makes the Postgresql instance data plane only accessible from compute resources located in the VPC.
+- Create a Context Based Restriction (CBR) rule that makes the PostgreSQL instance data plane accessible only from compute resources located in the VPC.
