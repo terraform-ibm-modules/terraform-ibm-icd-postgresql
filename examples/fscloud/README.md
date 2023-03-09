@@ -1,6 +1,6 @@
 # Financial Services Cloud Profile Example
 
-:exclamation: This example is only deploying Postgresql in a compliant manner the other infrastructure is not necessarily compliant.
+:exclamation: **Important:** This example deploys PostgreSQL in a compliant manner. Other infrastructure is not necessarily compliant.
 
 See also the documentation of the [Financial Services ICD Postgresql module](../../profiles/fscloud/).
 
