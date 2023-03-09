@@ -4,7 +4,7 @@
 
 For more information, see the documentation for the [Financial Services ICD PostgreSQL module](../../profiles/fscloud/).
 
-An end-to-end example using the [fscloud profile](../../profiles/fscloud/) to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider and various additional modules to:
+An end-to-end example using the [Financial Services Cloud profile](../../profiles/fscloud/) to deploy a compliant PostgreSQL instance. This example uses the IBM Cloud Terraform provider and other modules to automate the following infrastructure:
 
 - Create a new resource group if one is not passed in.
 - Create a new ICD Postgresql database instance and credentials.
