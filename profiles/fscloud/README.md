@@ -4,7 +4,7 @@ This module is a version of the [parent root module](../../) that comes with a d
 
 For more information, see the accompanying [Financial Services Cloud profile example](../../examples/fscloud/) that uses this module.
 
-The defaults coming with this module have been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and the Financial Cloud profile for [Security and Compliance Center](https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started). They meet all applicable goals.
+The default values in this module were scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and the Financial Services Cloud profile for [Security and Compliance Center](https://cloud.ibm.com/docs/security-compliance?topic=security-compliance-getting-started). The values meet all applicable goals.
 
 :exclamation: The financial services framework mandates the application of an inbound network-based allow-list in front of the ICD PostGresql instance. This can be achieved in multiple ways:
 - By using the `allowlist` (legacy method) input in the module.
