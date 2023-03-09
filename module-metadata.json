@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 113
+        "line": 126
       }
     },
     "auto_scaling": {
@@ -45,7 +45,19 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 140
+        "line": 153
+      }
+    },
+    "backup_crn": {
+      "name": "backup_crn",
+      "type": "string",
+      "description": "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:\u003c…\u003e:backup:. If omitted, the database is provisioned empty.",
+      "source": [
+        "ibm_database.postgresql_db.backup_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 56
       }
     },
     "backup_encryption_key_crn": {
@@ -54,7 +66,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 206
+        "line": 219
       }
     },
     "cbr_rules": {
@@ -71,7 +83,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 217
+        "line": 230
       }
     },
     "configuration": {
@@ -83,7 +95,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 122
+        "line": 135
       }
     },
     "key_protect_key_crn": {
@@ -95,7 +107,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 213
       },
       "immutable": true
     },
@@ -106,7 +118,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 69
+        "line": 82
       }
     },
     "member_disk_mb": {
@@ -116,7 +128,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 56
+        "line": 69
       }
     },
     "member_memory_mb": {
@@ -136,7 +148,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 84
+        "line": 97
       }
     },
     "name": {
@@ -223,7 +235,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 107
+        "line": 120
       },
       "min_length": 1,
       "max_length": 128,
@@ -243,7 +255,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 97
+        "line": 110
       },
       "options": "public, private, public-and-private"
     }
@@ -296,6 +308,7 @@
       "type": "ibm_database",
       "name": "postgresql_db",
       "attributes": {
+        "backup_id": "backup_crn",
         "configuration": "configuration",
         "key_protect_key": "key_protect_key_crn",
         "location": "region",
@@ -374,7 +387,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 95
+        "line": 96
       }
     }
   }
