@@ -81,6 +81,7 @@ You need the following permissions to run this module.
 | <a name="input_pg_version"></a> [pg\_version](#input\_pg\_version) | Version of the postgresql instance | `string` | `null` | no |
 | <a name="input_plan_validation"></a> [plan\_validation](#input\_plan\_validation) | Enable or disable validating the database parameters for postgres during the plan phase | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK if key\_protect\_key\_crn is used | `string` | `"us-south"` | no |
+| <a name="input_remote_leader_id"></a> [remote\_leader\_id](#input\_remote\_leader\_id) | The CRN of the leader database to make the replica(read-only) deployment. | `string` | `null` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the postgresql will be created | `string` | n/a | yes |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to created resources | `list(string)` | `[]` | no |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private' | `string` | `"private"` | no |
