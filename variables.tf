@@ -18,6 +18,12 @@ variable "plan_validation" {
   default     = true
 }
 
+variable "remote_leader_id" {
+  type        = string
+  description = "The CRN of the leader database to make the replica(read-only) deployment."
+  default     = null
+}
+
 variable "pg_version" {
   description = "Version of the postgresql instance"
   type        = string
