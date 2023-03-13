@@ -25,6 +25,30 @@ module "postgresql_db" {
 }
 ```
 
+```hcl
+# service credentials json is exposed as
+service_credentials_json = map({
+  service_credential_name_1 = string
+  service_credential_name_2 = string
+})
+
+# service credentials username, password, certificate and hostname are exposed as
+service_credentials_object = object({
+  hostname = string
+  certificate = string
+  credentials = map({
+    service_credential_name_1 = {
+      username = string
+      password = string
+    }
+    service_credential_name_2 = {
+      username = string
+      password = string
+    }
+  })
+})
+```
+
 ## Required IAM access policies
 
 You need the following permissions to run this module.
