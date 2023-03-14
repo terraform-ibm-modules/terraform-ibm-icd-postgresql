@@ -16,6 +16,11 @@ module "postgresql_db" {
   name              = "${var.prefix}-postgres"
   region            = var.region
   resource_tags     = var.resource_tags
+  auto_scaling = {
+    cpu    = {}
+    disk   = {}
+    memory = {}
+  }
 }
 
 data "ibm_database_backups" "backup_database" {
