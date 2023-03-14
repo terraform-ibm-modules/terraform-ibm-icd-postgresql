@@ -6,6 +6,13 @@
 
 locals {
   kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
+
+  #if service_credential_roles is provided then length should be equal to length of service_credentials
+  # tflint-ignore: terraform_unused_declarations
+  service_credential_roles_length_validation = (
+    length(var.service_credential_roles) > 0 && (length(var.service_credential_roles) != length(var.service_credentials)) ?
+    tobool("Length of service_credentials and service_credential_roles must be equal") : true
+  )
 }
 
 # Create postgresql database
@@ -125,4 +132,35 @@ module "cbr_rule" {
       }
     ]
   }]
+}
+
+##############################################################################
+# Service Credentials
+##############################################################################
+
+resource "ibm_resource_key" "service_credentials" {
+  count                = length(var.service_credentials)
+  name                 = var.service_credentials[count.index]
+  role                 = length(var.service_credential_roles) > 0 ? var.service_credential_roles[count.index] : "Administrator"
+  resource_instance_id = ibm_database.postgresql_db.id
+  tags                 = var.resource_tags
+}
+
+locals {
+  service_credentials_json = length(var.service_credentials) > 0 ? {
+    for service_credential in ibm_resource_key.service_credentials :
+    service_credential["name"] => service_credential["credentials_json"]
+  } : null
+
+  service_credentials_object = length(var.service_credentials) > 0 ? {
+    hostname    = ibm_resource_key.service_credentials[0].credentials["connection.postgres.hosts.0.hostname"]
+    certificate = ibm_resource_key.service_credentials[0].credentials["connection.postgres.certificate.certificate_base64"]
+    credentials = {
+      for service_credential in ibm_resource_key.service_credentials :
+      service_credential["name"] => {
+        username = service_credential.credentials["connection.postgres.authentication.username"]
+        password = service_credential.credentials["connection.postgres.authentication.password"]
+      }
+    }
+  } : null
 }

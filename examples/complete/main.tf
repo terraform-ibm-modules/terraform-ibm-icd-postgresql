@@ -84,6 +84,7 @@ module "postgresql_db" {
   pg_version          = var.pg_version
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
+  service_credentials = var.service_credentials
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
@@ -102,15 +103,4 @@ module "postgresql_db" {
       }]
     }
   ]
-}
-
-##############################################################################
-# Service Credentials
-##############################################################################
-
-resource "ibm_resource_key" "service_credentials" {
-  count                = length(var.service_credentials)
-  name                 = var.service_credentials[count.index]
-  resource_instance_id = module.postgresql_db.id
-  tags                 = var.resource_tags
 }
