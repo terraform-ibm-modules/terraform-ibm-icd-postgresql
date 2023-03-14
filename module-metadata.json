@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 132
       }
     },
     "auto_scaling": {
@@ -22,7 +22,7 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 153
+        "line": 159
       }
     },
     "backup_crn": {
@@ -34,7 +34,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 56
+        "line": 62
       }
     },
     "backup_encryption_key_crn": {
@@ -43,7 +43,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 196
+        "line": 202
       }
     },
     "cbr_rules": {
@@ -60,7 +60,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 207
+        "line": 213
       }
     },
     "configuration": {
@@ -72,7 +72,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 135
+        "line": 141
       }
     },
     "key_protect_key_crn": {
@@ -84,7 +84,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 190
+        "line": 196
       },
       "immutable": true
     },
@@ -95,7 +95,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 82
+        "line": 88
       }
     },
     "member_disk_mb": {
@@ -105,7 +105,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 69
+        "line": 75
       }
     },
     "member_memory_mb": {
@@ -115,7 +115,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 43
+        "line": 49
       }
     },
     "members": {
@@ -125,7 +125,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 97
+        "line": 103
       }
     },
     "name": {
@@ -150,7 +150,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 21
+        "line": 27
       },
       "immutable": true,
       "computed": true
@@ -179,9 +179,21 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 37
+        "line": 43
       },
       "cloud_data_type": "region"
+    },
+    "remote_leader_id": {
+      "name": "remote_leader_id",
+      "type": "string",
+      "description": "The CRN of the leader database to make the replica(read-only) deployment.",
+      "source": [
+        "ibm_database.postgresql_db.remote_leader_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 21
+      }
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -212,7 +224,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 120
+        "line": 126
       },
       "min_length": 1,
       "max_length": 128,
@@ -232,7 +244,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 110
+        "line": 116
       },
       "options": "public, private, public-and-private"
     }
@@ -291,6 +303,7 @@
         "location": "region",
         "name": "name",
         "plan_validation": "plan_validation",
+        "remote_leader_id": "remote_leader_id",
         "resource_group_id": "resource_group_id",
         "service_endpoints": "service_endpoints",
         "tags": "resource_tags",
@@ -364,7 +377,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 96
+        "line": 97
       }
     }
   }
