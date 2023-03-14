@@ -80,7 +80,7 @@ module "postgresql_db" {
   resource_group_id   = module.resource_group.resource_group_id
   name                = "${var.prefix}-postgres"
   region              = var.region
-  service_endpoints   = "private"
+  service_endpoints   = "public-and-private"
   pg_version          = var.pg_version
   key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags       = var.resource_tags
@@ -93,7 +93,7 @@ module "postgresql_db" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "private"
+            "value" : "private,public"
           },
           {
             name  = "networkZoneId"
@@ -113,4 +113,28 @@ resource "ibm_resource_key" "service_credentials" {
   name                 = var.service_credentials[count.index]
   resource_instance_id = module.postgresql_db.id
   tags                 = var.resource_tags
+}
+
+##############################################################################
+# VPE
+##############################################################################
+
+resource "ibm_is_security_group" "sg1" {
+  name = "${var.prefix}-sg1"
+  vpc  = ibm_is_vpc.example_vpc.id
+}
+
+resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
+  name = "vpe-to-access-pg"
+  target {
+    crn           = module.postgresql_db.crn
+    resource_type = "provider_cloud_service"
+  }
+  vpc = ibm_is_vpc.example_vpc.id
+  ips {
+    subnet = ibm_is_subnet.testacc_subnet.id
+    name   = "${var.prefix}-pg-access-reserved-ip"
+  }
+  resource_group  = module.resource_group.resource_group_id
+  security_groups = [ibm_is_security_group.sg1.id]
 }
