@@ -93,8 +93,25 @@ resource "ibm_database" "postgresql_db" {
 ##############################################################################
 # Context Based Restrictions
 ##############################################################################
+
+data "ibm_cbr_rule" "get_cbr_rule" {
+  rule_id = module.cbr_rule[0].rule_id
+}
+
+locals {
+  attribute_names = [ for attrib in data.ibm_cbr_rule.get_cbr_rule.contexts[0].attributes : attrib.name if contains(["endpointType","networkZoneId"],attrib.name)]
+}
+
+# TBD: Remove this - Created output just to validate results
+output "local_attribs" {
+  value = local.attribute_names
+}
+
 module "cbr_rule" {
-  count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
+
+  # TBD: Usage of attribute name - Just for reference
+  count            = length(var.cbr_rules) > 0 && !contains(local.attribute_names,"serviceRef") ? length(var.cbr_rules) : 0
+    # count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.1.4"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
