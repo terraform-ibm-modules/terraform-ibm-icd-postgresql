@@ -15,7 +15,7 @@
 
 > WARNING: **This module does not support major version upgrade or updates to encryption and backup encryption keys**: To upgrade version create a new postgresql instance with the updated version and follow the [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli)
 
-:exclamation: **Important:** This module enables auto-scaling by default.
+:exclamation: **Important:** This module enables auto-scaling by default, to disable auto_scaling set `var.auto_scaling = null`.
 
 ```hcl
 module "postgresql_db" {
