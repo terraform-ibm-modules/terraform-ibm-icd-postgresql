@@ -153,60 +153,37 @@ variable "configuration" {
 variable "auto_scaling" {
   type = object({
     cpu = object({
-      rate_increase_percent       = number
-      rate_limit_count_per_member = number
-      rate_period_seconds         = number
-      rate_units                  = string
+      rate_increase_percent       = optional(number, 10)
+      rate_limit_count_per_member = optional(number, 30)
+      rate_period_seconds         = optional(number, 900)
+      rate_units                  = optional(string, "count")
     })
     disk = object({
-      capacity_enabled             = bool
-      free_space_less_than_percent = number
-      io_above_percent             = number
-      io_enabled                   = bool
-      io_over_period               = string
-      rate_increase_percent        = number
-      rate_limit_mb_per_member     = number
-      rate_period_seconds          = number
-      rate_units                   = string
+      capacity_enabled             = optional(bool, false)
+      free_space_less_than_percent = optional(number, 10)
+      io_above_percent             = optional(number, 90)
+      io_enabled                   = optional(bool, false)
+      io_over_period               = optional(string, "15m")
+      rate_increase_percent        = optional(number, 10)
+      rate_limit_mb_per_member     = optional(number, 3670016)
+      rate_period_seconds          = optional(number, 900)
+      rate_units                   = optional(string, "mb")
     })
     memory = object({
-      io_above_percent         = number
-      io_enabled               = bool
-      io_over_period           = string
-      rate_increase_percent    = number
-      rate_limit_mb_per_member = number
-      rate_period_seconds      = number
-      rate_units               = string
+      io_above_percent         = optional(number, 90)
+      io_enabled               = optional(bool, false)
+      io_over_period           = optional(string, "15m")
+      rate_increase_percent    = optional(number, 10)
+      rate_limit_mb_per_member = optional(number, 114688)
+      rate_period_seconds      = optional(number, 900)
+      rate_units               = optional(string, "mb")
     })
   })
   description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
   default = {
-    cpu = {
-      rate_increase_percent       = 20
-      rate_limit_count_per_member = 20
-      rate_period_seconds         = 900
-      rate_units                  = "count"
-    }
-    disk = {
-      capacity_enabled             = true
-      free_space_less_than_percent = 10
-      io_above_percent             = 90
-      io_enabled                   = true
-      io_over_period               = "15m"
-      rate_increase_percent        = 10
-      rate_limit_mb_per_member     = 3670016
-      rate_period_seconds          = 900
-      rate_units                   = "mb"
-    }
-    memory = {
-      io_above_percent         = 90
-      io_enabled               = true
-      io_over_period           = "15m"
-      rate_increase_percent    = 10
-      rate_limit_mb_per_member = 114688
-      rate_period_seconds      = 900
-      rate_units               = "mb"
-    }
+    cpu    = {}
+    disk   = {}
+    memory = {}
   }
 }
 

@@ -13,35 +13,12 @@
     },
     "auto_scaling": {
       "name": "auto_scaling",
-      "type": "object({\n    cpu = object({\n      rate_increase_percent       = number\n      rate_limit_count_per_member = number\n      rate_period_seconds         = number\n      rate_units                  = string\n    })\n    disk = object({\n      capacity_enabled             = bool\n      free_space_less_than_percent = number\n      io_above_percent             = number\n      io_enabled                   = bool\n      io_over_period               = string\n      rate_increase_percent        = number\n      rate_limit_mb_per_member     = number\n      rate_period_seconds          = number\n      rate_units                   = string\n    })\n    memory = object({\n      io_above_percent         = number\n      io_enabled               = bool\n      io_over_period           = string\n      rate_increase_percent    = number\n      rate_limit_mb_per_member = number\n      rate_period_seconds      = number\n      rate_units               = string\n    })\n  })",
+      "type": "object({\n    cpu = object({\n      rate_increase_percent       = optional(number, 10)\n      rate_limit_count_per_member = optional(number, 30)\n      rate_period_seconds         = optional(number, 900)\n      rate_units                  = optional(string, \"count\")\n    })\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "default": {
-        "cpu": {
-          "rate_increase_percent": 20,
-          "rate_limit_count_per_member": 20,
-          "rate_period_seconds": 900,
-          "rate_units": "count"
-        },
-        "disk": {
-          "capacity_enabled": true,
-          "free_space_less_than_percent": 10,
-          "io_above_percent": 90,
-          "io_enabled": true,
-          "io_over_period": "15m",
-          "rate_increase_percent": 10,
-          "rate_limit_mb_per_member": 3670016,
-          "rate_period_seconds": 900,
-          "rate_units": "mb"
-        },
-        "memory": {
-          "io_above_percent": 90,
-          "io_enabled": true,
-          "io_over_period": "15m",
-          "rate_increase_percent": 10,
-          "rate_limit_mb_per_member": 114688,
-          "rate_period_seconds": 900,
-          "rate_units": "mb"
-        }
+        "cpu": {},
+        "disk": {},
+        "memory": {}
       },
       "pos": {
         "filename": "variables.tf",
@@ -66,7 +43,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 219
+        "line": 196
       }
     },
     "cbr_rules": {
@@ -83,7 +60,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 230
+        "line": 207
       }
     },
     "configuration": {
@@ -107,7 +84,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 213
+        "line": 190
       },
       "immutable": true
     },
