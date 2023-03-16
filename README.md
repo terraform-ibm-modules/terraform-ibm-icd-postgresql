@@ -38,7 +38,7 @@ You need the following permissions to run this module.
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
-- [ Autoscale example](examples/autoscale)
+- [ Autoscale example](examples/autoscale-disabled)
 - [ Restore from backup example](examples/backup)
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)

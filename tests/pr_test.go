@@ -11,7 +11,7 @@ import (
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
 const defaultExampleTerraformDir = "examples/default"
-const autoscaleExampleTerraformDir = "examples/autoscale"
+const autoscaleExampleTerraformDir = "examples/autoscale-disabled"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 
