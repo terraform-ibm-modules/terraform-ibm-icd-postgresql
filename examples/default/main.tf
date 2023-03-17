@@ -20,4 +20,5 @@ module "postgresql_db" {
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
+  auto_scaling      = var.auto_scaling
 }
