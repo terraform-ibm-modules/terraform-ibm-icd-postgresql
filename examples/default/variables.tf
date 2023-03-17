@@ -76,5 +76,11 @@ variable "auto_scaling" {
     })
   })
   description = "Configure rules to allow your database to automatically increase its resources"
-  default     = null
+  default = {
+    cpu = {
+      rate_limit_count_per_member = 30
+    }
+    disk   = {}
+    memory = {}
+  }
 }
