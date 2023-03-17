@@ -199,7 +199,6 @@ variable "backup_encryption_key_crn" {
   default     = null
 }
 
-
 ##############################################################
 # Context-based restriction (CBR)
 ##############################################################
