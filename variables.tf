@@ -153,8 +153,8 @@ variable "configuration" {
 variable "auto_scaling" {
   type = object({
     cpu = object({
-      rate_increase_percent       = optional(number, 10)
-      rate_limit_count_per_member = optional(number, 30)
+      rate_increase_percent       = optional(number, 20)
+      rate_limit_count_per_member = optional(number, 20)
       rate_period_seconds         = optional(number, 900)
       rate_units                  = optional(string, "count")
     })
