@@ -77,13 +77,15 @@ variable "auto_scaling" {
   })
   description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
   default = {
-    cpu = {}
+    cpu = {
+      rate_limit_count_per_member : 20
+    }
     disk = {
-      "capacity_enabled" : true,
-      "io_enabled" : true
+      capacity_enabled : true,
+      io_enabled : true
     }
     memory = {
-      "io_enabled" : true,
+      io_enabled : true,
     }
   }
 }
