@@ -20,4 +20,15 @@ module "postgresql_db" {
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
+  auto_scaling = {
+    cpu = {
+      rate_limit_count_per_member = 30
+    }
+    disk = {
+
+    }
+    memory = {
+
+    }
+  }
 }
