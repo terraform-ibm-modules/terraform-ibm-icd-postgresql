@@ -75,7 +75,7 @@ variable "auto_scaling" {
       rate_units               = optional(string)
     })
   })
-  description = "Configure rules to allow your database to automatically increase its resources"
+  description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
   default = {
     cpu = {}
     disk = {

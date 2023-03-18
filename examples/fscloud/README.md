@@ -5,7 +5,7 @@
 An example using the fscloud profile to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider to:
 
 - Create a new resource group if one is not passed in.
-- Create a new ICD Postgresql database instance with auto-scaling enabled and credentials.
+- Create a new ICD Postgresql database instance with and credentials.
 - Create Key Protect instance with root key.
 - Backend encryption using generated Key Protect key.
 - Create a Sample VPC.
