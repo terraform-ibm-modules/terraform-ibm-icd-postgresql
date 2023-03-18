@@ -84,8 +84,7 @@ You need the following permissions to run this module.
 | <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK if key\_protect\_key\_crn is used | `string` | `"us-south"` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the postgresql will be created | `string` | n/a | yes |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to created resources | `list(string)` | `[]` | no |
-| <a name="input_service_credential_roles"></a> [service\_credential\_roles](#input\_service\_credential\_roles) | A list of service credentials roles that you want to create for the database, if not provided then role will set as Administrator | `list(string)` | `[]` | no |
-| <a name="input_service_credentials"></a> [service\_credentials](#input\_service\_credentials) | A list of service credentials that you want to create for the database | `list(string)` | `[]` | no |
+| <a name="input_service_credential_names"></a> [service\_credential\_names](#input\_service\_credential\_names) | Map of name, role for service credentials that you want to create for the database | `map(string)` | `{}` | no |
 | <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private' | `string` | `"private"` | no |
 
 ## Outputs

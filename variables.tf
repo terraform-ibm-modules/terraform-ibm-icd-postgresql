@@ -92,20 +92,14 @@ variable "member_cpu_count" {
   }
 }
 
-variable "service_credentials" {
-  description = "A list of service credentials that you want to create for the database"
-  type        = list(string)
-  default     = []
-}
-
-variable "service_credential_roles" {
-  description = "A list of service credentials roles that you want to create for the database, if not provided then role will set as Administrator"
-  type        = list(string)
-  default     = []
+variable "service_credential_names" {
+  description = "Map of name, role for service credentials that you want to create for the database"
+  type        = map(string)
+  default     = {}
 
   validation {
-    condition     = alltrue([for role in var.service_credential_roles : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
-    error_message = "Valid values for service_credential_roles are 'Administrator', 'Operator', 'Viewer', and 'Editor'"
+    condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
+    error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
   }
 }
 
