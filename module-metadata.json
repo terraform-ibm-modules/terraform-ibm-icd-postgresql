@@ -15,11 +15,6 @@
       "name": "auto_scaling",
       "type": "object({\n    cpu = object({\n      rate_increase_percent       = optional(number, 10)\n      rate_limit_count_per_member = optional(number, 30)\n      rate_period_seconds         = optional(number, 900)\n      rate_units                  = optional(string, \"count\")\n    })\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, \"10\")\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
-      "default": {
-        "cpu": {},
-        "disk": {},
-        "memory": {}
-      },
       "pos": {
         "filename": "variables.tf",
         "line": 153
@@ -43,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 196
+        "line": 192
       }
     },
     "cbr_rules": {
@@ -60,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 206
+        "line": 202
       }
     },
     "configuration": {
@@ -84,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 190
+        "line": 186
       },
       "immutable": true
     },
@@ -301,7 +296,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 12
+        "line": 13
       }
     }
   },
@@ -364,7 +359,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 96
+        "line": 104
       }
     }
   }
