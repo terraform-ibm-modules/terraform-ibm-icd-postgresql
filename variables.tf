@@ -180,11 +180,7 @@ variable "auto_scaling" {
     })
   })
   description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
-  default = {
-    cpu    = {}
-    disk   = {}
-    memory = {}
-  }
+  default     = null
 }
 
 variable "key_protect_key_crn" {
