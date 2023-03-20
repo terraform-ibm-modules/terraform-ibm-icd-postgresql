@@ -84,43 +84,6 @@ variable "configuration" {
   default = null
 }
 
-variable "auto_scaling" {
-  type = object({
-    cpu = object({
-      rate_increase_percent       = optional(number)
-      rate_limit_count_per_member = optional(number)
-      rate_period_seconds         = optional(number)
-      rate_units                  = optional(string)
-    })
-    disk = object({
-      capacity_enabled             = optional(bool)
-      free_space_less_than_percent = optional(number)
-      io_above_percent             = optional(number)
-      io_enabled                   = optional(bool)
-      io_over_period               = optional(string)
-      rate_increase_percent        = optional(number)
-      rate_limit_mb_per_member     = optional(number)
-      rate_period_seconds          = optional(number)
-      rate_units                   = optional(string)
-    })
-    memory = object({
-      io_above_percent         = optional(number)
-      io_enabled               = optional(bool)
-      io_over_period           = optional(string)
-      rate_increase_percent    = optional(number)
-      rate_limit_mb_per_member = optional(number)
-      rate_period_seconds      = optional(number)
-      rate_units               = optional(string)
-    })
-  })
-  description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
-  default = {
-    cpu    = {}
-    disk   = {}
-    memory = {}
-  }
-}
-
 variable "key_protect_key_crn" {
   type        = string
   description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"

@@ -16,7 +16,6 @@ module "postgresql_db" {
   resource_tags             = var.resource_tags
   allowlist                 = var.allowlist
   cbr_rules                 = var.cbr_rules
-  auto_scaling              = var.auto_scaling
   configuration             = var.configuration
   member_memory_mb          = var.member_memory_mb
   member_disk_mb            = var.member_disk_mb
