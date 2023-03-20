@@ -74,11 +74,9 @@ func testRunCompleteExample(t *testing.T, version string) {
 			"pg_version": version,
 		},
 	})
-	options.SkipTestTearDown = true
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
-	options.TestTearDown()
 }
 
 func TestRunCompleteExample(t *testing.T) {
