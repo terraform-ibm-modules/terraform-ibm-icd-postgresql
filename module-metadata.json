@@ -253,9 +253,9 @@
     }
   },
   "outputs": {
-    "cbrruleid": {
-      "name": "cbrruleid",
-      "description": "CBR created to restrict Postgresql",
+    "cbr_rule_ids": {
+      "name": "cbr_rule_ids",
+      "description": "CBR rule ids created to restrict Postgresql",
       "pos": {
         "filename": "outputs.tf",
         "line": 38
