@@ -124,17 +124,17 @@ resource "ibm_is_security_group" "sg1" {
   vpc  = ibm_is_vpc.example_vpc.id
 }
 
-resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
-  name = "vpe-to-access-pg"
-  target {
-    crn           = module.postgresql_db.crn
-    resource_type = "provider_cloud_service"
-  }
-  vpc = ibm_is_vpc.example_vpc.id
-  ips {
-    subnet = ibm_is_subnet.testacc_subnet.id
-    name   = "${var.prefix}-pg-access-reserved-ip"
-  }
-  resource_group  = module.resource_group.resource_group_id
-  security_groups = [ibm_is_security_group.sg1.id]
-}
+# resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
+#   name = "vpe-to-access-pg"
+#   target {
+#     crn           = module.postgresql_db.crn
+#     resource_type = "provider_cloud_service"
+#   }
+#   vpc = ibm_is_vpc.example_vpc.id
+#   ips {
+#     subnet = ibm_is_subnet.testacc_subnet.id
+#     name   = "${var.prefix}-pg-access-reserved-ip"
+#   }
+#   resource_group  = module.resource_group.resource_group_id
+#   security_groups = [ibm_is_security_group.sg1.id]
+# }
