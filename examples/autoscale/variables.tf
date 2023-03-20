@@ -77,31 +77,13 @@ variable "auto_scaling" {
   })
   description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
   default = {
-    cpu = {
-      rate_increase_percent       = 20
-      rate_limit_count_per_member = 20
-      rate_period_seconds         = 900
-      rate_units                  = "count"
-    }
+    cpu = {}
     disk = {
-      capacity_enabled             = true
-      free_space_less_than_percent = 15
-      io_above_percent             = 85
-      io_enabled                   = true
-      io_over_period               = "15m"
-      rate_increase_percent        = 15
-      rate_limit_mb_per_member     = 3670016
-      rate_period_seconds          = 900
-      rate_units                   = "mb"
+      capacity_enabled : true,
+      io_enabled : true
     }
     memory = {
-      io_above_percent         = 90
-      io_enabled               = true
-      io_over_period           = "15m"
-      rate_increase_percent    = 10
-      rate_limit_mb_per_member = 114688
-      rate_period_seconds      = 900
-      rate_units               = "mb"
+      io_enabled : true,
     }
   }
 }
