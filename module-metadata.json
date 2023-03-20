@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 132
+        "line": 143
       }
     },
     "auto_scaling": {
@@ -22,7 +22,7 @@
       },
       "pos": {
         "filename": "variables.tf",
-        "line": 159
+        "line": 170
       }
     },
     "backup_crn": {
@@ -43,7 +43,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 202
+        "line": 213
       }
     },
     "cbr_rules": {
@@ -60,7 +60,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 213
+        "line": 224
       }
     },
     "configuration": {
@@ -72,7 +72,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 141
+        "line": 152
       }
     },
     "key_protect_key_crn": {
@@ -84,7 +84,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 196
+        "line": 207
       },
       "immutable": true
     },
@@ -125,7 +125,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 103
+        "line": 114
       }
     },
     "name": {
@@ -220,18 +220,33 @@
       "description": "Optional list of tags to be added to created resources",
       "default": [],
       "source": [
-        "ibm_database.postgresql_db.tags"
+        "ibm_database.postgresql_db.tags",
+        "ibm_resource_key.service_credentials.tags"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 137
       },
+      "cloud_data_type": "tags",
       "min_length": 1,
       "max_length": 128,
       "matches": "^[A-Za-z0-9:_ .-]+$",
       "computed": true,
       "elem": {
         "type": "TypeString"
+      }
+    },
+    "service_credential_names": {
+      "name": "service_credential_names",
+      "type": "map(string)",
+      "description": "Map of name, role for service credentials that you want to create for the database",
+      "default": {},
+      "source": [
+        "ibm_resource_key.service_credentials.for_each"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 101
       }
     },
     "service_endpoints": {
@@ -244,7 +259,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 116
+        "line": 127
       },
       "options": "public, private, public-and-private"
     }
@@ -267,6 +282,26 @@
       "pos": {
         "filename": "outputs.tf",
         "line": 5
+      }
+    },
+    "service_credentials_json": {
+      "name": "service_credentials_json",
+      "description": "Service credentials json map",
+      "value": "local.service_credentials_json",
+      "sensitive": true,
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 20
+      }
+    },
+    "service_credentials_object": {
+      "name": "service_credentials_object",
+      "description": "Service credentials object",
+      "value": "local.service_credentials_object",
+      "sensitive": true,
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 26
       }
     },
     "version": {
@@ -315,6 +350,22 @@
       "pos": {
         "filename": "main.tf",
         "line": 12
+      }
+    },
+    "ibm_resource_key.service_credentials": {
+      "mode": "managed",
+      "type": "ibm_resource_key",
+      "name": "service_credentials",
+      "attributes": {
+        "for_each": "service_credential_names",
+        "tags": "resource_tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 135
       }
     }
   },

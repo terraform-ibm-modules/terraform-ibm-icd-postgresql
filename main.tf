@@ -127,3 +127,35 @@ module "cbr_rule" {
     ]
   }]
 }
+
+##############################################################################
+# Service Credentials
+##############################################################################
+
+resource "ibm_resource_key" "service_credentials" {
+  for_each             = var.service_credential_names
+  name                 = each.key
+  role                 = each.value
+  resource_instance_id = ibm_database.postgresql_db.id
+  tags                 = var.resource_tags
+}
+
+locals {
+  # used for output only
+  service_credentials_json = length(var.service_credential_names) > 0 ? {
+    for service_credential in ibm_resource_key.service_credentials :
+    service_credential["name"] => service_credential["credentials_json"]
+  } : null
+
+  service_credentials_object = length(var.service_credential_names) > 0 ? {
+    hostname    = ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.hostname"]
+    certificate = ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.certificate.certificate_base64"]
+    credentials = {
+      for service_credential in ibm_resource_key.service_credentials :
+      service_credential["name"] => {
+        username = service_credential.credentials["connection.postgres.authentication.username"]
+        password = service_credential.credentials["connection.postgres.authentication.password"]
+      }
+    }
+  } : null
+}
