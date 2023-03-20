@@ -258,7 +258,7 @@
       "description": "CBR created to restrict Postgresql",
       "pos": {
         "filename": "outputs.tf",
-        "line": 25
+        "line": 38
       }
     },
     "crn": {
@@ -297,7 +297,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 25
       }
     },
     "service_credentials_object": {
@@ -307,7 +307,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 26
+        "line": 31
       }
     },
     "version": {
