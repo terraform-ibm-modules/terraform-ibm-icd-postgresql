@@ -34,8 +34,12 @@ variable "pg_version" {
   default     = null
 }
 
-variable "service_credentials" {
-  description = "A list of service credentials that you want to create for the database"
-  type        = list(string)
-  default     = ["postgressql_credential_microservices", "postgressql_credential_dev_1", "postgressql_credential_dev_2"]
+variable "service_credential_names" {
+  description = "Map of name, role for service credentials that you want to create for the database"
+  type        = map(string)
+  default = {
+    "postgressql_credential_microservices" : "Administrator",
+    "postgressql_credential_dev_1" : "Administrator",
+    "postgressql_credential_dev_2" : "Administrator"
+  }
 }
