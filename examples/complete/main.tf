@@ -76,14 +76,15 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source              = "../../"
-  resource_group_id   = module.resource_group.resource_group_id
-  name                = "${var.prefix}-postgres"
-  region              = var.region
-  service_endpoints   = "public-and-private"
-  pg_version          = var.pg_version
-  key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  resource_tags       = var.resource_tags
+  source                   = "../../"
+  resource_group_id        = module.resource_group.resource_group_id
+  name                     = "${var.prefix}-postgres"
+  region                   = var.region
+  service_endpoints        = "private"
+  pg_version               = var.pg_version
+  key_protect_key_crn      = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
+  resource_tags            = var.resource_tags
+  service_credential_names = var.service_credential_names
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
@@ -102,17 +103,6 @@ module "postgresql_db" {
       }]
     }
   ]
-}
-
-##############################################################################
-# Service Credentials
-##############################################################################
-
-resource "ibm_resource_key" "service_credentials" {
-  count                = length(var.service_credentials)
-  name                 = var.service_credentials[count.index]
-  resource_instance_id = module.postgresql_db.id
-  tags                 = var.resource_tags
 }
 
 ##############################################################################
