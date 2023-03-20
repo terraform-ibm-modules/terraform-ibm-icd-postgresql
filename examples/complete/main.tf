@@ -137,8 +137,4 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
   }
   resource_group  = module.resource_group.resource_group_id
   security_groups = [ibm_is_security_group.sg1.id]
-
-  depends_on = [
-    module.postgresql_db
-  ]
 }
