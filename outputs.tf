@@ -35,7 +35,7 @@ output "service_credentials_object" {
 }
 
 
-output "cbrruleid" {
-  description = "CBR created to restrict Postgresql"
+output "cbr_rule_ids" {
+  description = "CBR rule ids created to restrict Postgresql"
   value       = module.cbr_rule[*].rule_id
 }

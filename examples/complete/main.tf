@@ -94,7 +94,7 @@ module "postgresql_db" {
         attributes = [
           {
             "name" : "endpointType",
-            "value" : "private,public"
+            "value" : "private"
           },
           {
             name  = "networkZoneId"
@@ -115,7 +115,7 @@ resource "ibm_is_security_group" "sg1" {
 }
 
 resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
-  name = "vpe-to-access-pg"
+  name = "${var.prefix}-vpe-to-pg"
   target {
     crn           = module.postgresql_db.crn
     resource_type = "provider_cloud_service"
