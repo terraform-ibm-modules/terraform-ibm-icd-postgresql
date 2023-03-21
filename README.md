@@ -41,6 +41,7 @@ You need the following permissions to run this module.
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
 - [ Financial Services Cloud profile example](examples/fscloud)
+- [ Default example](examples/replica)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
@@ -82,7 +83,7 @@ You need the following permissions to run this module.
 | <a name="input_pg_version"></a> [pg\_version](#input\_pg\_version) | Version of the postgresql instance | `string` | `null` | no |
 | <a name="input_plan_validation"></a> [plan\_validation](#input\_plan\_validation) | Enable or disable validating the database parameters for postgres during the plan phase | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK if key\_protect\_key\_crn is used | `string` | `"us-south"` | no |
-| <a name="input_remote_leader_id"></a> [remote\_leader\_id](#input\_remote\_leader\_id) | The CRN of the leader database to make the replica(read-only) deployment. | `string` | `null` | no |
+| <a name="input_remote_leader_crn"></a> [remote\_leader\_crn](#input\_remote\_leader\_crn) | The CRN of the leader database to make the replica(read-only) deployment. | `string` | `null` | no |
 | <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the postgresql will be created | `string` | n/a | yes |
 | <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to created resources | `list(string)` | `[]` | no |
 | <a name="input_service_credential_names"></a> [service\_credential\_names](#input\_service\_credential\_names) | Map of name, role for service credentials that you want to create for the database | `map(string)` | `{}` | no |

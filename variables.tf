@@ -18,7 +18,7 @@ variable "plan_validation" {
   default     = true
 }
 
-variable "remote_leader_id" {
+variable "remote_leader_crn" {
   type        = string
   description = "The CRN of the leader database to make the replica(read-only) deployment."
   default     = null
