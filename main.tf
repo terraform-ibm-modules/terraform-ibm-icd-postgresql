@@ -18,7 +18,7 @@ resource "ibm_database" "postgresql_db" {
   plan              = "standard" # Only standard plan is available for postgres
   backup_id         = var.backup_crn
   plan_validation   = var.plan_validation
-  remote_leader_id  = var.remote_leader_id
+  remote_leader_id  = var.remote_leader_crn
   version           = var.pg_version
   tags              = var.resource_tags
   service_endpoints = var.service_endpoints

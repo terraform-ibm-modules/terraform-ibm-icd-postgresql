@@ -178,8 +178,8 @@
       },
       "cloud_data_type": "region"
     },
-    "remote_leader_id": {
-      "name": "remote_leader_id",
+    "remote_leader_crn": {
+      "name": "remote_leader_crn",
       "type": "string",
       "description": "The CRN of the leader database to make the replica(read-only) deployment.",
       "source": [
@@ -351,7 +351,7 @@
         "location": "region",
         "name": "name",
         "plan_validation": "plan_validation",
-        "remote_leader_id": "remote_leader_id",
+        "remote_leader_id": "remote_leader_crn",
         "resource_group_id": "resource_group_id",
         "service_endpoints": "service_endpoints",
         "tags": "resource_tags",
