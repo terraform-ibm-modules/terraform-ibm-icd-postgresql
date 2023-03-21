@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 209
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 214
+        "line": 220
       }
     },
     "configuration": {
@@ -79,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 197
+        "line": 203
       },
       "immutable": true
     },
@@ -360,7 +360,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 143
       }
     }
   },
@@ -423,7 +423,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 104
+        "line": 105
       }
     }
   }
