@@ -29,9 +29,9 @@ variable "resource_tags" {
 }
 
 variable "postgresql_db_remote_leader_crn" {
-  type = string
+  type        = string
   description = "The CRN of the leader database to make the replica(read-only) deployment."
-  default = null
+  default     = null
 }
 
 variable "member_memory_mb" {
