@@ -28,6 +28,12 @@ variable "resource_tags" {
   default     = []
 }
 
+# variable "postgres_replica_count" {
+#   type        = string
+#   description = "value"
+#   default     = null
+# }
+
 variable "postgresql_db_remote_leader_crn" {
   type        = string
   description = "The CRN of the leader database to make the replica(read-only) deployment."
