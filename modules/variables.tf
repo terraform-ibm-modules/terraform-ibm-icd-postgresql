@@ -184,24 +184,3 @@ variable "backup_encryption_key_crn" {
   description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
 }
-
-
-##############################################################
-# Context-based restriction (CBR)
-##############################################################
-
-variable "cbr_rules" {
-  type = list(object({
-    description = string
-    account_id  = string
-    rule_contexts = list(object({
-      attributes = optional(list(object({
-        name  = string
-        value = string
-    }))) }))
-    enforcement_mode = string
-  }))
-  description = "(Optional, list) List of CBR rules to create"
-  default     = []
-  # Validation happens in the rule module
-}
