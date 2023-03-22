@@ -104,3 +104,36 @@ module "postgresql_db" {
     }
   ]
 }
+
+# VPE provisioning should wait for the database provisioning
+resource "time_sleep" "wait_120_seconds" {
+  depends_on      = [module.postgresql_db]
+  create_duration = "120s"
+}
+
+##############################################################################
+# VPE
+##############################################################################
+
+resource "ibm_is_security_group" "sg1" {
+  name = "${var.prefix}-sg1"
+  vpc  = ibm_is_vpc.example_vpc.id
+}
+
+resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
+  name = "${var.prefix}-vpe-to-pg"
+  target {
+    crn           = module.postgresql_db.crn
+    resource_type = "provider_cloud_service"
+  }
+  vpc = ibm_is_vpc.example_vpc.id
+  ips {
+    subnet = ibm_is_subnet.testacc_subnet.id
+    name   = "${var.prefix}-pg-access-reserved-ip"
+  }
+  resource_group  = module.resource_group.resource_group_id
+  security_groups = [ibm_is_security_group.sg1.id]
+  depends_on = [
+    time_sleep.wait_120_seconds
+  ]
+}

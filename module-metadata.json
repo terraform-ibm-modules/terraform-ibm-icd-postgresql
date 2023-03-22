@@ -248,6 +248,24 @@
     }
   },
   "outputs": {
+    "cbr_rule_ids": {
+      "name": "cbr_rule_ids",
+      "description": "CBR rule ids created to restrict Postgresql",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 38
+      }
+    },
+    "crn": {
+      "name": "crn",
+      "description": "Postgresql instance crn",
+      "value": "ibm_database.postgresql_db.resource_crn",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 15
+      },
+      "type": "TypeString"
+    },
     "guid": {
       "name": "guid",
       "description": "Postgresql instance guid",
@@ -274,7 +292,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 25
       }
     },
     "service_credentials_object": {
@@ -284,7 +302,7 @@
       "sensitive": true,
       "pos": {
         "filename": "outputs.tf",
-        "line": 26
+        "line": 31
       }
     },
     "version": {
@@ -293,7 +311,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 15
+        "line": 20
       },
       "type": "TypeString"
     }

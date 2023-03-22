@@ -12,6 +12,11 @@ output "guid" {
   value       = ibm_database.postgresql_db.guid
 }
 
+output "crn" {
+  description = "Postgresql instance crn"
+  value       = ibm_database.postgresql_db.resource_crn
+}
+
 output "version" {
   description = "Postgresql instance version"
   value       = ibm_database.postgresql_db.version
@@ -27,4 +32,10 @@ output "service_credentials_object" {
   description = "Service credentials object"
   value       = local.service_credentials_object
   sensitive   = true
+}
+
+
+output "cbr_rule_ids" {
+  description = "CBR rule ids created to restrict Postgresql"
+  value       = module.cbr_rule[*].rule_id
 }
