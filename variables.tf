@@ -196,13 +196,13 @@ variable "auto_scaling" {
 
 variable "key_protect_key_crn" {
   type        = string
-  description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
+  description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. Refer to the [disk encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect#using-the-key-protect-key) documentation for more information"
   default     = null
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a key protect key to use for encrypting the disk that holds deployment backups. BYOK for backups is available with keys from us-south, us-east or eu-de. Important: Only keys in us-south and eu-de are durable to region failures (https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok). If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
 }
 
