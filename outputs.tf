@@ -17,6 +17,11 @@ output "version" {
   value       = ibm_database.postgresql_db.version
 }
 
+output "crn" {
+  description = "Postgresql instance crn"
+  value       = ibm_database.postgresql_db.resource_crn
+}
+
 output "service_credentials_json" {
   description = "Service credentials json map"
   value       = local.service_credentials_json
