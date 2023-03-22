@@ -35,7 +35,7 @@
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "(Optional) The CRN of a key protect key to use for encrypting the disk that holds deployment backups. BYOK for backups is available with keys from us-south, us-east or eu-de. Important: Only keys in us-south and eu-de are durable to region failures (https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect\u0026interface=ui#key-byok). If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
+      "description": "(Optional) The CRN of a key protect key to use for encrypting the disk that holds deployment backups. BYOK for backups is available with keys from us-south, us-east or eu-de. Important: Only keys in us-south and eu-de are durable to region failures, refer to the [BYOK](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect\u0026interface=ui#key-byok) documentation for more information. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
         "line": 203
