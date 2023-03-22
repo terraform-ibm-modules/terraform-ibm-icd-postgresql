@@ -1,6 +1,6 @@
 provider "ibm" {
   ibmcloud_api_key = var.ibmcloud_api_key
-  region           = var.region
+  region           = "us-south"
 }
 
 terraform {
@@ -42,7 +42,7 @@ variable "resource_group" {
 
 module "resource_group" {
   source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-resource-group.git?ref=v1.0.5"
-  resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
+  resource_group_name          = var.resource_group == null ? "create-ror-resource-group" : null
   existing_resource_group_name = var.resource_group
 }
 
