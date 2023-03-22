@@ -204,6 +204,10 @@ variable "backup_encryption_key_crn" {
   type        = string
   description = "(Optional) The CRN of a key protect key to use for encrypting the disk that holds deployment backups. BYOK for backups is available with keys from us-south, us-east or eu-de. Important: Only keys in us-south and eu-de are durable to region failures, refer to the [BYOK](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) documentation for more information. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
+  validation {
+    condition     = var.backup_encryption_key_crn == null ? true : length(regexall("^crn:v1:bluemix:public:kms:(us-south|us-east|eu-de):a/[[:xdigit:]]{32}:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}:key:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$", var.backup_encryption_key_crn)) > 0
+    error_message = "Valid values for backup_encryption_key_crn is null or Key Protect key CRN from us-south, us-east or eu-de"
+  }
 }
 
 
