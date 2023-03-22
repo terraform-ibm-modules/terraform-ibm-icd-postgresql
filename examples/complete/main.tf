@@ -106,9 +106,9 @@ module "postgresql_db" {
 }
 
 # VPE provisioning should wait for the database provisioning
-resource "time_sleep" "wait_60_seconds" {
+resource "time_sleep" "wait_120_seconds" {
   depends_on      = [module.postgresql_db]
-  create_duration = "60s"
+  create_duration = "120s"
 }
 
 ##############################################################################
@@ -134,6 +134,6 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
   resource_group  = module.resource_group.resource_group_id
   security_groups = [ibm_is_security_group.sg1.id]
   depends_on = [
-    time_sleep.wait_60_seconds
+    time_sleep.wait_120_seconds
   ]
 }
