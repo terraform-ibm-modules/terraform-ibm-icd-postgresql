@@ -24,22 +24,6 @@ variable "remote_leader_crn" {
   default     = null
 }
 
-variable "pg_version" {
-  description = "Version of the postgresql instance"
-  type        = string
-  default     = null
-  validation {
-    condition = anytrue([
-      var.pg_version == null,
-      var.pg_version == "14",
-      var.pg_version == "13",
-      var.pg_version == "12",
-      var.pg_version == "11"
-    ])
-    error_message = "Version must be 11 or 12 or 13 or 14. If null, the current default ICD postgresql version is used"
-  }
-}
-
 variable "region" {
   description = "The region postgresql is to be created on. The region must support BYOK if key_protect_key_crn is used"
   type        = string
@@ -95,17 +79,6 @@ variable "member_cpu_count" {
       var.member_cpu_count <= 28
     ])
     error_message = "member group cpu must be >= 3 and <= 28 in increments of 1"
-  }
-}
-
-variable "service_credential_names" {
-  description = "Map of name, role for service credentials that you want to create for the database"
-  type        = map(string)
-  default     = {}
-
-  validation {
-    condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
-    error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
   }
 }
 
