@@ -46,9 +46,9 @@ resource "ibm_database" "postgresql_db" {
       allocation_count = var.member_cpu_count
     }
 
-    members {
-      allocation_count = var.members
-    }
+    # members {
+    #   allocation_count = var.members
+    # }
   }
 
   ## This for_each block is NOT a loop to attach to multiple auto_scaling blocks.

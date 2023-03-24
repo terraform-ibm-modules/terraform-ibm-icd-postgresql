@@ -113,16 +113,6 @@
         "line": 49
       }
     },
-    "members": {
-      "name": "members",
-      "type": "number",
-      "description": "Number of members",
-      "default": 3,
-      "pos": {
-        "filename": "variables.tf",
-        "line": 114
-      }
-    },
     "name": {
       "name": "name",
       "type": "string",
@@ -274,7 +264,7 @@
       "value": "ibm_database.postgresql_db.resource_crn",
       "pos": {
         "filename": "outputs.tf",
-        "line": 15
+        "line": 20
       },
       "type": "TypeString"
     },
@@ -323,7 +313,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 15
       },
       "type": "TypeString"
     }
