@@ -62,6 +62,7 @@ You need the following permissions to run this module.
 |------|------|
 | [ibm_database.postgresql_db](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database) | resource |
 | [ibm_resource_key.service_credentials](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/resource_key) | resource |
+| [ibm_cbr_zone.cbr_zone](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/cbr_zone) | data source |
 
 ## Inputs
 

@@ -347,11 +347,24 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 158
       }
     }
   },
-  "data_resources": {},
+  "data_resources": {
+    "data.ibm_cbr_zone.cbr_zone": {
+      "mode": "data",
+      "type": "ibm_cbr_zone",
+      "name": "cbr_zone",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 115
+      }
+    }
+  },
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
@@ -410,7 +423,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 104
+        "line": 120
       }
     }
   }

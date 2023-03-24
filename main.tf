@@ -101,8 +101,24 @@ resource "ibm_database" "postgresql_db" {
 ##############################################################################
 # Context Based Restrictions
 ##############################################################################
+
+locals {
+  network_zone_id = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
+
+  disable_cbr_module = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
+  validate_msg       = "Cloud Databases does not support Reference a service."
+  # tflint-ignore: terraform_unused_declarations
+  validate_cbr_rule = regex("^${local.validate_msg}$", (local.disable_cbr_module ? "" : local.validate_msg))
+}
+
+
+data "ibm_cbr_zone" "cbr_zone" {
+  count   = length(local.network_zone_id)
+  zone_id = local.network_zone_id[count.index]
+}
+
 module "cbr_rule" {
-  count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
+  count            = (length(var.cbr_rules) == 0 || local.disable_cbr_module) ? 0 : length(var.cbr_rules)
   source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.1.4"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
