@@ -92,6 +92,8 @@ You need the following permissions to run this module.
 
 | Name | Description |
 |------|-------------|
+| <a name="output_cbr_rule_ids"></a> [cbr\_rule\_ids](#output\_cbr\_rule\_ids) | CBR rule ids created to restrict Postgresql |
+| <a name="output_crn"></a> [crn](#output\_crn) | Postgresql instance crn |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
 | <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
 | <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | Service credentials json map |
