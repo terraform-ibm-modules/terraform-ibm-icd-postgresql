@@ -365,7 +365,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 158
+        "line": 156
       }
     }
   },
@@ -379,7 +379,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 115
+        "line": 105
       }
     }
   },
@@ -441,7 +441,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 120
+        "line": 118
       }
     }
   }
