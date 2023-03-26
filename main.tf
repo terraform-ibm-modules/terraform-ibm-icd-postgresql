@@ -111,7 +111,7 @@ locals {
   network_zone_id = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
 
   disable_cbr_module = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
-  validate_msg       = "Cloud Databases does not support Reference as a service."
+  validate_msg       = "Cloud Databases does not support Reference as service."
   # tflint-ignore: terraform_unused_declarations
   validate_cbr_rule = regex("^${local.validate_msg}$", (local.disable_cbr_module ? "" : local.validate_msg))
 }
