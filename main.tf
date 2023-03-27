@@ -104,7 +104,7 @@ resource "ibm_database" "postgresql_db" {
 ##############################################################################
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
-  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.1.4"
+  source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.2.0"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
