@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 143
+        "line": 149
       }
     },
     "auto_scaling": {
@@ -17,7 +17,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 170
+        "line": 176
       }
     },
     "backup_crn": {
@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 209
+        "line": 215
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 220
+        "line": 226
       }
     },
     "configuration": {
@@ -67,7 +67,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 158
       }
     },
     "key_protect_key_crn": {
@@ -79,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 209
       },
       "immutable": true
     },
@@ -103,6 +103,16 @@
         "line": 75
       }
     },
+    "member_enabled": {
+      "name": "member_enabled",
+      "type": "bool",
+      "description": "This variable is used to conditionally add member_allocation_count block depending on requirements",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 112
+      }
+    },
     "member_memory_mb": {
       "name": "member_memory_mb",
       "type": "string",
@@ -111,6 +121,16 @@
       "pos": {
         "filename": "variables.tf",
         "line": 49
+      }
+    },
+    "members": {
+      "name": "members",
+      "type": "number",
+      "description": "Number of members",
+      "default": 3,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 120
       }
     },
     "name": {
@@ -210,7 +230,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 137
+        "line": 143
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -244,7 +264,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 127
+        "line": 133
       },
       "options": "public, private, public-and-private"
     }
@@ -368,7 +388,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 143
+        "line": 145
       }
     }
   },
@@ -447,7 +467,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 105
+        "line": 107
       }
     }
   }

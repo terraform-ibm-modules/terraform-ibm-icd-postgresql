@@ -109,20 +109,26 @@ variable "service_credential_names" {
   }
 }
 
+variable "member_enabled" {
+  type        = bool
+  description = "This variable is used to conditionally add member_allocation_count block depending on requirements"
+  default     = false
+}
+
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
-# variable "members" {
-#   type        = number
-#   description = "Number of members"
-#   default     = 3
-#   validation {
-#     condition = alltrue([
-#       var.members >= 3,
-#       var.members <= 20
-#     ])
-#     error_message = "member group members must be >= 3 and <= 20 in increments of 1"
-#   }
-# }
+variable "members" {
+  type        = number
+  description = "Number of members"
+  default     = 3
+  validation {
+    condition = alltrue([
+      var.members >= 3,
+      var.members <= 20
+    ])
+    error_message = "member group members must be >= 3 and <= 20 in increments of 1"
+  }
+}
 
 variable "service_endpoints" {
   type        = string

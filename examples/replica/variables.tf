@@ -19,7 +19,7 @@ variable "prefix" {
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
-  default     = null
+  default     = "testing-anam"
 }
 
 variable "resource_tags" {
@@ -27,12 +27,6 @@ variable "resource_tags" {
   description = "Optional list of tags to be added to created resources"
   default     = []
 }
-
-# variable "postgres_replica_count" {
-#   type        = string
-#   description = "value"
-#   default     = null
-# }
 
 variable "postgresql_db_remote_leader_crn" {
   type        = string
@@ -77,4 +71,10 @@ variable "member_cpu_count" {
     ])
     error_message = "member group cpu must be >= 3 and <= 28 in increments of 1"
   }
+}
+
+variable "member_enabled" {
+  type        = bool
+  description = "This variable is used to conditionally add member_allocation_count block depending on requirements"
+  default     = true
 }

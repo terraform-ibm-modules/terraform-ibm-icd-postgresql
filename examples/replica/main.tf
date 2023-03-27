@@ -14,7 +14,6 @@ module "resource_group" {
 ##############################################################################
 
 module "postgresql_db" {
-  # count             = var.postgresql_db_remote_leader_crn != null ? 0 : 1
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-primary"
@@ -27,8 +26,7 @@ module "postgresql_db" {
 ##############################################################################
 
 module "replicate_postgresql_db" {
-  source = "../.."
-  # count             = var.postgres_replica_count == null ? 1 : var.postgres_replica_count
+  source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-read-only-replica"
   region            = var.region
@@ -37,4 +35,5 @@ module "replicate_postgresql_db" {
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb
   member_cpu_count  = var.member_cpu_count
+  member_enabled    = var.member_enabled
 }

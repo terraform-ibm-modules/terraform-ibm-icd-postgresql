@@ -45,10 +45,12 @@ resource "ibm_database" "postgresql_db" {
     cpu {
       allocation_count = var.member_cpu_count
     }
-
-    # members {
-    #   allocation_count = var.members
-    # }
+    dynamic "members" {
+      for_each = var.member_enabled ? [] : [1]
+      content {
+        allocation_count = var.members
+      }
+    }
   }
 
   ## This for_each block is NOT a loop to attach to multiple auto_scaling blocks.
