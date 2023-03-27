@@ -45,11 +45,11 @@ variable "member_cpu_count" {
 
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
-# variable "members" {
-#   type        = number
-#   description = "Number of members" # member group members must be >= 3 and <= 20
-#   default     = 3
-# }
+variable "members" {
+  type        = number
+  description = "Number of members" # member group members must be >= 3 and <= 20
+  default     = 3
+}
 
 variable "resource_tags" {
   type        = list(string)
