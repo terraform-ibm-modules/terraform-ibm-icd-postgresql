@@ -41,7 +41,7 @@ You need the following permissions to run this module.
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
 - [ Financial Services Cloud profile example](examples/fscloud)
-- [ Point in time recovery example](examples/pitr)
+- [ Point in time recovery example (PITR)](examples/pitr)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
