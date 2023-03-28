@@ -1,4 +1,4 @@
-# Point in time recovery example
+# Point in time recovery example (PITR)
 
 This example provides an end-to-end creation of a new PostgreSQL instance, then creating a new PostgreSQL instance pointing to a PITR time. This example uses the IBM Cloud terraform provider to:
 

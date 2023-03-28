@@ -227,6 +227,10 @@ variable "cbr_rules" {
   # Validation happens in the rule module
 }
 
+##############################################################
+# Point in time recovery (PITR)
+##############################################################
+
 variable "pitr_id" {
   type        = string
   description = "(Optional) The ID of the source deployment that you want to recover back to."
