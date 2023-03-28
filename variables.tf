@@ -226,3 +226,15 @@ variable "cbr_rules" {
   default     = []
   # Validation happens in the rule module
 }
+
+variable "pitr_id" {
+  type        = string
+  description = "(Optional) The ID of the source deployment that you want to recover back to."
+  default     = null
+}
+
+variable "pitr_time" {
+  type        = string
+  description = "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>)"
+  default     = null
+}

@@ -8,6 +8,7 @@ import (
 )
 
 const restoredTerraformDir = "examples/backup"
+const PITRTerraformDir = "examples/pitr"
 
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
@@ -23,3 +24,19 @@ func TestRunRestoredDBExample(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
+
+func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  PITRTerraformDir,
+		Prefix:        "pg-pitr",
+		ResourceGroup: resourceGroup,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
