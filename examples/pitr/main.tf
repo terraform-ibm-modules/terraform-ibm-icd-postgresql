@@ -16,7 +16,7 @@ module "resource_group" {
 module "postgresql_db" {
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-pitr-postgres"
+  name              = "${var.prefix}-postgres"
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
