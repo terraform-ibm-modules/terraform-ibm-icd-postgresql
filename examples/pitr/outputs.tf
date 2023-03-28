@@ -25,7 +25,3 @@ output "pitr_time" {
   description = "PITR timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) used to create PITR instance"
   value       = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time
 }
-
-
-
-
