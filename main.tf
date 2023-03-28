@@ -46,7 +46,7 @@ resource "ibm_database" "postgresql_db" {
       allocation_count = var.member_cpu_count
     }
     dynamic "members" {
-      for_each = var.member_enabled ? [] : [1]
+      for_each = var.remote_leader_crn == null ? [1] : []
       content {
         allocation_count = var.members
       }

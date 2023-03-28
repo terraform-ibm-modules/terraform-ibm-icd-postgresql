@@ -10,7 +10,7 @@ module "resource_group" {
 }
 
 ##############################################################################
-# ICD postgresql database
+# ICD postgresql primary/leader database
 ##############################################################################
 
 module "postgresql_db" {
@@ -25,15 +25,14 @@ module "postgresql_db" {
 # ICD postgresql read-only-replica
 ##############################################################################
 
-module "replicate_postgresql_db" {
+module "read_only_replica_postgresql_db" {
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-read-only-replica"
   region            = var.region
   resource_tags     = var.resource_tags
-  remote_leader_crn = var.postgresql_db_remote_leader_crn == null ? module.postgresql_db.crn : var.postgresql_db_remote_leader_crn
+  remote_leader_crn = module.postgresql_db.crn
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb
   member_cpu_count  = var.member_cpu_count
-  member_enabled    = var.member_enabled
 }

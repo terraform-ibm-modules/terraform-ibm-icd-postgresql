@@ -19,19 +19,13 @@ variable "prefix" {
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
-  default     = "testing-anam"
+  default     = null
 }
 
 variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
   default     = []
-}
-
-variable "postgresql_db_remote_leader_crn" {
-  type        = string
-  description = "The CRN of the leader database to make the replica(read-only) deployment."
-  default     = null
 }
 
 variable "member_memory_mb" {
@@ -43,7 +37,7 @@ variable "member_memory_mb" {
       var.member_memory_mb >= 3072,
       var.member_memory_mb <= 114688
     ])
-    error_message = "member group memory must be >= 2048 and <= 114688 in increments of 128"
+    error_message = "member group memory must be >= 3072 and <= 114688 in increments of 384"
   }
 }
 
@@ -56,7 +50,7 @@ variable "member_disk_mb" {
       var.member_disk_mb >= 15360,
       var.member_disk_mb <= 4194304
     ])
-    error_message = "member group disk must be >= 7680 and <= 4193280 in increments of 1024"
+    error_message = "member group disk must be >= 15360 and <= 4194304 in increments of 1536"
   }
 }
 
@@ -69,12 +63,6 @@ variable "member_cpu_count" {
       var.member_cpu_count >= 9,
       var.member_cpu_count <= 28
     ])
-    error_message = "member group cpu must be >= 3 and <= 28 in increments of 1"
+    error_message = "member group cpu must be >= 9 and <= 28 in increments of 1"
   }
-}
-
-variable "member_enabled" {
-  type        = bool
-  description = "This variable is used to conditionally add member_allocation_count block depending on requirements"
-  default     = true
 }

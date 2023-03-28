@@ -109,12 +109,6 @@ variable "service_credential_names" {
   }
 }
 
-variable "member_enabled" {
-  type        = bool
-  description = "This variable is used to conditionally add member_allocation_count block depending on requirements"
-  default     = false
-}
-
 # actual scaling of the resources could take some time to apply
 # Members can be scaled up but not down
 variable "members" {
