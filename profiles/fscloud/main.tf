@@ -10,6 +10,9 @@ module "postgresql_db" {
   name                      = var.name
   region                    = var.region
   service_endpoints         = "private"
+  create_hmac_key           = var.create_hmac_key
+  hmac_key_name             = var.hmac_key_name
+  hmac_key_role             = var.hmac_key_role
   pg_version                = var.pg_version
   key_protect_key_crn       = var.key_protect_key_crn
   backup_encryption_key_crn = var.backup_encryption_key_crn

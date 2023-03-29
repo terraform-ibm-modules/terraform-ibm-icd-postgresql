@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 137
+        "line": 149
       }
     },
     "auto_scaling": {
@@ -17,7 +17,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 176
       }
     },
     "backup_crn": {
@@ -29,7 +29,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 56
+        "line": 68
       }
     },
     "backup_encryption_key_crn": {
@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 215
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 214
+        "line": 226
       }
     },
     "configuration": {
@@ -67,7 +67,17 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 158
+      }
+    },
+    "create_hmac_key": {
+      "name": "create_hmac_key",
+      "type": "bool",
+      "description": "Set as true to create a new HMAC key for the PostgreSQL instance.",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 21
       }
     },
     "key_protect_key_crn": {
@@ -79,7 +89,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 197
+        "line": 209
       },
       "immutable": true
     },
@@ -90,7 +100,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 82
+        "line": 94
       }
     },
     "member_disk_mb": {
@@ -100,7 +110,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 69
+        "line": 81
       }
     },
     "member_memory_mb": {
@@ -110,7 +120,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 43
+        "line": 55
       }
     },
     "members": {
@@ -120,7 +130,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 108
+        "line": 120
       }
     },
     "name": {
@@ -145,7 +155,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 21
+        "line": 33
       },
       "immutable": true,
       "computed": true
@@ -174,7 +184,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 37
+        "line": 49
       },
       "cloud_data_type": "region"
     },
@@ -197,6 +207,18 @@
         "resolved_to:id"
       ]
     },
+    "resource_key_existing_serviceid_crn": {
+      "name": "resource_key_existing_serviceid_crn",
+      "type": "string",
+      "description": "CRN of existing serviceID to bind with resource key to be created. If null a new ServiceID is created for the resource key.",
+      "source": [
+        "ibm_resource_key.service_credentials.parameters"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 27
+      }
+    },
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
@@ -208,7 +230,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 131
+        "line": 143
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -229,7 +251,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 95
+        "line": 107
       }
     },
     "service_endpoints": {
@@ -242,7 +264,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 121
+        "line": 133
       },
       "options": "public, private, public-and-private"
     }
@@ -358,6 +380,7 @@
       "name": "service_credentials",
       "attributes": {
         "for_each": "service_credential_names",
+        "parameters": "resource_key_existing_serviceid_crn",
         "tags": "resource_tags"
       },
       "provider": {

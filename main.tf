@@ -140,8 +140,12 @@ module "cbr_rule" {
 ##############################################################################
 
 resource "ibm_resource_key" "service_credentials" {
-  for_each             = var.service_credential_names
-  name                 = each.key
+  for_each = var.service_credential_names
+  name     = each.key
+  parameters = {
+    "serviceid_crn" = var.resource_key_existing_serviceid_crn
+    "HMAC"          = var.create_hmac_key
+  }
   role                 = each.value
   resource_instance_id = ibm_database.postgresql_db.id
   tags                 = var.resource_tags

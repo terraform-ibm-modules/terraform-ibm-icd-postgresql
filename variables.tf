@@ -18,6 +18,18 @@ variable "plan_validation" {
   default     = true
 }
 
+variable "create_hmac_key" {
+  description = "Set as true to create a new HMAC key for the PostgreSQL instance."
+  type        = bool
+  default     = false
+}
+
+variable "resource_key_existing_serviceid_crn" {
+  description = "CRN of existing serviceID to bind with resource key to be created. If null a new ServiceID is created for the resource key."
+  type        = string
+  default     = null
+}
+
 variable "pg_version" {
   description = "Version of the postgresql instance"
   type        = string

@@ -53,7 +53,7 @@ func TestRunFSCloudExample(t *testing.T) {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       fsCloudTerraformDir,
-		Prefix:             "pg-compliant",
+		Prefix:             "pg-fscloud",
 		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 	})
