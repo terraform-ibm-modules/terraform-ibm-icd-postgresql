@@ -349,7 +349,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 13
+        "line": 21
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -365,7 +365,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 156
+        "line": 151
       }
     }
   },
@@ -379,7 +379,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 105
+        "line": 6
       }
     }
   },
@@ -457,7 +457,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 118
+        "line": 113
       }
     }
   }
