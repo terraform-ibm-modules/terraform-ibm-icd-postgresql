@@ -38,13 +38,13 @@ You need the following permissions to run this module.
 
 - **There are additional considerations when setting the variables in the read-only-replica example.** Refer [configuring read-only replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)
 
-| Considerations | Variable |
+| Variable | Description |
 |------|---------|
-| The read-only replica can exist in the same region as the source formation or in different one, enabling your data to be replicated across regions. | <a name="input_region"></a> [region](#input\_region)|
-| The minimum RAM size of a read-only replica is 3 GB |<a name="input_member_memory_mb"></a> [member\_memory\_mb](#input\_member\_memory\_mb) |
-| The minimum disk size of a read-only replica is 15 GB |<a name="input_member_disk_mb"></a> [member\_disk\_mb](#input\_member\_disk\_mb)  |
-| The minimum CPU allocation required for read-only replica is 9 |<a name="input_member_cpu_count"></a> [member\_cpu\_count](#input\_member\_cpu\_count) |
-| A read-only replica is a deployment with single data member and does not have any internal high availability.| <a name="input_members"></a> [members](#input\_members)|
+|  <a name="input_region"></a> [region](#input\_region)| The read-only replica can exist in the same region as the source formation or in different one, enabling your data to be replicated across regions. |
+| <a name="input_member_memory_mb"></a> [member\_memory\_mb](#input\_member\_memory\_mb) | The minimum RAM size of a read-only replica is 3 GB |
+| <a name="input_member_disk_mb"></a> [member\_disk\_mb](#input\_member\_disk\_mb)  | The minimum disk size of a read-only replica is 15 GB |
+| <a name="input_member_cpu_count"></a> [member\_cpu\_count](#input\_member\_cpu\_count) | The minimum CPU allocation required for read-only replica is 9 |
+| <a name="input_members"></a> [members](#input\_members)| A read-only replica is a deployment with single data member and does not have any internal high availability.|
 
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
