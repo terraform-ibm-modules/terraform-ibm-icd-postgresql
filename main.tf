@@ -13,12 +13,12 @@ locals {
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
   network_zone_id      = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
   validate_cbr_zone    = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
-  validate_msg         = "Cloud Databases does not support service reference in network zone."
 }
 resource "null_resource" "validate" {
   depends_on = [data.ibm_cbr_zone.cbr_zone]
-  triggers = {
-    "cbr_rule_validate" = regex("^${local.validate_msg}$", ((local.validate_cbr_zone) ? "" : local.validate_msg))
+  provisioner "local-exec" {
+    command     = local.validate_cbr_zone ? "echo Cloud Databases does not support service reference in network zone. ; exit 1" : "echo "
+    interpreter = ["/bin/bash", "-c"]
   }
 }
 # Create postgresql database
