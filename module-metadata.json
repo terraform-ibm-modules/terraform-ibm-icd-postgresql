@@ -325,6 +325,11 @@
       "version_constraints": [
         "\u003e= 1.49.0"
       ]
+    },
+    "null": {
+      "version_constraints": [
+        "\u003e= 3.2.1"
+      ]
     }
   },
   "managed_resources": {
@@ -349,7 +354,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 21
+        "line": 25
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -365,7 +370,19 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 151
+        "line": 158
+      }
+    },
+    "null_resource.validate": {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "validate",
+      "provider": {
+        "name": "null"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 18
       }
     }
   },
@@ -457,7 +474,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 113
+        "line": 120
       }
     }
   }

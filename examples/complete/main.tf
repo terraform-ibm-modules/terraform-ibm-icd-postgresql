@@ -68,7 +68,7 @@ module "cbr_zone" {
   addresses = [{
     type  = "vpc", # to bind a specific vpc to the zone
     value = ibm_is_vpc.example_vpc.crn,
-      }
+    }
   ]
 }
 ##############################################################################
