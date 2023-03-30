@@ -116,7 +116,6 @@ resource "ibm_database" "postgresql_db" {
 ##############################################################################
 # Context Based Restrictions
 ##############################################################################
-
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.2.0"

@@ -370,7 +370,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 158
+        "line": 157
       }
     },
     "null_resource.validate": {
@@ -474,7 +474,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 120
+        "line": 119
       }
     }
   }
