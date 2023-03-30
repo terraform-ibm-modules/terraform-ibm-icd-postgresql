@@ -6,5 +6,8 @@ terraform {
       # Use "greater than or equal to" range in modules
       version = ">= 1.49.0"
     }
+    null = {
+      version = ">= 3.2.1"
+    }
   }
 }

@@ -325,6 +325,11 @@
       "version_constraints": [
         "\u003e= 1.49.0"
       ]
+    },
+    "null": {
+      "version_constraints": [
+        "\u003e= 3.2.1"
+      ]
     }
   },
   "managed_resources": {
@@ -349,7 +354,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 13
+        "line": 25
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -365,11 +370,36 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 157
+      }
+    },
+    "null_resource.validate": {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "validate",
+      "provider": {
+        "name": "null"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 17
       }
     }
   },
-  "data_resources": {},
+  "data_resources": {
+    "data.ibm_cbr_zone.cbr_zone": {
+      "mode": "data",
+      "type": "ibm_cbr_zone",
+      "name": "cbr_zone",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 6
+      }
+    }
+  },
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
@@ -444,7 +474,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 104
+        "line": 119
       }
     }
   }
