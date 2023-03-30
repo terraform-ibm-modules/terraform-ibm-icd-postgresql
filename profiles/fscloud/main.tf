@@ -10,9 +10,6 @@ module "postgresql_db" {
   name                      = var.name
   region                    = var.region
   service_endpoints         = "private"
-  create_hmac_key           = var.create_hmac_key
-  hmac_key_name             = var.hmac_key_name
-  hmac_key_role             = var.hmac_key_role
   pg_version                = var.pg_version
   key_protect_key_crn       = var.key_protect_key_crn
   backup_encryption_key_crn = var.backup_encryption_key_crn
@@ -24,4 +21,13 @@ module "postgresql_db" {
   member_disk_mb            = var.member_disk_mb
   member_cpu_count          = var.member_cpu_count
   members                   = var.members
+}
+
+# Create IAM Authorization Policies to allow COS to access kms for the encryption key
+resource "ibm_iam_authorization_policy" "primary_kms_policy" {
+  source_service_name         = "databases-for-postgresql"
+  source_resource_instance_id = module.postgresql_db.guid
+  target_service_name         = "hs-crypto"
+  target_resource_instance_id = var.existing_hpcs_instance_guid
+  roles                       = ["Reader"]
 }

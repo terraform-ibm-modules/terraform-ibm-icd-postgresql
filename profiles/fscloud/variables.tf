@@ -12,22 +12,10 @@ variable "name" {
   description = "Name of the Postgresql instance"
 }
 
-variable "create_hmac_key" {
-  description = "Set as true to create a new HMAC key for the PostgreSQL instance."
-  type        = bool
-  default     = false
-}
-
-variable "hmac_key_name" {
-  description = "The name of the hmac key to be created."
+variable "existing_hpcs_instance_guid" {
+  description = "The GUID of the Hyper Protect Crypto service."
   type        = string
-  default     = "hmac-postgres-key"
-}
-
-variable "hmac_key_role" {
-  description = "The role you want to be associated with your new hmac key. Valid roles are 'Writer', 'Reader', 'Manager', 'Content Reader', 'Object Reader', 'Object Writer'."
-  type        = string
-  default     = "Manager"
+  default     = null
 }
 
 variable "pg_version" {

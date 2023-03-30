@@ -42,3 +42,8 @@ variable "allowlist" {
   default     = []
   description = "Set of IP address and description to allowlist in database"
 }
+
+variable "existing_hpcs_instance_guid" {
+  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from"
+  type        = string
+}

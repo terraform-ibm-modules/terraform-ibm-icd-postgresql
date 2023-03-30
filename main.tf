@@ -7,6 +7,11 @@
 locals {
   kp_backup_crn        = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
+  kms_service = var.key_protect_key_crn != null ? (
+    can(regex(".*kms.*", var.key_protect_key_crn)) ? "kms" : (
+      can(regex(".*hs-crypto.*", var.key_protect_key_crn)) ? "hs-crypto" : null
+    )
+  ) : null
 }
 
 # Create postgresql database
@@ -98,6 +103,15 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
+# Create IAM Authorization Policy to allow Postgresql to access kms for the encryption key
+resource "ibm_iam_authorization_policy" "policy" {
+  source_service_name         = "databases-for-postgresql"
+  source_resource_instance_id = ibm_database.postgresql_db.guid
+  target_service_name         = local.kms_service
+  target_resource_instance_id = var.existing_key_protect_instance_guid
+  roles                       = ["Reader"]
+}
+
 ##############################################################################
 # Context Based Restrictions
 ##############################################################################
@@ -140,12 +154,8 @@ module "cbr_rule" {
 ##############################################################################
 
 resource "ibm_resource_key" "service_credentials" {
-  for_each = var.service_credential_names
-  name     = each.key
-  parameters = {
-    "serviceid_crn" = var.resource_key_existing_serviceid_crn
-    "HMAC"          = var.create_hmac_key
-  }
+  for_each             = var.service_credential_names
+  name                 = each.key
   role                 = each.value
   resource_instance_id = ibm_database.postgresql_db.id
   tags                 = var.resource_tags

@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 149
+        "line": 143
       }
     },
     "auto_scaling": {
@@ -17,7 +17,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 176
+        "line": 170
       }
     },
     "backup_crn": {
@@ -29,7 +29,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 68
+        "line": 62
       }
     },
     "backup_encryption_key_crn": {
@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 215
+        "line": 209
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 226
+        "line": 220
       }
     },
     "configuration": {
@@ -67,18 +67,22 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 158
+        "line": 152
       }
     },
-    "create_hmac_key": {
-      "name": "create_hmac_key",
-      "type": "bool",
-      "description": "Set as true to create a new HMAC key for the PostgreSQL instance.",
-      "default": false,
+    "existing_key_protect_instance_guid": {
+      "name": "existing_key_protect_instance_guid",
+      "type": "string",
+      "description": "The GUID of the Key Protect or Hyper Protect instance in which the key specified in var.key_protect_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Key protect or Hyper Protect to access the newly created Postgresql database instance.",
+      "source": [
+        "ibm_iam_authorization_policy.policy.target_resource_instance_id"
+      ],
       "pos": {
         "filename": "variables.tf",
         "line": 21
-      }
+      },
+      "immutable": true,
+      "computed": true
     },
     "key_protect_key_crn": {
       "name": "key_protect_key_crn",
@@ -89,7 +93,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 209
+        "line": 203
       },
       "immutable": true
     },
@@ -100,7 +104,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 94
+        "line": 88
       }
     },
     "member_disk_mb": {
@@ -110,7 +114,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 81
+        "line": 75
       }
     },
     "member_memory_mb": {
@@ -120,7 +124,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 55
+        "line": 49
       }
     },
     "members": {
@@ -130,7 +134,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 120
+        "line": 114
       }
     },
     "name": {
@@ -155,7 +159,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 33
+        "line": 27
       },
       "immutable": true,
       "computed": true
@@ -184,7 +188,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 49
+        "line": 43
       },
       "cloud_data_type": "region"
     },
@@ -207,18 +211,6 @@
         "resolved_to:id"
       ]
     },
-    "resource_key_existing_serviceid_crn": {
-      "name": "resource_key_existing_serviceid_crn",
-      "type": "string",
-      "description": "CRN of existing serviceID to bind with resource key to be created. If null a new ServiceID is created for the resource key.",
-      "source": [
-        "ibm_resource_key.service_credentials.parameters"
-      ],
-      "pos": {
-        "filename": "variables.tf",
-        "line": 27
-      }
-    },
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
@@ -230,7 +222,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 143
+        "line": 137
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -251,7 +243,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 107
+        "line": 101
       }
     },
     "service_endpoints": {
@@ -264,7 +256,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 133
+        "line": 127
       },
       "options": "public, private, public-and-private"
     }
@@ -371,7 +363,22 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 13
+        "line": 18
+      }
+    },
+    "ibm_iam_authorization_policy.policy": {
+      "mode": "managed",
+      "type": "ibm_iam_authorization_policy",
+      "name": "policy",
+      "attributes": {
+        "target_resource_instance_id": "existing_key_protect_instance_guid"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 107
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -380,7 +387,6 @@
       "name": "service_credentials",
       "attributes": {
         "for_each": "service_credential_names",
-        "parameters": "resource_key_existing_serviceid_crn",
         "tags": "resource_tags"
       },
       "provider": {
@@ -388,7 +394,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 156
       }
     }
   },
@@ -467,7 +473,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 104
+        "line": 118
       }
     }
   }

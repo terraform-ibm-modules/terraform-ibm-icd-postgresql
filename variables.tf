@@ -18,14 +18,8 @@ variable "plan_validation" {
   default     = true
 }
 
-variable "create_hmac_key" {
-  description = "Set as true to create a new HMAC key for the PostgreSQL instance."
-  type        = bool
-  default     = false
-}
-
-variable "resource_key_existing_serviceid_crn" {
-  description = "CRN of existing serviceID to bind with resource key to be created. If null a new ServiceID is created for the resource key."
+variable "existing_key_protect_instance_guid" {
+  description = "The GUID of the Key Protect or Hyper Protect instance in which the key specified in var.key_protect_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Key protect or Hyper Protect to access the newly created Postgresql database instance."
   type        = string
   default     = null
 }
