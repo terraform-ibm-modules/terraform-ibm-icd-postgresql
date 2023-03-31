@@ -8,12 +8,9 @@ module "resource_group" {
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
 }
-locals {
-  permanent_resources = yamldecode(file("../../common-dev-assets/common-go-assets/common-permanent-resources.yaml"))
-}
 
 data "ibm_database_point_in_time_recovery" "database_pitr" {
-  deployment_id = local.permanent_resources["postgresqlCrn"]
+  deployment_id = var.pitr_id
 }
 
 # New ICD postgresql database instance pointing to a PITR time
@@ -24,6 +21,6 @@ module "postgresql_db_pitr" {
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
+  pitr_id           = var.pitr_id
   pitr_time         = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time
-  pitr_id           = local.permanent_resources["postgresqlCrn"]
 }

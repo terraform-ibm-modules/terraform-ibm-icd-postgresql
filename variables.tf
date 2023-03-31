@@ -233,7 +233,7 @@ variable "cbr_rules" {
 
 variable "pitr_id" {
   type        = string
-  description = "(Optional) The ID of the source deployment that you want to recover back to."
+  description = "(Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state."
   default     = null
 }
 

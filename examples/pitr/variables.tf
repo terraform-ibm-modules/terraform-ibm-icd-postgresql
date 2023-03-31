@@ -45,3 +45,8 @@ variable "configuration" {
   })
   default = null
 }
+
+variable "pitr_id" {
+  type        = string
+  description = "The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state."
+}
