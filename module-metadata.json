@@ -75,8 +75,7 @@
       "type": "string",
       "description": "The GUID of the Hyper Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect to access the newly created Postgresql database instance.",
       "source": [
-        "ibm_iam_authorization_policy.kms_policy.target_resource_instance_id",
-        "ibm_iam_authorization_policy.policy.target_resource_instance_id"
+        "ibm_iam_authorization_policy.kms_policy.target_resource_instance_id"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -199,7 +198,8 @@
       "description": "The resource group ID where the postgresql will be created",
       "required": true,
       "source": [
-        "ibm_database.postgresql_db.resource_group_id"
+        "ibm_database.postgresql_db.resource_group_id",
+        "ibm_iam_authorization_policy.kms_policy.source_resource_group_id"
       ],
       "pos": {
         "filename": "variables.tf",
@@ -377,7 +377,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 21
+        "line": 31
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -386,6 +386,7 @@
       "name": "kms_policy",
       "attributes": {
         "count": "skip_iam_authorization_policy",
+        "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_hpcs_instance_guid"
       },
       "provider": {
@@ -393,22 +394,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 111
-      }
-    },
-    "ibm_iam_authorization_policy.policy": {
-      "mode": "managed",
-      "type": "ibm_iam_authorization_policy",
-      "name": "policy",
-      "attributes": {
-        "target_resource_instance_id": "existing_hpcs_instance_guid"
-      },
-      "provider": {
-        "name": "ibm"
-      },
-      "pos": {
-        "filename": "main.tf",
-        "line": 121
+        "line": 21
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -424,7 +410,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 161
       }
     }
   },
@@ -503,7 +489,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 123
       }
     }
   }

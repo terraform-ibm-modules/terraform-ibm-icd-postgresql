@@ -10,12 +10,13 @@ module "resource_group" {
 }
 
 module "postgresql_db" {
-  count             = var.postgresql_db_backup_crn != null ? 0 : 1
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-postgres"
-  region            = var.region
-  resource_tags     = var.resource_tags
+  count                         = var.postgresql_db_backup_crn != null ? 0 : 1
+  source                        = "../.."
+  resource_group_id             = module.resource_group.resource_group_id
+  name                          = "${var.prefix}-postgres"
+  region                        = var.region
+  resource_tags                 = var.resource_tags
+  skip_iam_authorization_policy = true
 }
 
 data "ibm_database_backups" "backup_database" {
@@ -25,10 +26,11 @@ data "ibm_database_backups" "backup_database" {
 
 # New postgresql instance pointing to the backup instance
 module "restored_postgresql_db" {
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-postgres-restored"
-  region            = var.region
-  resource_tags     = var.resource_tags
-  backup_crn        = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn
+  source                        = "../.."
+  resource_group_id             = module.resource_group.resource_group_id
+  name                          = "${var.prefix}-postgres-restored"
+  region                        = var.region
+  resource_tags                 = var.resource_tags
+  skip_iam_authorization_policy = true
+  backup_crn                    = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn
 }

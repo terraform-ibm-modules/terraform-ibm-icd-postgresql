@@ -17,8 +17,19 @@ locals {
   validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_hpcs_instance_guid == null ? tobool("A value must be passed for var.existing_hpcs_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
 }
 
+# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
+resource "ibm_iam_authorization_policy" "kms_policy" {
+  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "databases-for-postgresql"
+  source_resource_group_id    = var.resource_group_id
+  target_service_name         = local.kms_service
+  target_resource_instance_id = var.existing_hpcs_instance_guid
+  roles                       = ["Reader"]
+}
+
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
+  depends_on        = [ibm_iam_authorization_policy.kms_policy]
   resource_group_id = var.resource_group_id
   name              = var.name
   service           = "databases-for-postgresql"
@@ -104,26 +115,6 @@ resource "ibm_database" "postgresql_db" {
   timeouts {
     create = "120m" # Extending provisioning time to 120 minutes
   }
-}
-
-
-# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
-resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "databases-for-postgresql"
-  source_resource_instance_id = ibm_database.postgresql_db.guid
-  target_service_name         = "hs-crypto"
-  target_resource_instance_id = var.existing_hpcs_instance_guid
-  roles                       = ["Reader"]
-}
-
-# Create IAM Authorization Policy to allow Postgresql to access kms for the encryption key
-resource "ibm_iam_authorization_policy" "policy" {
-  source_service_name         = "databases-for-postgresql"
-  source_resource_instance_id = ibm_database.postgresql_db.guid
-  target_service_name         = local.kms_service
-  target_resource_instance_id = var.existing_hpcs_instance_guid
-  roles                       = ["Reader"]
 }
 
 ##############################################################################

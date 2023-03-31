@@ -24,6 +24,8 @@ const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-pr
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
+const region = "us-south"
+
 var permanentResources map[string]interface{}
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
@@ -40,11 +42,12 @@ func TestMain(m *testing.M) {
 
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       dir,
-		Prefix:             prefix,
-		ResourceGroup:      resourceGroup,
-		BestRegionYAMLPath: regionSelectionPath,
+		Testing:       t,
+		TerraformDir:  dir,
+		Prefix:        prefix,
+		ResourceGroup: resourceGroup,
+		Region:        region,
+		//BestRegionYAMLPath: regionSelectionPath,
 	})
 	return options
 }
@@ -73,8 +76,8 @@ func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, "pg-fscloud", fsCloudTerraformDir)
-	options.TerraformVars["existing_hpcs_instance_guid"] = permanentResources["hpcs_east"]
-	options.TerraformVars["kms_key_crn"] = permanentResources["hpcs_east_root_key_crn"]
+	options.TerraformVars["existing_hpcs_instance_guid"] = permanentResources["hpcs_south"]
+	options.TerraformVars["kms_key_crn"] = permanentResources["hpcs_south_root_key_crn"]
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
