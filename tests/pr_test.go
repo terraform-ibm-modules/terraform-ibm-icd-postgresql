@@ -74,6 +74,7 @@ func TestRunFSCloudExample(t *testing.T) {
 
 	options := setupOptions(t, "pg-fscloud", fsCloudTerraformDir)
 	options.TerraformVars["existing_hpcs_instance_guid"] = permanentResources["hpcs_east"]
+	options.TerraformVars["kms_key_crn"] = permanentResources["hpcs_east_root_key_crn"]
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
