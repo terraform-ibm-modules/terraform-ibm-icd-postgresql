@@ -33,6 +33,7 @@ resource "ibm_database" "postgresql_db" {
   plan              = "standard" # Only standard plan is available for postgres
   backup_id         = var.backup_crn
   plan_validation   = var.plan_validation
+  remote_leader_id  = var.remote_leader_crn
   version           = var.pg_version
   tags              = var.resource_tags
   service_endpoints = var.service_endpoints
@@ -59,9 +60,11 @@ resource "ibm_database" "postgresql_db" {
     cpu {
       allocation_count = var.member_cpu_count
     }
-
-    members {
-      allocation_count = var.members
+    dynamic "members" {
+      for_each = var.remote_leader_crn == null ? [1] : []
+      content {
+        allocation_count = var.members
+      }
     }
   }
 
