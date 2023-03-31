@@ -57,9 +57,9 @@ module "postgresql_db" {
   name                        = "${var.prefix}-postgres"
   region                      = var.region
   pg_version                  = var.pg_version
+  kms_key_crn                 = var.kms_key_crn
   existing_hpcs_instance_guid = var.existing_hpcs_instance_guid
   resource_tags               = var.resource_tags
-  allowlist                   = var.allowlist
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

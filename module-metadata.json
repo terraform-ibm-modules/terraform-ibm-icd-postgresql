@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 143
+        "line": 149
       }
     },
     "auto_scaling": {
@@ -17,7 +17,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 170
+        "line": 176
       }
     },
     "backup_crn": {
@@ -29,16 +29,16 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 62
+        "line": 68
       }
     },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
+      "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 209
+        "line": 215
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 220
+        "line": 226
       }
     },
     "configuration": {
@@ -67,14 +67,15 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 152
+        "line": 158
       }
     },
-    "existing_key_protect_instance_guid": {
-      "name": "existing_key_protect_instance_guid",
+    "existing_hpcs_instance_guid": {
+      "name": "existing_hpcs_instance_guid",
       "type": "string",
-      "description": "The GUID of the Key Protect or Hyper Protect instance in which the key specified in var.key_protect_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Key protect or Hyper Protect to access the newly created Postgresql database instance.",
+      "description": "The GUID of the Hyper Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect to access the newly created Postgresql database instance.",
       "source": [
+        "ibm_iam_authorization_policy.kms_policy.target_resource_instance_id",
         "ibm_iam_authorization_policy.policy.target_resource_instance_id"
       ],
       "pos": {
@@ -84,8 +85,8 @@
       "immutable": true,
       "computed": true
     },
-    "key_protect_key_crn": {
-      "name": "key_protect_key_crn",
+    "kms_key_crn": {
+      "name": "kms_key_crn",
       "type": "string",
       "description": "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect\u0026interface=ui#key-byok for current list of supported regions for BYOK",
       "source": [
@@ -93,7 +94,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 209
       },
       "immutable": true
     },
@@ -104,7 +105,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 88
+        "line": 94
       }
     },
     "member_disk_mb": {
@@ -114,7 +115,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 75
+        "line": 81
       }
     },
     "member_memory_mb": {
@@ -124,7 +125,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 49
+        "line": 55
       }
     },
     "members": {
@@ -134,7 +135,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 114
+        "line": 120
       }
     },
     "name": {
@@ -159,7 +160,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 27
+        "line": 33
       },
       "immutable": true,
       "computed": true
@@ -180,7 +181,7 @@
     "region": {
       "name": "region",
       "type": "string",
-      "description": "The region postgresql is to be created on. The region must support BYOK if key_protect_key_crn is used",
+      "description": "The region postgresql is to be created on. The region must support BYOK if kms_key_crn is used",
       "default": "us-south",
       "required": true,
       "source": [
@@ -188,7 +189,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 43
+        "line": 49
       },
       "cloud_data_type": "region"
     },
@@ -222,7 +223,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 137
+        "line": 143
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -243,7 +244,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 101
+        "line": 107
       }
     },
     "service_endpoints": {
@@ -256,9 +257,22 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 127
+        "line": 133
       },
       "options": "public, private, public-and-private"
+    },
+    "skip_iam_authorization_policy": {
+      "name": "skip_iam_authorization_policy",
+      "type": "bool",
+      "description": "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`.",
+      "default": false,
+      "source": [
+        "ibm_iam_authorization_policy.kms_policy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 27
+      }
     }
   },
   "outputs": {
@@ -349,7 +363,7 @@
       "attributes": {
         "backup_id": "backup_crn",
         "configuration": "configuration",
-        "key_protect_key": "key_protect_key_crn",
+        "key_protect_key": "kms_key_crn",
         "location": "region",
         "name": "name",
         "plan_validation": "plan_validation",
@@ -363,7 +377,23 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 18
+        "line": 21
+      }
+    },
+    "ibm_iam_authorization_policy.kms_policy": {
+      "mode": "managed",
+      "type": "ibm_iam_authorization_policy",
+      "name": "kms_policy",
+      "attributes": {
+        "count": "skip_iam_authorization_policy",
+        "target_resource_instance_id": "existing_hpcs_instance_guid"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 111
       }
     },
     "ibm_iam_authorization_policy.policy": {
@@ -371,14 +401,14 @@
       "type": "ibm_iam_authorization_policy",
       "name": "policy",
       "attributes": {
-        "target_resource_instance_id": "existing_key_protect_instance_guid"
+        "target_resource_instance_id": "existing_hpcs_instance_guid"
       },
       "provider": {
         "name": "ibm"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 107
+        "line": 121
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -394,7 +424,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 156
+        "line": 170
       }
     }
   },
@@ -473,7 +503,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 118
+        "line": 132
       }
     }
   }

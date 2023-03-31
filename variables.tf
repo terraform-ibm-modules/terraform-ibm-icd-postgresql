@@ -18,10 +18,16 @@ variable "plan_validation" {
   default     = true
 }
 
-variable "existing_key_protect_instance_guid" {
-  description = "The GUID of the Key Protect or Hyper Protect instance in which the key specified in var.key_protect_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Key protect or Hyper Protect to access the newly created Postgresql database instance."
+variable "existing_hpcs_instance_guid" {
+  description = "The GUID of the Hyper Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect to access the newly created Postgresql database instance."
   type        = string
   default     = null
+}
+
+variable "skip_iam_authorization_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`."
+  default     = false
 }
 
 variable "pg_version" {
@@ -41,7 +47,7 @@ variable "pg_version" {
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support BYOK if key_protect_key_crn is used"
+  description = "The region postgresql is to be created on. The region must support BYOK if kms_key_crn is used"
   type        = string
   default     = "us-south"
 }
@@ -200,7 +206,7 @@ variable "auto_scaling" {
   default     = null
 }
 
-variable "key_protect_key_crn" {
+variable "kms_key_crn" {
   type        = string
   description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
   default     = null
@@ -208,7 +214,7 @@ variable "key_protect_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
 }
 

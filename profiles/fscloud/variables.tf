@@ -15,7 +15,6 @@ variable "name" {
 variable "existing_hpcs_instance_guid" {
   description = "The GUID of the Hyper Protect Crypto service."
   type        = string
-  default     = null
 }
 
 variable "pg_version" {
@@ -26,7 +25,7 @@ variable "pg_version" {
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support BYOK if key_protect_key_crn is used"
+  description = "The region postgresql is to be created on. The region must support KYOK if kms_key_crn is used"
   type        = string
   default     = "us-south"
 }
@@ -59,49 +58,26 @@ variable "members" {
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to created resources"
+  description = "Optional list of tags to be applied to the PostgreSQL database instance."
   default     = []
 }
 
-variable "allowlist" {
-  type = list(object({
-    address     = optional(string)
-    description = optional(string)
-  }))
-  default     = []
-  description = "Set of IP address and description to allowlist in database"
-}
-
-variable "configuration" {
-  description = "(Optional, Json String) Database Configuration in JSON format."
-  type = object({
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
-    synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
-  })
-  default = null
-}
-
-variable "key_protect_key_crn" {
+variable "kms_key_crn" {
   type        = string
-  description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
-  default     = null
+  description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a hyper protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
 }
 
+variable "skip_iam_authorization_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`."
+  default     = false
+}
 
 ##############################################################
 # Context-based restriction (CBR)

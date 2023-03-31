@@ -19,7 +19,6 @@ const completeExampleTerraformDir = "examples/complete"
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
 
-// Restricting due to limited availability of BYOK in certain regions
 const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
 
 // Define a struct with fields that match the structure of the YAML data
@@ -45,7 +44,7 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 		TerraformDir:  dir,
 		Prefix:        prefix,
 		ResourceGroup: resourceGroup,
-		Region:        region,
+		Region:        regionSelectionPath,
 	})
 	return options
 }

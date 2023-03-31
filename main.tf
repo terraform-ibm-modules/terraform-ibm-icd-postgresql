@@ -5,13 +5,16 @@
 ##############################################################################
 
 locals {
-  kp_backup_crn        = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
+  kp_backup_crn        = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.kms_key_crn
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
-  kms_service = var.key_protect_key_crn != null ? (
-    can(regex(".*kms.*", var.key_protect_key_crn)) ? "kms" : (
-      can(regex(".*hs-crypto.*", var.key_protect_key_crn)) ? "hs-crypto" : null
+  kms_service = var.kms_key_crn != null ? (
+    can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
+      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
     )
   ) : null
+
+  # tflint-ignore: terraform_unused_declarations
+  validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_hpcs_instance_guid == null ? tobool("A value must be passed for var.existing_hpcs_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
 }
 
 # Create postgresql database
@@ -28,7 +31,7 @@ resource "ibm_database" "postgresql_db" {
   service_endpoints = var.service_endpoints
   configuration     = var.configuration != null ? jsonencode(var.configuration) : null
 
-  key_protect_key           = var.key_protect_key_crn
+  key_protect_key           = var.kms_key_crn
   backup_encryption_key_crn = local.kp_backup_crn
 
   dynamic "allowlist" {
@@ -103,12 +106,23 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
+
+# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
+resource "ibm_iam_authorization_policy" "kms_policy" {
+  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "databases-for-postgresql"
+  source_resource_instance_id = ibm_database.postgresql_db.guid
+  target_service_name         = "hs-crypto"
+  target_resource_instance_id = var.existing_hpcs_instance_guid
+  roles                       = ["Reader"]
+}
+
 # Create IAM Authorization Policy to allow Postgresql to access kms for the encryption key
 resource "ibm_iam_authorization_policy" "policy" {
   source_service_name         = "databases-for-postgresql"
   source_resource_instance_id = ibm_database.postgresql_db.guid
   target_service_name         = local.kms_service
-  target_resource_instance_id = var.existing_key_protect_instance_guid
+  target_resource_instance_id = var.existing_hpcs_instance_guid
   roles                       = ["Reader"]
 }
 

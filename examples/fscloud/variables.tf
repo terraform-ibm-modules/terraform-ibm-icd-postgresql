@@ -19,7 +19,6 @@ variable "prefix" {
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
-  default     = null
 }
 
 variable "resource_tags" {
@@ -34,16 +33,12 @@ variable "pg_version" {
   default     = null
 }
 
-variable "allowlist" {
-  type = list(object({
-    address     = optional(string)
-    description = optional(string)
-  }))
-  default     = []
-  description = "Set of IP address and description to allowlist in database"
+variable "existing_hpcs_instance_guid" {
+  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.kms_key_crn is coming from"
+  type        = string
 }
 
-variable "existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.hpcs_key_crn is coming from"
+variable "kms_key_crn" {
   type        = string
+  description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
 }
