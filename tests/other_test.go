@@ -8,7 +8,6 @@ import (
 )
 
 const restoredTerraformDir = "examples/backup"
-const PITRTerraformDir = "examples/pitr"
 
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()

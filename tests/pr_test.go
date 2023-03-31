@@ -17,6 +17,7 @@ const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
+const pitrTerraformDir = "examples/pitr"
 
 // Restricting due to limited availability of BYOK in certain regions
 const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
@@ -143,7 +144,7 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:       t,
-		TerraformDir:  PITRTerraformDir,
+		TerraformDir:  pitrTerraformDir,
 		Prefix:        "pg-pitr",
 		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
