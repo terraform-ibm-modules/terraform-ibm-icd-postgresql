@@ -18,15 +18,15 @@ variable "plan_validation" {
   default     = true
 }
 
-variable "existing_hpcs_instance_guid" {
-  description = "The GUID of the Hyper Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect to access the newly created Postgresql database instance."
+variable "existing_kms_instance_guid" {
+  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect or Key Protect to access the newly created Postgresql database instance."
   type        = string
   default     = null
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instances in the Resource group to read the encryption key from the HPCS instance in `existing_kms_instance_guid`."
   default     = true
 }
 
@@ -53,7 +53,7 @@ variable "pg_version" {
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support BYOK if kms_key_crn is used"
+  description = "The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used."
   type        = string
   default     = "us-south"
 }
@@ -220,7 +220,7 @@ variable "kms_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a Hyper Protect Crypto Service (HPCS) Key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys."
   default     = null
 }
 

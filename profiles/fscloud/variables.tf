@@ -12,7 +12,7 @@ variable "name" {
   description = "Name of the Postgresql instance"
 }
 
-variable "existing_hpcs_instance_guid" {
+variable "existing_kms_instance_guid" {
   description = "The GUID of the Hyper Protect Crypto service."
   type        = string
 }
@@ -62,6 +62,24 @@ variable "resource_tags" {
   default     = []
 }
 
+variable "configuration" {
+  description = "(Optional, Json String) Database Configuration in JSON format."
+  type = object({
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    deadlock_timeout           = optional(number)
+    effective_io_concurrency   = optional(number)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
+    shared_buffers             = optional(number)
+    synchronous_commit         = optional(string)
+    wal_level                  = optional(string)
+    archive_timeout            = optional(number)
+    log_min_duration_statement = optional(number)
+  })
+  default = null
+}
+
 variable "kms_key_crn" {
   type        = string
   description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
@@ -75,7 +93,7 @@ variable "backup_encryption_key_crn" {
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_kms_instance_guid`."
   default     = false
 }
 

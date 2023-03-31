@@ -5,4 +5,4 @@ It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs
 - 3000225: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
   - This is ignored because the CBR locks this down and CRA does not check this
 
-## Note: If the Allowlist is not set and no Context Based Restriction(CBR) rules are not passed, you must configure Context Based Restrictions externally to be compliant.
+## Note: If no Context Based Restriction(CBR) rules are not passed, you must configure Context Based Restrictions externally to be compliant.

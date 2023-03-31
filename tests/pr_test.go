@@ -24,7 +24,7 @@ const replicaExampleTerraformDir = "examples/replica"
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
-// Not all regions provide cross region support so value must be hardcoded https://cloud.ibm.com/docs/cloud-object-storage?topic=cloud-object-storage-service-availability.
+// Not all regions provide cross region support so value must be hardcoded https://cloud.ibm.com/docs/hs-crypto?topic=hs-crypto-regions&interface=ui.
 const region = "us-south"
 
 var permanentResources map[string]interface{}
@@ -85,7 +85,7 @@ func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, "pg-fscloud", fsCloudTerraformDir)
-	options.TerraformVars["existing_hpcs_instance_guid"] = permanentResources["hpcs_south"]
+	options.TerraformVars["existing_kms_instance_guid"] = permanentResources["hpcs_south"]
 	options.TerraformVars["kms_key_crn"] = permanentResources["hpcs_south_root_key_crn"]
 
 	output, err := options.RunTestConsistency()

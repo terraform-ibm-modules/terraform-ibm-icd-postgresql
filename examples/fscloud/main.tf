@@ -52,14 +52,14 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                      = "../../profiles/fscloud"
-  resource_group_id           = module.resource_group.resource_group_id
-  name                        = "${var.prefix}-postgres"
-  region                      = var.region
-  pg_version                  = var.pg_version
-  kms_key_crn                 = var.kms_key_crn
-  existing_hpcs_instance_guid = var.existing_hpcs_instance_guid
-  resource_tags               = var.resource_tags
+  source                     = "../../profiles/fscloud"
+  resource_group_id          = module.resource_group.resource_group_id
+  name                       = "${var.prefix}-postgres"
+  region                     = var.region
+  pg_version                 = var.pg_version
+  kms_key_crn                = var.kms_key_crn
+  existing_kms_instance_guid = var.existing_kms_instance_guid
+  resource_tags              = var.resource_tags
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

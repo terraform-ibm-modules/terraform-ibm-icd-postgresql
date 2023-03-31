@@ -34,7 +34,7 @@ variable "pg_version" {
   default     = null
 }
 
-variable "existing_hpcs_instance_guid" {
+variable "existing_kms_instance_guid" {
   description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.kms_key_crn is coming from"
   type        = string
 }

@@ -10,6 +10,6 @@ An example using the fscloud profile to deploy a compliant Postgresql instance. 
 
 - Create a new resource group if one is not passed in.
 - Create an IAM Authorization between PostgreSQL Database Resource group and HPSC permanent Instance.
-- Create a new ICD Postgresql database instance and credentials.
+- Create a new ICD Postgresql database instance and credentials that is encrypted using the Hyper Protect Crypto Service resources that are passed in.
 - Create a Sample VPC.
 - Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.
