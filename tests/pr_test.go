@@ -15,6 +15,7 @@ const defaultExampleTerraformDir = "examples/default"
 const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
+const replicaExampleTerraformDir = "examples/replica"
 
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
@@ -66,6 +67,21 @@ func TestRunAutoscaleExample(t *testing.T) {
 	t.Parallel()
 
 	options := setupOptions(t, "pg-autoscale", autoscaleExampleTerraformDir)
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunReplicaExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  replicaExampleTerraformDir,
+		Prefix:        "pg-replica",
+		ResourceGroup: resourceGroup,
+	})
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
