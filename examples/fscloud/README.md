@@ -9,8 +9,7 @@ This example expects you have Hyper Protect Crypto Service instances in the regi
 An example using the fscloud profile to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider to:
 
 - Create a new resource group if one is not passed in.
+- Create an IAM Authorization between PostgreSQL Database Resource group and HPSC permanent Instance.
 - Create a new ICD Postgresql database instance and credentials.
-- Create Key Protect instance with root key.
-- Backend encryption using generated Key Protect key.
 - Create a Sample VPC.
 - Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.

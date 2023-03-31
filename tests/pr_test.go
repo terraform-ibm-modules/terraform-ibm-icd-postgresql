@@ -18,9 +18,8 @@ const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
 
 // Use existing resource group
-const resourceGroup = "geretain-test-postgres"
-
-const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
+// Allow the tests to create a unique resource group for every test to ensure tests do not clash. This is due to the fact that the auth policy created by this module has to be scoped to the resource group and hence would clash if tests used same resource group.
+//const resourceGroup = "geretain-test-postgres"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -43,12 +42,10 @@ func TestMain(m *testing.M) {
 
 func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptions {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  dir,
-		Prefix:        prefix,
-		ResourceGroup: resourceGroup,
-		Region:        region,
-		//BestRegionYAMLPath: regionSelectionPath,
+		Testing:      t,
+		TerraformDir: dir,
+		Prefix:       prefix,
+		Region:       region,
 	})
 	return options
 }
@@ -76,12 +73,7 @@ func TestRunAutoscaleExample(t *testing.T) {
 func TestRunReplicaExample(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  replicaExampleTerraformDir,
-		Prefix:        "pg-replica",
-		ResourceGroup: resourceGroup,
-	})
+	options := setupOptions(t, "pg-replica", replicaExampleTerraformDir)
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
