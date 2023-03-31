@@ -14,14 +14,13 @@ module "resource_group" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                        = "../.."
-  resource_group_id             = module.resource_group.resource_group_id
-  name                          = "${var.prefix}-postgres"
-  region                        = var.region
-  resource_tags                 = var.resource_tags
-  skip_iam_authorization_policy = true
-  member_memory_mb              = var.member_memory_mb
-  member_disk_mb                = var.member_disk_mb
-  member_cpu_count              = var.member_cpu_count
-  auto_scaling                  = var.auto_scaling
+  source            = "../.."
+  resource_group_id = module.resource_group.resource_group_id
+  name              = "${var.prefix}-postgres"
+  region            = var.region
+  resource_tags     = var.resource_tags
+  member_memory_mb  = var.member_memory_mb
+  member_disk_mb    = var.member_disk_mb
+  member_cpu_count  = var.member_cpu_count
+  auto_scaling      = var.auto_scaling
 }

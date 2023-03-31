@@ -27,7 +27,7 @@ variable "existing_hpcs_instance_guid" {
 variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instance created to read the encryption key from the HPCS instance in `existing_hpcs_instance_guid`."
-  default     = false
+  default     = true
 }
 
 variable "pg_version" {

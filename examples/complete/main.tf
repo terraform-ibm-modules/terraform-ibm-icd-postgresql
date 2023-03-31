@@ -76,16 +76,15 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                        = "../../"
-  resource_group_id             = module.resource_group.resource_group_id
-  name                          = "${var.prefix}-postgres"
-  region                        = var.region
-  service_endpoints             = "private"
-  pg_version                    = var.pg_version
-  skip_iam_authorization_policy = true
-  kms_key_crn                   = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  resource_tags                 = var.resource_tags
-  service_credential_names      = var.service_credential_names
+  source                   = "../../"
+  resource_group_id        = module.resource_group.resource_group_id
+  name                     = "${var.prefix}-postgres"
+  region                   = var.region
+  service_endpoints        = "private"
+  pg_version               = var.pg_version
+  kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
+  resource_tags            = var.resource_tags
+  service_credential_names = var.service_credential_names
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
