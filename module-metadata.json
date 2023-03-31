@@ -8,7 +8,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 137
+        "line": 143
       }
     },
     "auto_scaling": {
@@ -17,7 +17,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 170
       }
     },
     "backup_crn": {
@@ -29,7 +29,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 56
+        "line": 62
       }
     },
     "backup_encryption_key_crn": {
@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 209
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 214
+        "line": 220
       }
     },
     "configuration": {
@@ -67,7 +67,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 146
+        "line": 152
       }
     },
     "key_protect_key_crn": {
@@ -79,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 197
+        "line": 203
       },
       "immutable": true
     },
@@ -90,7 +90,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 82
+        "line": 88
       }
     },
     "member_disk_mb": {
@@ -100,7 +100,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 69
+        "line": 75
       }
     },
     "member_memory_mb": {
@@ -110,7 +110,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 43
+        "line": 49
       }
     },
     "members": {
@@ -120,7 +120,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 108
+        "line": 114
       }
     },
     "name": {
@@ -145,7 +145,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 21
+        "line": 27
       },
       "immutable": true,
       "computed": true
@@ -174,9 +174,21 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 37
+        "line": 43
       },
       "cloud_data_type": "region"
+    },
+    "remote_leader_crn": {
+      "name": "remote_leader_crn",
+      "type": "string",
+      "description": "The CRN of the leader database to make the replica(read-only) deployment.",
+      "source": [
+        "ibm_database.postgresql_db.remote_leader_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 21
+      }
     },
     "resource_group_id": {
       "name": "resource_group_id",
@@ -208,7 +220,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 131
+        "line": 137
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -229,7 +241,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 95
+        "line": 101
       }
     },
     "service_endpoints": {
@@ -242,7 +254,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 121
+        "line": 127
       },
       "options": "public, private, public-and-private"
     }
@@ -262,7 +274,7 @@
       "value": "ibm_database.postgresql_db.resource_crn",
       "pos": {
         "filename": "outputs.tf",
-        "line": 15
+        "line": 20
       },
       "type": "TypeString"
     },
@@ -311,7 +323,7 @@
       "value": "ibm_database.postgresql_db.version",
       "pos": {
         "filename": "outputs.tf",
-        "line": 20
+        "line": 15
       },
       "type": "TypeString"
     }
@@ -339,6 +351,7 @@
         "location": "region",
         "name": "name",
         "plan_validation": "plan_validation",
+        "remote_leader_id": "remote_leader_crn",
         "resource_group_id": "resource_group_id",
         "service_endpoints": "service_endpoints",
         "tags": "resource_tags",
@@ -365,7 +378,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 145
       }
     }
   },
@@ -444,7 +457,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 104
+        "line": 107
       }
     }
   }
