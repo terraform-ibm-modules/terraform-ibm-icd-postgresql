@@ -21,6 +21,9 @@ module "postgresql_db_pitr" {
   region            = var.region
   resource_tags     = var.resource_tags
   configuration     = var.configuration
+  member_memory_mb  = var.member_memory_mb
+  member_disk_mb    = var.member_disk_mb
+  member_cpu_count  = var.member_cpu_count
   pitr_id           = var.pitr_id
   pitr_time         = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time
 }
