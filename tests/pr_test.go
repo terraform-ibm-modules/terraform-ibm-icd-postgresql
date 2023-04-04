@@ -15,6 +15,7 @@ const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
+const replica_pg_version = "14"
 
 // Restricting due to limited availability of BYOK in certain regions
 const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
@@ -57,6 +58,9 @@ func TestRunReplicaExample(t *testing.T) {
 		TerraformDir:  replicaExampleTerraformDir,
 		Prefix:        "pg-replica",
 		ResourceGroup: resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pg_version": replica_pg_version,
+		},
 	})
 
 	output, err := options.RunTestConsistency()

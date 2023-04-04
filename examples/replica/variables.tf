@@ -16,6 +16,12 @@ variable "prefix" {
   default     = "postgres"
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
@@ -26,6 +32,20 @@ variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
   default     = []
+}
+
+variable "read_only_replicas" {
+  type        = string
+  description = "No of read-only replicas per leader"
+  default     = "1"
+  validation {
+    condition = alltrue([
+      var.read_only_replicas >= 1,
+      var.read_only_replicas <= 5
+    ])
+    error_message = "There is a limit of five read-only replicas per leader"
+  }
+
 }
 
 variable "member_memory_mb" {
