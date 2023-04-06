@@ -49,7 +49,7 @@ func TestRunAutoscaleExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunReplicaExample(t *testing.T) {
+func testRunReplicaExample(t *testing.T, version string) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -57,11 +57,22 @@ func TestRunReplicaExample(t *testing.T) {
 		TerraformDir:  replicaExampleTerraformDir,
 		Prefix:        "pg-replica",
 		ResourceGroup: resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pg_version": version,
+		},
 	})
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunReplicaExample(t *testing.T) {
+	t.Parallel()
+	versions := []string{"11", "12", "13", "14"}
+	for _, version := range versions {
+		t.Run(version, func(t *testing.T) { testRunReplicaExample(t, version) })
+	}
 }
 
 func TestRunFSCloudExample(t *testing.T) {

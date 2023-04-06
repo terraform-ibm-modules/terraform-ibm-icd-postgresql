@@ -42,6 +42,12 @@ variable "read_only_replicas" {
 
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
 variable "member_memory_mb" {
   type        = string
   description = "Memory allocation required for postgresql read-only replica database"
