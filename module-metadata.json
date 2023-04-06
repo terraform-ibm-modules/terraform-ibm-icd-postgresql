@@ -35,15 +35,11 @@
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "(Optional) The CRN of a Hyper Protect Crypto Service (HPCS) Key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys.",
-      "source": [
-        "ibm_database.postgresql_db.backup_encryption_key_crn"
-      ],
+      "description": "(Optional) The CRN of a Key Protect Key, that you want to use for encrypting disk that holds deployment backups. It doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.",
       "pos": {
         "filename": "variables.tf",
         "line": 221
-      },
-      "immutable": true
+      }
     },
     "cbr_rules": {
       "name": "cbr_rules",
@@ -377,7 +373,6 @@
       "type": "ibm_database",
       "name": "postgresql_db",
       "attributes": {
-        "backup_encryption_key_crn": "backup_encryption_key_crn",
         "backup_id": "backup_crn",
         "configuration": "configuration",
         "key_protect_key": "kms_key_crn",
@@ -395,7 +390,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 30
+        "line": 34
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -412,7 +407,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 20
+        "line": 24
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -428,7 +423,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 163
+        "line": 167
       }
     }
   },
@@ -507,7 +502,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 125
+        "line": 129
       }
     }
   }

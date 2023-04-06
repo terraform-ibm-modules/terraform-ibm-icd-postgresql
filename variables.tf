@@ -220,7 +220,7 @@ variable "kms_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a Hyper Protect Crypto Service (HPCS) Key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'kms_key_crn' as encryption key. If 'kms_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a Key Protect Key, that you want to use for encrypting disk that holds deployment backups. It doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys."
   default     = null
 }
 

@@ -5,6 +5,10 @@
 ##############################################################################
 
 locals {
+  # The backup crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
+  # https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
+  kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
   kms_service = var.kms_key_crn != null ? (
     can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
@@ -43,7 +47,7 @@ resource "ibm_database" "postgresql_db" {
   configuration     = var.configuration != null ? jsonencode(var.configuration) : null
 
   key_protect_key           = var.kms_key_crn
-  backup_encryption_key_crn = var.backup_encryption_key_crn
+  backup_encryption_key_crn = local.kp_backup_crn
 
   dynamic "allowlist" {
     for_each = (var.allowlist != null ? var.allowlist : [])
