@@ -15,6 +15,8 @@
 
 > WARNING: **This module does not support major version upgrade or updates to encryption and backup encryption keys**: To upgrade version create a new postgresql instance with the updated version and follow the [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli)
 
+> NOTE: The database encryption for backups supports only Key Protect keys, not the Hyper Protect Crypto Key at the moment. More info: https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
+
 ```hcl
 module "postgresql_db" {
   # replace main with version
