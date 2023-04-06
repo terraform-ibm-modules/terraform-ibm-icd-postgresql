@@ -5,7 +5,7 @@
 ##############################################################################
 
 locals {
-  # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
+  # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If 'backup_encryption_key_crn' is null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
   # https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
   kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
 
