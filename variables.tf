@@ -19,7 +19,7 @@ variable "plan_validation" {
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Required if var.skip_iam_authorization_policy is false in order to create an IAM Access Policy to allow Hyper Protect or Key Protect to access the newly created Postgresql database instance."
+  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from."
   type        = string
   default     = null
 }
