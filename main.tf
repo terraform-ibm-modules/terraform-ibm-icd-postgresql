@@ -27,6 +27,9 @@ resource "ibm_database" "postgresql_db" {
   key_protect_key           = var.key_protect_key_crn
   backup_encryption_key_crn = local.kp_backup_crn
 
+  point_in_time_recovery_deployment_id = var.pitr_id
+  point_in_time_recovery_time          = var.pitr_time
+
   dynamic "allowlist" {
     for_each = (var.allowlist != null ? var.allowlist : [])
     content {
