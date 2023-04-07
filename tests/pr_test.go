@@ -2,13 +2,12 @@
 package test
 
 import (
+	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"log"
 	"os"
 	"testing"
-
-	"github.com/stretchr/testify/assert"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
 const defaultExampleTerraformDir = "examples/default"
@@ -16,6 +15,7 @@ const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
+const pitrTerraformDir = "examples/pitr"
 
 // Use existing resource group
 // Allow the tests to create a unique resource group for every test to ensure tests do not clash. This is due to the fact that the auth policy created by this module has to be scoped to the resource group and hence would clash if tests used same resource group.
@@ -50,6 +50,8 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 	})
 	return options
 }
+
+const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
 func TestRunDefaultExample(t *testing.T) {
 	t.Parallel()
@@ -122,4 +124,36 @@ func TestRunUpgradeExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
+}
+
+var permanentResources map[string]interface{}
+
+// TestMain will be run before any parallel tests, used to read data from yaml for use with tests
+func TestMain(m *testing.M) {
+
+	var err error
+	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	os.Exit(m.Run())
+}
+
+func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  pitrTerraformDir,
+		Prefix:        "pg-pitr",
+		ResourceGroup: resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pitr_id": permanentResources["postgresqlCrn"],
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }

@@ -164,6 +164,30 @@
       "immutable": true,
       "computed": true
     },
+    "pitr_id": {
+      "name": "pitr_id",
+      "type": "string",
+      "description": "(Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state.",
+      "source": [
+        "ibm_database.postgresql_db.point_in_time_recovery_deployment_id"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 252
+      }
+    },
+    "pitr_time": {
+      "name": "pitr_time",
+      "type": "string",
+      "description": "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp \u003cdeployment name or CRN\u003e)",
+      "source": [
+        "ibm_database.postgresql_db.point_in_time_recovery_time"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 258
+      }
+    },
     "plan_validation": {
       "name": "plan_validation",
       "type": "bool",
@@ -379,6 +403,8 @@
         "location": "region",
         "name": "name",
         "plan_validation": "plan_validation",
+        "point_in_time_recovery_deployment_id": "pitr_id",
+        "point_in_time_recovery_time": "pitr_time",
         "remote_leader_id": "remote_leader_crn",
         "resource_group_id": "resource_group_id",
         "service_endpoints": "service_endpoints",
@@ -423,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 167
+        "line": 170
       }
     }
   },
@@ -502,7 +528,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 129
+        "line": 132
       }
     }
   }

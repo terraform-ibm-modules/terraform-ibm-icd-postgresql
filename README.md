@@ -56,6 +56,7 @@ You need the following permissions to run this module.
 - [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
 - [ Default example](examples/default)
 - [ Financial Services Cloud profile example](examples/fscloud)
+- [ Point in time recovery example (PITR)](examples/pitr)
 - [ Replica example](examples/replica)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
@@ -98,6 +99,8 @@ You need the following permissions to run this module.
 | <a name="input_members"></a> [members](#input\_members) | Number of members | `number` | `3` | no |
 | <a name="input_name"></a> [name](#input\_name) | Name of the Postgresql instance | `string` | n/a | yes |
 | <a name="input_pg_version"></a> [pg\_version](#input\_pg\_version) | Version of the postgresql instance | `string` | `null` | no |
+| <a name="input_pitr_id"></a> [pitr\_id](#input\_pitr\_id) | (Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state. | `string` | `null` | no |
+| <a name="input_pitr_time"></a> [pitr\_time](#input\_pitr\_time) | (Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>) | `string` | `null` | no |
 | <a name="input_plan_validation"></a> [plan\_validation](#input\_plan\_validation) | Enable or disable validating the database parameters for postgres during the plan phase | `bool` | `true` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used. | `string` | `"us-south"` | no |
 | <a name="input_remote_leader_crn"></a> [remote\_leader\_crn](#input\_remote\_leader\_crn) | The CRN of the leader database to make the replica(read-only) deployment. | `string` | `null` | no |
