@@ -44,12 +44,12 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       pitrTerraformDir,
-		Prefix:             "pg-pitr",
-		BestRegionYAMLPath: regionSelectionPath,
+		Testing:      t,
+		TerraformDir: pitrTerraformDir,
+		Prefix:       "pg-pitr",
 		TerraformVars: map[string]interface{}{
 			"pitr_id": permanentResources["postgresqlCrn"],
+			"region":  region,
 		},
 	})
 
