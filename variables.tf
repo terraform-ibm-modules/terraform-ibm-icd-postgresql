@@ -232,3 +232,19 @@ variable "cbr_rules" {
   default     = []
   # Validation happens in the rule module
 }
+
+##############################################################
+# Point in time recovery (PITR)
+##############################################################
+
+variable "pitr_id" {
+  type        = string
+  description = "(Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state."
+  default     = null
+}
+
+variable "pitr_time" {
+  type        = string
+  description = "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>)"
+  default     = null
+}
