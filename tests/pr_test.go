@@ -51,8 +51,6 @@ func setupOptions(t *testing.T, prefix string, dir string) *testhelper.TestOptio
 	return options
 }
 
-const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
-
 func TestRunDefaultExample(t *testing.T) {
 	t.Parallel()
 
@@ -114,6 +112,17 @@ func TestRunCompleteExample(t *testing.T) {
 	}
 }
 
+func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
+	t.Parallel()
+
+	options := setupOptions(t, "pg-pitr", pitrTerraformDir)
+	options.TerraformVars["pitr_id"] = permanentResources["postgresqlCrn"]
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunUpgradeExample(t *testing.T) {
 	t.Parallel()
 
@@ -124,36 +133,4 @@ func TestRunUpgradeExample(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
-}
-
-var permanentResources map[string]interface{}
-
-// TestMain will be run before any parallel tests, used to read data from yaml for use with tests
-func TestMain(m *testing.M) {
-
-	var err error
-	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
-	if err != nil {
-		log.Fatal(err)
-	}
-
-	os.Exit(m.Run())
-}
-
-func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  pitrTerraformDir,
-		Prefix:        "pg-pitr",
-		ResourceGroup: resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"pitr_id": permanentResources["postgresqlCrn"],
-		},
-	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
