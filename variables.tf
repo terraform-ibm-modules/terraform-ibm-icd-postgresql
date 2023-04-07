@@ -19,14 +19,14 @@ variable "plan_validation" {
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from."
+  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Only required if skip_iam_authorization_policy is false"
   type        = string
   default     = null
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits the PostgreSQL database instances in the Resource group to read the encryption key from the HPCS instance in `existing_kms_instance_guid`."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given Resource group to read the encryption key from the Hyper Protect or Key Protect instance in `existing_kms_instance_guid`."
   default     = true
 }
 
@@ -220,7 +220,7 @@ variable "kms_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a Key Protect Key, that you want to use for encrypting disk that holds deployment backups. It doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys."
+  description = "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported."
   default     = null
 }
 

@@ -10,6 +10,31 @@ module "resource_group" {
 }
 
 ##############################################################################
+# Key Protect All Inclusive
+##############################################################################
+
+# Need Key Protect instance for backup_encryption_key_crn as backup encryption key is not supported by Hyper Protect instaces yet.
+module "key_protect_all_inclusive" {
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
+  resource_group_id = module.resource_group.resource_group_id
+  # Note: Database instance and Key Protect must be created in the same region when using BYOK
+  # See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok
+  region                    = var.region
+  key_protect_instance_name = "${var.prefix}-kp"
+  resource_tags             = var.resource_tags
+  key_map                   = { "icd-pg" = ["${var.prefix}-pg"] }
+}
+
+# Create IAM Access Policy to allow Key protect to access Postgres instance
+resource "ibm_iam_authorization_policy" "policy" {
+  source_service_name         = "databases-for-postgresql"
+  source_resource_group_id    = module.resource_group.resource_group_id
+  target_service_name         = "kms"
+  target_resource_instance_id = module.key_protect_all_inclusive.key_protect_guid
+  roles                       = ["Reader"]
+}
+
+##############################################################################
 # Get Cloud Account ID
 ##############################################################################
 
@@ -60,6 +85,7 @@ module "postgresql_db" {
   kms_key_crn                = var.kms_key_crn
   existing_kms_instance_guid = var.existing_kms_instance_guid
   resource_tags              = var.resource_tags
+  backup_encryption_key_crn  = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

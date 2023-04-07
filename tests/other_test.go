@@ -3,6 +3,7 @@ package test
 
 import (
 	"github.com/stretchr/testify/assert"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"testing"
 )
 
@@ -11,7 +12,12 @@ const restoredTerraformDir = "examples/backup"
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
 
-	options := setupOptions(t, "pg-backup", restoredTerraformDir)
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  restoredTerraformDir,
+		Prefix:        "pg-backup",
+		ResourceGroup: resourceGroup,
+	})
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
