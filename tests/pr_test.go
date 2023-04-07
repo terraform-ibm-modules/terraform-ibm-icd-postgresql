@@ -36,7 +36,6 @@ func TestRunDefaultExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       defaultExampleTerraformDir,
 		Prefix:             "postgres",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 	})
 
@@ -52,7 +51,6 @@ func TestRunAutoscaleExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       autoscaleExampleTerraformDir,
 		Prefix:             "pg-autoscale",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 	})
 
@@ -68,7 +66,6 @@ func TestRunReplicaExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       replicaExampleTerraformDir,
 		Prefix:             "pg-replica",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 	})
 
@@ -80,10 +77,9 @@ func TestRunReplicaExample(t *testing.T) {
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  fsCloudTerraformDir,
-		Prefix:        "pg-compliant",
-		ResourceGroup: resourceGroup,
+		Testing:      t,
+		TerraformDir: fsCloudTerraformDir,
+		Prefix:       "pg-compliant",
 		TerraformVars: map[string]interface{}{
 			"region":                     region,
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
@@ -101,7 +97,6 @@ func testRunCompleteExample(t *testing.T, version string) {
 		Testing:            t,
 		TerraformDir:       completeExampleTerraformDir,
 		Prefix:             "pg-complete",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 		TerraformVars: map[string]interface{}{
 			"pg_version": version,
@@ -127,7 +122,6 @@ func TestRunUpgradeExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       defaultExampleTerraformDir,
 		Prefix:             "postgres-upg",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 	})
 
@@ -159,7 +153,6 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       pitrTerraformDir,
 		Prefix:             "pg-pitr",
-		ResourceGroup:      resourceGroup,
 		BestRegionYAMLPath: regionSelectionPath,
 		TerraformVars: map[string]interface{}{
 			"pitr_id": permanentResources["postgresqlCrn"],

@@ -13,10 +13,9 @@ func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  restoredTerraformDir,
-		Prefix:        "pg-backup",
-		ResourceGroup: resourceGroup,
+		Testing:      t,
+		TerraformDir: restoredTerraformDir,
+		Prefix:       "pg-backup",
 	})
 
 	output, err := options.RunTestConsistency()
