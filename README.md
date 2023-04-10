@@ -36,7 +36,7 @@ You need the following permissions to run this module.
 
 ## Read-only Replica considerations
 
-- **There are additional considerations when setting the variables in the read-only-replica example.** Refer [configuring read-only replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)
+- **There are additional considerations when setting the variables in the read-only-replica example.** Refer [configuring read-only replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas). For load balancing multiple read only replicas are suggested/required.
 
 | Variable | Description | Type | Default |
 |------|---------|---------|:--------:|
