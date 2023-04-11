@@ -13,7 +13,7 @@ variable "region" {
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "sm-test"
+  default     = "fs-cloud"
 }
 
 variable "resource_group" {
@@ -34,11 +34,12 @@ variable "pg_version" {
   default     = null
 }
 
-variable "allowlist" {
-  type = list(object({
-    address     = optional(string)
-    description = optional(string)
-  }))
-  default     = []
-  description = "Set of IP address and description to allowlist in database"
+variable "existing_kms_instance_guid" {
+  description = "The GUID of the Hyper Protect Crypto service in which the key specified in var.kms_key_crn is coming from"
+  type        = string
+}
+
+variable "kms_key_crn" {
+  type        = string
+  description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
 }
