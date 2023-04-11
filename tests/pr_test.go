@@ -63,10 +63,10 @@ func testRunReplicaExample(t *testing.T, version string) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  replicaExampleTerraformDir,
-		Prefix:        "pg-replica",
-		ResourceGroup: resourceGroup,
+		Testing:            t,
+		TerraformDir:       replicaExampleTerraformDir,
+		Prefix:             "pg-replica",
+		BestRegionYAMLPath: regionSelectionPath,
 		TerraformVars: map[string]interface{}{
 			"pg_version": version,
 		},
