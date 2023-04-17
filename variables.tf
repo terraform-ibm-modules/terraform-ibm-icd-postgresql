@@ -18,6 +18,18 @@ variable "plan_validation" {
   default     = true
 }
 
+variable "existing_kms_instance_guid" {
+  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Only required if skip_iam_authorization_policy is false"
+  type        = string
+  default     = null
+}
+
+variable "skip_iam_authorization_policy" {
+  type        = bool
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given Resource group to read the encryption key from the Hyper Protect or Key Protect instance in `existing_kms_instance_guid`."
+  default     = true
+}
+
 variable "remote_leader_crn" {
   type        = string
   description = "The CRN of the leader database to make the replica(read-only) deployment."
@@ -41,7 +53,7 @@ variable "pg_version" {
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support BYOK if key_protect_key_crn is used"
+  description = "The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used."
   type        = string
   default     = "us-south"
 }
@@ -200,7 +212,7 @@ variable "auto_scaling" {
   default     = null
 }
 
-variable "key_protect_key_crn" {
+variable "kms_key_crn" {
   type        = string
   description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
   default     = null
@@ -208,7 +220,7 @@ variable "key_protect_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "(Optional) The CRN of a key protect key, that you want to use for encrypting disk that holds deployment backups. If null, will use 'key_protect_key_crn' as encryption key. If 'key_protect_key_crn' is also null database is encrypted by using randomly generated keys."
+  description = "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported."
   default     = null
 }
 
@@ -231,4 +243,20 @@ variable "cbr_rules" {
   description = "(Optional, list) List of CBR rules to create"
   default     = []
   # Validation happens in the rule module
+}
+
+##############################################################
+# Point in time recovery (PITR)
+##############################################################
+
+variable "pitr_id" {
+  type        = string
+  description = "(Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state."
+  default     = null
+}
+
+variable "pitr_time" {
+  type        = string
+  description = "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>)"
+  default     = null
 }

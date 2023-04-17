@@ -9,10 +9,31 @@ data "ibm_cbr_zone" "cbr_zone" {
 }
 
 locals {
-  kp_backup_crn        = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.key_protect_key_crn
+  # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If 'backup_encryption_key_crn' is null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
+  # https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
+  kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
+  kms_service = var.kms_key_crn != null ? (
+    can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
+      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
+    )
+  ) : null
+# tflint-ignore: terraform_unused_declarations
+  validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("A value must be passed for var.existing_kms_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
   network_zone_id      = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
   validate_cbr_zone    = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
+}
+
+# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
+resource "ibm_iam_authorization_policy" "kms_policy" {
+  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  source_service_name         = "databases-for-postgresql"
+  source_resource_group_id    = var.resource_group_id
+  target_service_name         = local.kms_service
+  target_resource_instance_id = var.existing_kms_instance_guid
+  roles                       = ["Reader"]
+ 
 }
 resource "null_resource" "validate" {
   depends_on = [data.ibm_cbr_zone.cbr_zone]
@@ -23,9 +44,7 @@ resource "null_resource" "validate" {
 }
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on = [
-    null_resource.validate
-  ]
+  depends_on        = [ibm_iam_authorization_policy.kms_policy,null_resource.validate]
   resource_group_id = var.resource_group_id
   name              = var.name
   service           = "databases-for-postgresql"
@@ -39,8 +58,11 @@ resource "ibm_database" "postgresql_db" {
   service_endpoints = var.service_endpoints
   configuration     = var.configuration != null ? jsonencode(var.configuration) : null
 
-  key_protect_key           = var.key_protect_key_crn
+  key_protect_key           = var.kms_key_crn
   backup_encryption_key_crn = local.kp_backup_crn
+
+  point_in_time_recovery_deployment_id = var.pitr_id
+  point_in_time_recovery_time          = var.pitr_time
 
   dynamic "allowlist" {
     for_each = (var.allowlist != null ? var.allowlist : [])
