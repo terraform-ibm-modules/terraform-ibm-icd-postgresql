@@ -3,6 +3,10 @@
 #
 # Creates ICD Postgresql instance
 ##############################################################################
+data "ibm_cbr_zone" "cbr_zone" {
+  count   = length(local.network_zone_id)
+  zone_id = local.network_zone_id[count.index]
+}
 
 locals {
   # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If 'backup_encryption_key_crn' is null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
@@ -18,6 +22,8 @@ locals {
 
   # tflint-ignore: terraform_unused_declarations
   validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("A value must be passed for var.existing_kms_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
+  network_zone_id     = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
+  validate_cbr_zone    = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
 }
 
 # Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
@@ -30,9 +36,17 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   roles                       = ["Reader"]
 }
 
+resource "null_resource" "validate" {
+  depends_on = [data.ibm_cbr_zone.cbr_zone]
+  provisioner "local-exec" {
+    command     = local.validate_cbr_zone ? "echo Cloud Databases does not support service reference in network zone. ; exit 1" : "echo "
+    interpreter = ["/bin/bash", "-c"]
+  }
+}
+
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on        = [ibm_iam_authorization_policy.kms_policy]
+  depends_on        = [ibm_iam_authorization_policy.kms_policy,null_resource.validate]
   resource_group_id = var.resource_group_id
   name              = var.name
   service           = "databases-for-postgresql"
