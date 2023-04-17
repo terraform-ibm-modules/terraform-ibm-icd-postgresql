@@ -83,7 +83,7 @@ module "postgresql_db" {
   region                   = var.region
   service_endpoints        = "private"
   pg_version               = var.pg_version
-   kms_key_crn             = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
+  kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags            = var.resource_tags
   service_credential_names = var.service_credential_names
   cbr_rules = [
@@ -135,6 +135,12 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
   resource_group  = module.resource_group.resource_group_id
   security_groups = [ibm_is_security_group.sg1.id]
   depends_on = [
-    time_sleep.wait_120_seconds
+    time_sleep.wait_120_seconds,
+    time_sleep.wait_30_seconds
   ]
+}
+
+resource "time_sleep" "wait_30_seconds" {
+  depends_on       = [ibm_is_security_group.sg1]
+  destroy_duration = "30s"
 }
