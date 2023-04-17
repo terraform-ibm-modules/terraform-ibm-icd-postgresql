@@ -421,7 +421,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 34
+        "line": 48
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -438,7 +438,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 24
+        "line": 30
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -454,7 +454,33 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 184
+      }
+    },
+    "null_resource.validate": {
+      "mode": "managed",
+      "type": "null_resource",
+      "name": "validate",
+      "provider": {
+        "name": "null"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 39
+      }
+    }
+  },
+  "data_resources": {
+    "data.ibm_cbr_zone.cbr_zone": {
+      "mode": "data",
+      "type": "ibm_cbr_zone",
+      "name": "cbr_zone",
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 6
       }
     }
   },
@@ -532,7 +558,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 146
       }
     }
   }
