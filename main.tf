@@ -122,7 +122,7 @@ resource "ibm_database" "postgresql_db" {
   }
 
   timeouts {
-    create = "150m" # Extending provisioning time to 150 minutes
+    create = "120m" # Extending provisioning time to 120 minutes
   }
 }
 
