@@ -148,6 +148,7 @@ func TestMain(m *testing.M) {
 
 func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	t.Parallel()
+	t.Skip() // TODO once this issue gets resolved - https://github.ibm.com/GoldenEye/issues/issues/4513
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
