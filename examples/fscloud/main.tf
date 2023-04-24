@@ -13,6 +13,7 @@ module "resource_group" {
 # Key Protect All Inclusive
 ##############################################################################
 
+# Need Key Protect instance for backup_encryption_key_crn as backup encryption key is not supported by Hyper Protect instaces yet.
 module "key_protect_all_inclusive" {
   source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
   resource_group_id = module.resource_group.resource_group_id
@@ -76,14 +77,15 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source              = "../../profiles/fscloud"
-  resource_group_id   = module.resource_group.resource_group_id
-  name                = "${var.prefix}-postgres"
-  region              = var.region
-  pg_version          = var.pg_version
-  key_protect_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  resource_tags       = var.resource_tags
-  allowlist           = var.allowlist
+  source                     = "../../profiles/fscloud"
+  resource_group_id          = module.resource_group.resource_group_id
+  name                       = "${var.prefix}-postgres"
+  region                     = var.region
+  pg_version                 = var.pg_version
+  kms_key_crn                = var.kms_key_crn
+  existing_kms_instance_guid = var.existing_kms_instance_guid
+  resource_tags              = var.resource_tags
+  backup_encryption_key_crn  = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
