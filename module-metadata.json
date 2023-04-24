@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 218
+        "line": 236
       }
     },
     "configuration": {
@@ -173,7 +173,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 252
+        "line": 256
       }
     },
     "pitr_time": {
@@ -185,7 +185,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 258
+        "line": 262
       }
     },
     "plan_validation": {
