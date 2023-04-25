@@ -52,6 +52,9 @@ func TestRunAutoscaleExample(t *testing.T) {
 		TerraformDir:       autoscaleExampleTerraformDir,
 		Prefix:             "pg-autoscale",
 		BestRegionYAMLPath: regionSelectionPath,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
 	})
 
 	output, err := options.RunTestConsistency()
@@ -67,6 +70,9 @@ func TestRunReplicaExample(t *testing.T) {
 		TerraformDir:       replicaExampleTerraformDir,
 		Prefix:             "pg-replica",
 		BestRegionYAMLPath: regionSelectionPath,
+		TerraformVars: map[string]interface{}{
+			"access_tags": permanentResources["accessTags"],
+		},
 	})
 
 	output, err := options.RunTestConsistency()
@@ -84,6 +90,7 @@ func TestRunFSCloudExample(t *testing.T) {
 			"region":                     region,
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
+			"access_tags":                permanentResources["accessTags"],
 		},
 	})
 	output, err := options.RunTestConsistency()
@@ -99,7 +106,8 @@ func testRunCompleteExample(t *testing.T, version string) {
 		Prefix:             "pg-complete",
 		BestRegionYAMLPath: regionSelectionPath,
 		TerraformVars: map[string]interface{}{
-			"pg_version": version,
+			"pg_version":  version,
+			"access_tags": permanentResources["accessTags"],
 		},
 	})
 	output, err := options.RunTestConsistency()
@@ -155,8 +163,9 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		TerraformDir: pitrTerraformDir,
 		Prefix:       "pg-pitr",
 		TerraformVars: map[string]interface{}{
-			"pitr_id": permanentResources["postgresqlCrn"],
-			"region":  region,
+			"pitr_id":     permanentResources["postgresqlCrn"],
+			"region":      region,
+			"access_tags": permanentResources["accessTags"],
 		},
 	})
 

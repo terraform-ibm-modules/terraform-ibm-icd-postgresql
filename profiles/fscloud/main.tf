@@ -10,6 +10,7 @@ module "postgresql_db" {
   kms_key_crn                   = var.kms_key_crn
   backup_encryption_key_crn     = var.backup_encryption_key_crn
   resource_tags                 = var.resource_tags
+  access_tags                   = var.access_tags
   cbr_rules                     = var.cbr_rules
   configuration                 = var.configuration
   member_memory_mb              = var.member_memory_mb

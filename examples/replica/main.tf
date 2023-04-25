@@ -19,6 +19,7 @@ module "postgresql_db" {
   name              = "${var.prefix}-primary"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
 }
 
 ##############################################################################
@@ -31,6 +32,7 @@ module "read_only_replica_postgresql_db" {
   name              = "${var.prefix}-read-only-replica"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   remote_leader_crn = module.postgresql_db.crn
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb

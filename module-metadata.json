@@ -1,6 +1,27 @@
 {
   "path": ".",
   "variables": {
+    "access_tags": {
+      "name": "access_tags",
+      "type": "list(string)",
+      "description": "A list of access tags to apply to the resources created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details",
+      "default": [],
+      "source": [
+        "ibm_resource_tag.postgresql_tag.count",
+        "ibm_resource_tag.postgresql_tag.tags"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 155
+      },
+      "min_length": 1,
+      "max_length": 128,
+      "matches": "^[A-Za-z0-9:_ .-]+$",
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
+      }
+    },
     "allowlist": {
       "name": "allowlist",
       "type": "list(object({\n    address     = optional(string)\n    description = optional(string)\n  }))",
@@ -8,7 +29,7 @@
       "default": [],
       "pos": {
         "filename": "variables.tf",
-        "line": 155
+        "line": 168
       }
     },
     "auto_scaling": {
@@ -17,7 +38,7 @@
       "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
       "pos": {
         "filename": "variables.tf",
-        "line": 182
+        "line": 195
       }
     },
     "backup_crn": {
@@ -38,7 +59,7 @@
       "description": "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported.",
       "pos": {
         "filename": "variables.tf",
-        "line": 221
+        "line": 234
       }
     },
     "cbr_rules": {
@@ -55,7 +76,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 232
+        "line": 245
       }
     },
     "configuration": {
@@ -67,7 +88,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 177
       }
     },
     "existing_kms_instance_guid": {
@@ -93,7 +114,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 215
+        "line": 228
       },
       "immutable": true
     },
@@ -173,7 +194,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 252
+        "line": 265
       }
     },
     "pitr_time": {
@@ -185,7 +206,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 258
+        "line": 271
       }
     },
     "plan_validation": {
@@ -449,7 +470,23 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 177
+      }
+    },
+    "ibm_resource_tag.postgresql_tag": {
+      "mode": "managed",
+      "type": "ibm_resource_tag",
+      "name": "postgresql_tag",
+      "attributes": {
+        "count": "access_tags",
+        "tags": "access_tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 129
       }
     }
   },
@@ -528,7 +565,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 139
       }
     }
   }

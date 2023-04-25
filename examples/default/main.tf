@@ -19,5 +19,6 @@ module "postgresql_db" {
   name              = "${var.prefix}-postgres"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   configuration     = var.configuration
 }

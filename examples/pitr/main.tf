@@ -20,6 +20,7 @@ module "postgresql_db_pitr" {
   name              = "${var.prefix}-postgres-pitr"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   configuration     = var.configuration
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb

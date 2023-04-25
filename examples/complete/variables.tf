@@ -28,6 +28,12 @@ variable "resource_tags" {
   default     = []
 }
 
+variable "access_tags" {
+  type        = list(string)
+  description = "Optional list of access management tags to be added to created resources"
+  default     = []
+}
+
 variable "pg_version" {
   description = "Version of the postgresql instance"
   type        = string

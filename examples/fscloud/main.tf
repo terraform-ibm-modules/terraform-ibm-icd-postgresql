@@ -85,6 +85,7 @@ module "postgresql_db" {
   kms_key_crn                = var.kms_key_crn
   existing_kms_instance_guid = var.existing_kms_instance_guid
   resource_tags              = var.resource_tags
+  access_tags                = var.access_tags
   backup_encryption_key_crn  = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   cbr_rules = [
     {

@@ -85,6 +85,7 @@ module "postgresql_db" {
   kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags            = var.resource_tags
   service_credential_names = var.service_credential_names
+  access_tags              = var.access_tags
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
