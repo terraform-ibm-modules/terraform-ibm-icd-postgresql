@@ -216,12 +216,27 @@ variable "kms_key_crn" {
   type        = string
   description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
   default     = null
+  validation {
+    condition = anytrue([
+      var.kms_key_crn == null,
+      can(regex(".*kms.*", var.kms_key_crn)),
+      can(regex(".*hs-crypto.*", var.kms_key_crn))
+    ])
+    error_message = "A Key Protect or Hyper Protect key is required for encryption"
+  }
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
   description = "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported."
   default     = null
+  validation {
+    condition = anytrue([
+      var.backup_encryption_key_crn == null,
+      can(regex(".*kms.*", var.backup_encryption_key_crn))
+    ])
+    error_message = "A Key Protect key is required for encryption of backups"
+  }
 }
 
 

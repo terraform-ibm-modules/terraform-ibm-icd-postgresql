@@ -12,12 +12,14 @@ locals {
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
   kms_service = var.kms_key_crn != null ? (
     can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
-      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
+      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : "unrecognised key type"
     )
-  ) : null
+  ) : "no key crn"
 
   # tflint-ignore: terraform_unused_declarations
   validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("A value must be passed for var.existing_kms_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_key_input = var.skip_iam_authorization_policy == false && var.kms_key_crn == null ? tobool("A value must be passed for var.kms_key_crn when creating an instance, var.skip_iam_authorization_policy is false.") : true
 }
 
 # Create IAM Authorization Policies to allow postgresql to access kms for the encryption key

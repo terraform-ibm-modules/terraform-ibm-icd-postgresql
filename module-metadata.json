@@ -38,7 +38,7 @@
       "description": "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported.",
       "pos": {
         "filename": "variables.tf",
-        "line": 221
+        "line": 229
       }
     },
     "cbr_rules": {
@@ -55,7 +55,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 232
+        "line": 247
       }
     },
     "configuration": {
@@ -173,7 +173,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 252
+        "line": 267
       }
     },
     "pitr_time": {
@@ -185,7 +185,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 258
+        "line": 273
       }
     },
     "plan_validation": {
@@ -416,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 34
+        "line": 36
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -433,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 24
+        "line": 26
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -449,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 172
       }
     }
   },
@@ -528,7 +528,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 134
       }
     }
   }
