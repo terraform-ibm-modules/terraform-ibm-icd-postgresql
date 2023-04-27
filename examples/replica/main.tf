@@ -19,6 +19,7 @@ module "postgresql_db" {
   name              = "${var.prefix}-primary"
   region            = var.region
   resource_tags     = var.resource_tags
+  pg_version        = var.pg_version
 }
 
 ##############################################################################
@@ -26,11 +27,13 @@ module "postgresql_db" {
 ##############################################################################
 
 module "read_only_replica_postgresql_db" {
+  count             = var.read_only_replicas
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-read-only-replica"
+  name              = "${var.prefix}-read-only-replica-${count.index}"
   region            = var.region
   resource_tags     = var.resource_tags
+  pg_version        = var.pg_version
   remote_leader_crn = module.postgresql_db.crn
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb
