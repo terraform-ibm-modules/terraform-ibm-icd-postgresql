@@ -11,10 +11,10 @@ import (
 )
 
 const defaultExampleTerraformDir = "examples/default"
-const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
+const autoscaleExampleTerraformDir = "examples/autoscale"
 const pitrTerraformDir = "examples/pitr"
 
 // Restricting due to limited availability of BYOK in certain regions

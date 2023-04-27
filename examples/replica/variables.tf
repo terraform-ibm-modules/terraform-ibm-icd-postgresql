@@ -28,6 +28,26 @@ variable "resource_tags" {
   default     = []
 }
 
+variable "read_only_replicas" {
+  type        = number
+  description = "No of read-only replicas per leader"
+  default     = 1
+  validation {
+    condition = alltrue([
+      var.read_only_replicas >= 1,
+      var.read_only_replicas <= 5
+    ])
+    error_message = "There is a limit of five read-only replicas per leader"
+  }
+
+}
+
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
 variable "member_memory_mb" {
   type        = string
   description = "Memory allocation required for postgresql read-only replica database"
