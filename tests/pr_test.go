@@ -13,6 +13,8 @@ import (
 const defaultExampleTerraformDir = "examples/default"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
+const replicaExampleTerraformDir = "examples/replica"
+const autoscaleExampleTerraformDir = "examples/autoscale"
 const pitrTerraformDir = "examples/pitr"
 
 // Restricting due to limited availability of BYOK in certain regions
@@ -34,6 +36,36 @@ func TestRunDefaultExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       defaultExampleTerraformDir,
 		Prefix:             "postgres",
+		BestRegionYAMLPath: regionSelectionPath,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunAutoscaleExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       autoscaleExampleTerraformDir,
+		Prefix:             "pg-autoscale",
+		BestRegionYAMLPath: regionSelectionPath,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunReplicaExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       replicaExampleTerraformDir,
+		Prefix:             "pg-replica",
 		BestRegionYAMLPath: regionSelectionPath,
 	})
 
