@@ -222,7 +222,7 @@ variable "kms_key_crn" {
       can(regex(".*kms.*", var.kms_key_crn)),
       can(regex(".*hs-crypto.*", var.kms_key_crn))
     ])
-    error_message = "A Key Protect or Hyper Protect key is required for encryption"
+    error_message = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption"
   }
 }
 
@@ -235,7 +235,7 @@ variable "backup_encryption_key_crn" {
       var.backup_encryption_key_crn == null,
       can(regex(".*kms.*", var.backup_encryption_key_crn))
     ])
-    error_message = "A Key Protect key is required for encryption of backups"
+    error_message = "(Optional) The CRN of a Key Protect Key to use for encrypting backups"
   }
 }
 
