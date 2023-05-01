@@ -10,12 +10,13 @@
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 
+This module implements an IBM Cloud Databases for Postgresql instance with tags, users, memory allocation, disk allocation, CPU allocation and context-based restrictions.
+
+:exclamation: **Important:** This module does not support major version upgrades or updates to encryption and backup encryption keys. To upgrade, create another PostgreSQL instance with the updated version and follow [upgrading to a new major version](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli) in the IBM Cloud Docs.
+
+The database encryption for backups supports only Key Protect keys, not Hyper Protect Crypto Services keys. For more information about using  a key in Hyper Protect Crypto Services, see [Hyper Protect Crypto Services Integration](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli).
 
 ## Usage
-
-> WARNING: **This module does not support major version upgrade or updates to encryption and backup encryption keys**: To upgrade version create a new postgresql instance with the updated version and follow the [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli)
-
-> NOTE: The database encryption for backups supports only Key Protect keys, not the Hyper Protect Crypto Key at the moment. More info: https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
 
 ```hcl
 module "postgresql_db" {

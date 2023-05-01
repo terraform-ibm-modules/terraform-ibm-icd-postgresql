@@ -1,6 +1,8 @@
 # Autoscale example
 
-An end-to-end example that uses the module's default variable values. This example uses the IBM Cloud terraform provider to:
+An end-to-end example that uses the module's default variable values. This example uses the IBM Cloud Terraform provider to create the following infrastructure:
 
-- Create a new resource group if one is not passed in.
-- Create a new ICD Postgresql database instance with auto-scaling (automatically increase resources) enabled.
+- A resource group if one is not passed in.
+- An ICD Postgresql database instance with autoscaling (automatically increase resources) enabled.
+
+:information_source: **Tip:** Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.
