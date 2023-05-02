@@ -5,4 +5,4 @@ An end-to-end example that uses the module's default variable values. This examp
 - A resource group if one is not passed in.
 - An ICD Postgresql database instance with autoscaling (automatically increase resources) enabled.
 
-:information_source: **Tip:** Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.
+:exclamation: **Important:** Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.
