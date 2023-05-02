@@ -54,7 +54,7 @@ variable "pitr_id" {
 variable "member_memory_mb" {
   type        = string
   description = "Memory allocation required for postgresql read-only replica database"
-  default     = "7680"
+  default     = "3072"
   validation {
     condition = alltrue([
       var.member_memory_mb >= 3072,
