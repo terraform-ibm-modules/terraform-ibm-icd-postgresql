@@ -10,10 +10,10 @@ on:
 
 jobs:
   call-terraform-ci-pipeline:
-    # Only run if it is a comment on a PR and its body is /run pipeline
-    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run pipeline' }}
     uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/common-terraform-module-ci.yml@v1.9.1
     secrets: inherit
+    # Only run if it is a comment on a PR and its body is /run pipeline
+    if: ${{ github.event.issue.pull_request && github.event.comment.body == '/run pipeline' }}
     with:
       craTarget: "examples/fscloud"
       craGoalIgnoreFile: "cra-tf-validate-ignore-goals.json"
