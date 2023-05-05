@@ -85,6 +85,7 @@ module "postgresql_db" {
   kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags            = var.resource_tags
   service_credential_names = var.service_credential_names
+  auto_scaling             = var.auto_scaling
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
@@ -142,4 +143,22 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
 resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"
+}
+
+##############################################################################
+# ICD postgresql read-only-replica
+##############################################################################
+
+module "read_only_replica_postgresql_db" {
+  count             = var.read_only_replicas_count
+  source            = "../.."
+  resource_group_id = module.resource_group.resource_group_id
+  name              = "${var.prefix}-read-only-replica-${count.index}"
+  region            = var.region
+  resource_tags     = var.resource_tags
+  pg_version        = var.pg_version
+  remote_leader_crn = module.postgresql_db.crn
+  member_memory_mb  = var.replica_member_memory_mb
+  member_disk_mb    = var.replica_member_disk_mb
+  member_cpu_count  = var.replica_member_cpu_count
 }

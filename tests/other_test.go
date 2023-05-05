@@ -8,6 +8,8 @@ import (
 )
 
 const restoredTerraformDir = "examples/backup"
+const pitrTerraformDir = "examples/pitr"
+const basicExampleTerraformDir = "examples/basic"
 
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
@@ -21,4 +23,45 @@ func TestRunRestoredDBExample(t *testing.T) {
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: pitrTerraformDir,
+		Prefix:       "pg-pitr",
+		TerraformVars: map[string]interface{}{
+			"pitr_id": permanentResources["postgresqlCrn"],
+			"region":  region,
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func testRunBasicExample(t *testing.T, version string) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       basicExampleTerraformDir,
+		Prefix:             "postgres",
+		BestRegionYAMLPath: regionSelectionPath,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+	versions := []string{"12", "13"} // Always test for version which are already not included in the complete and FSCloud tests.
+	for _, version := range versions {
+		t.Run(version, func(t *testing.T) { testRunBasicExample(t, version) })
+	}
 }
