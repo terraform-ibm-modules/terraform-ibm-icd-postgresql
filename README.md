@@ -55,7 +55,7 @@ You need the following permissions to run this module.
 
 - [ Restore from backup example](examples/backup)
 - [ Basic example](examples/basic)
-- [ Complete example with byok encryption, CBR rules and storing credentials in secrets manager](examples/complete)
+- [ Complete example with byok encryption, autoscaling, CBR rules, storing credentials in secrets manager and read-only replica](examples/complete)
 - [ Financial Services Cloud profile example](examples/fscloud)
 - [ Point in time recovery example (PITR)](examples/pitr)
 <!-- END EXAMPLES HOOK -->
