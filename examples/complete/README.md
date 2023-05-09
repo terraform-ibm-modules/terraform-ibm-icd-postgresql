@@ -1,4 +1,4 @@
-# Complete example with byok encryption, autoscaling, CBR rules, storing credentials in secrets manager and read-only replica
+# Complete example with BYOK encryption, autoscaling, CBR rules, VPE creation and read-only replica provisioning
 
 An end-to-end example that uses the module's default variable values. This example uses the IBM Cloud terraform provider to:
 
@@ -8,4 +8,5 @@ An end-to-end example that uses the module's default variable values. This examp
 - Backend encryption using generated Key Protect key.
 - Create a Sample VPC.
 - Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.
+- Create a VPE.
 - Create a read-only replica of the leader Postgresql database instance.

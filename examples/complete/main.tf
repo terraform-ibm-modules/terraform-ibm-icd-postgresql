@@ -24,15 +24,6 @@ module "key_protect_all_inclusive" {
   key_map                   = { "icd-pg" = ["${var.prefix}-pg"] }
 }
 
-# Create IAM Access Policy to allow Key protect to access Postgres instance
-resource "ibm_iam_authorization_policy" "policy" {
-  source_service_name         = "databases-for-postgresql"
-  source_resource_group_id    = module.resource_group.resource_group_id
-  target_service_name         = "kms"
-  target_resource_instance_id = module.key_protect_all_inclusive.key_protect_guid
-  roles                       = ["Reader"]
-}
-
 ##############################################################################
 # Get Cloud Account ID
 ##############################################################################
