@@ -11,10 +11,10 @@ import (
 )
 
 const defaultExampleTerraformDir = "examples/default"
-const autoscaleExampleTerraformDir = "examples/autoscale"
 const fsCloudTerraformDir = "examples/fscloud"
 const completeExampleTerraformDir = "examples/complete"
 const replicaExampleTerraformDir = "examples/replica"
+const autoscaleExampleTerraformDir = "examples/autoscale"
 const pitrTerraformDir = "examples/pitr"
 
 // Restricting due to limited availability of BYOK in certain regions
@@ -156,7 +156,6 @@ func TestMain(m *testing.M) {
 
 func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	t.Parallel()
-	t.Skip() // TODO once this issue gets resolved - https://github.ibm.com/GoldenEye/issues/issues/4513
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
