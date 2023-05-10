@@ -22,6 +22,12 @@ variable "resource_group" {
   default     = null
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
 variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"

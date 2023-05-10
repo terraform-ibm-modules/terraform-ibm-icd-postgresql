@@ -24,6 +24,7 @@ module "postgresql_db_pitr" {
   member_memory_mb  = var.member_memory_mb
   member_disk_mb    = var.member_disk_mb
   member_cpu_count  = var.member_cpu_count
+  pg_version        = var.pg_version
   pitr_id           = var.pitr_id
   pitr_time         = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time
 }
