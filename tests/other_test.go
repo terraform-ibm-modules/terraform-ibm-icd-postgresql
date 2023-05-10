@@ -18,6 +18,9 @@ func TestRunRestoredDBExample(t *testing.T) {
 		Testing:      t,
 		TerraformDir: restoredTerraformDir,
 		Prefix:       "pg-backup",
+		TerraformVars: map[string]interface{}{
+			"pg_version": "13",
+		},
 	})
 
 	output, err := options.RunTestConsistency()
@@ -33,24 +36,10 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		TerraformDir: pitrTerraformDir,
 		Prefix:       "pg-pitr",
 		TerraformVars: map[string]interface{}{
-			"pitr_id": permanentResources["postgresqlCrn"],
-			"region":  region,
+			"pitr_id":    permanentResources["postgresqlPITRCrn"],
+			"pg_version": permanentResources["postgresqlPITRVersion"],
+			"region":     region,
 		},
-	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func testRunBasicExample(t *testing.T, version string) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       basicExampleTerraformDir,
-		Prefix:             "postgres",
-		BestRegionYAMLPath: regionSelectionPath,
 	})
 
 	output, err := options.RunTestConsistency()
@@ -60,8 +49,18 @@ func testRunBasicExample(t *testing.T, version string) {
 
 func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
-	versions := []string{"12", "13"} // Always test for version which are already not included in the complete and FSCloud tests.
-	for _, version := range versions {
-		t.Run(version, func(t *testing.T) { testRunBasicExample(t, version) })
-	}
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       basicExampleTerraformDir,
+		Prefix:             "postgres",
+		BestRegionYAMLPath: regionSelectionPath,
+		TerraformVars: map[string]interface{}{
+			"pg_version": "12",
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }

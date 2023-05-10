@@ -2,10 +2,10 @@
 
 This is a profile for PostgreSQL that meets FS Cloud requirements.
 It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals with the following exception:
-- 3000225: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
+- rule-9b2d8054-bc93-44fd-901b-91f677287e84: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
   - This is ignored because the CBR locks this down and CRA does not check this
 
-## Note: If no Context Based Restriction(CBR) rules are not passed, you must configure Context Based Restrictions externally to be compliant.
+## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally to be compliant.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements

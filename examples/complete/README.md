@@ -8,5 +8,5 @@ An end-to-end example that uses the module's default variable values. This examp
 - Backend encryption using generated Key Protect key.
 - Create a Sample VPC.
 - Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.
-- Create a VPE.
+- Create a security group and a VPE for the postgres instance
 - Create a read-only replica of the leader Postgresql database instance.
