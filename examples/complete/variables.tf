@@ -73,7 +73,7 @@ variable "auto_scaling" {
       rate_units               = optional(string)
     })
   })
-  description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs."
   default = {
     cpu = {}
     disk = {

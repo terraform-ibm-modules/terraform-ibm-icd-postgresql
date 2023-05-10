@@ -1,11 +1,16 @@
-# Financial Services Cloud Profile
+# Profile for IBM Cloud Framework for Financial Services
 
-This is a profile for PostgreSQL that meets FS Cloud requirements.
-It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals with the following exception:
-- rule-9b2d8054-bc93-44fd-901b-91f677287e84: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
-  - This is ignored because the CBR locks this down and CRA does not check this
+This example for PostgreSQL meets the requirements of the IBM Cloud Framework for Financial Services.
 
-## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally to be compliant.
+The Terraform plan from this example was scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) for compliance with the IBM Cloud Framework for Financial Services profile that is specified by the IBM Security and Compliance Center.
+
+The scan passed for all applicable goals with one exception:
+
+> rule-beb7b289-706b-4dc0-b01d-b1d15d4331e3: Check whether Databases for MongoDB network access is restricted to a specific IP range.
+
+This rule is ignored because it is covered by the context-based restriction rule. CRA does not check the rule.
+
+:exclamation: **Important:** To be compliant with the IBM Cloud Framework for Financial Services profile, you much configure a list of IP addresses in the `allowlist` variable and set a context-based restriction (CBR) rule. If those settings are not configured in your Terraform logic, you must configure a CBR rule externally.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
