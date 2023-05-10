@@ -22,6 +22,12 @@ variable "resource_group" {
   default     = null
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance"
+  type        = string
+  default     = null
+}
+
 variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
@@ -54,7 +60,7 @@ variable "pitr_id" {
 variable "member_memory_mb" {
   type        = string
   description = "Memory allocation required for postgresql read-only replica database"
-  default     = "7680"
+  default     = "3072"
   validation {
     condition = alltrue([
       var.member_memory_mb >= 3072,
