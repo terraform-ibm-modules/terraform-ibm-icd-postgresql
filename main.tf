@@ -17,12 +17,12 @@ locals {
   ) : null
 
   # tflint-ignore: terraform_unused_declarations
-  validate_skip_iam_authorization_policy = var.kms_key_crn != null && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid. Alternatively, if opting to use default encryption") : true
+  validate_skip_iam_authorization_policy = var.kms_key_crn != null && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid.") : true
 }
 
 # Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  count                       = var.skip_iam_authorization_policy || var.kms_key_crn == null ? 0 : 1
   source_service_name         = "databases-for-postgresql"
   source_resource_group_id    = var.resource_group_id
   target_service_name         = local.kms_service
