@@ -6,6 +6,7 @@ module "postgresql_db" {
   skip_iam_authorization_policy = var.skip_iam_authorization_policy
   service_endpoints             = "private"
   pg_version                    = var.pg_version
+  kms_encryption_enabled        = true
   existing_kms_instance_guid    = var.existing_kms_instance_guid
   kms_key_crn                   = var.kms_key_crn
   backup_encryption_key_crn     = var.backup_encryption_key_crn

@@ -83,7 +83,6 @@ module "postgresql_db" {
   name                       = "${var.prefix}-postgres"
   region                     = var.region
   pg_version                 = var.pg_version
-  kms_encryption_enabled     = true
   kms_key_crn                = var.kms_key_crn
   existing_kms_instance_guid = var.existing_kms_instance_guid
   resource_tags              = var.resource_tags
