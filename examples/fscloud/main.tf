@@ -77,6 +77,7 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
+  depends_on                 = [ibm_iam_authorization_policy.policy]
   source                     = "../../profiles/fscloud"
   resource_group_id          = module.resource_group.resource_group_id
   name                       = "${var.prefix}-postgres"
