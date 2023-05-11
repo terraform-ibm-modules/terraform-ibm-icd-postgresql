@@ -73,6 +73,7 @@ module "postgresql_db" {
   region                   = var.region
   service_endpoints        = "private"
   pg_version               = var.pg_version
+  kms_encryption_enabled   = true
   kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   resource_tags            = var.resource_tags
   service_credential_names = var.service_credential_names
