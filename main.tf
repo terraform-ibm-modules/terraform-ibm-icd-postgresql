@@ -5,24 +5,31 @@
 ##############################################################################
 
 locals {
-  # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If 'backup_encryption_key_crn' is null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
-  # https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
-  kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+  # Validation
+  # tflint-ignore: terraform_unused_declarations
+  validate_pitr_vars = (var.pitr_id != null && var.pitr_time == null) || (var.pitr_time != null && var.pitr_id == null) ? tobool("To use Point-In-Time Recovery (PITR), values for both var.pitr_id and var.pitr_time need to be set. Otherwise, unset both of these.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = var.kms_encryption_enabled && var.kms_key_crn == null && var.backup_encryption_key_crn == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.kms_key_crn and/or var.backup_encryption_key_crn") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_backup_encryption_key = var.kms_encryption_enabled && can(regex(".*hs-crypto.*", local.backup_encryption_key_crn)) ? tobool("Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported. You must either pass a Key Protect CRN for the value of var.backup_encryption_key_crn, or don't pass any value for it to use the default encryption.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid.") : true
 
+  # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn'
+  backup_encryption_key_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.kms_key_crn
+  # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
+  # Determine what KMS service is being used for database encryption
   kms_service = var.kms_key_crn != null ? (
     can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
       can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
     )
   ) : null
-
-  # tflint-ignore: terraform_unused_declarations
-  validate_skip_iam_authorization_policy = var.kms_key_crn != null && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid.") : true
 }
 
 # Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.skip_iam_authorization_policy || var.kms_key_crn == null ? 0 : 1
+  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
   source_service_name         = "databases-for-postgresql"
   source_resource_group_id    = var.resource_group_id
   target_service_name         = local.kms_service
@@ -47,18 +54,11 @@ resource "ibm_database" "postgresql_db" {
   configuration     = var.configuration != null ? jsonencode(var.configuration) : null
 
   key_protect_key           = var.kms_key_crn
-  backup_encryption_key_crn = local.kp_backup_crn
+  backup_encryption_key_crn = local.backup_encryption_key_crn
 
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
 
-  dynamic "allowlist" {
-    for_each = (var.allowlist != null ? var.allowlist : [])
-    content {
-      address     = (allowlist.value.address != "" ? allowlist.value.address : null)
-      description = (allowlist.value.description != "" ? allowlist.value.description : null)
-    }
-  }
   group {
     group_id = "member" #Only member type is allowed for postgresql
     memory {

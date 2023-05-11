@@ -1,23 +1,13 @@
 {
   "path": ".",
   "variables": {
-    "allowlist": {
-      "name": "allowlist",
-      "type": "list(object({\n    address     = optional(string)\n    description = optional(string)\n  }))",
-      "description": "Set of IP address and description to allowlist in database",
-      "default": [],
-      "pos": {
-        "filename": "variables.tf",
-        "line": 155
-      }
-    },
     "auto_scaling": {
       "name": "auto_scaling",
       "type": "object({\n    cpu = object({\n      rate_increase_percent       = optional(number, 10)\n      rate_limit_count_per_member = optional(number, 20)\n      rate_period_seconds         = optional(number, 900)\n      rate_units                  = optional(string, \"count\")\n    })\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
-      "description": "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once.",
+      "description": "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.",
       "pos": {
         "filename": "variables.tf",
-        "line": 182
+        "line": 131
       }
     },
     "backup_crn": {
@@ -29,16 +19,16 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 74
+        "line": 234
       }
     },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "(Optional) The CRN of a Key Protect Key to use for encrypting backups. If left null, the value passed for the 'kms_key_crn' variable will be used. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported.",
+      "description": "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported.",
       "pos": {
         "filename": "variables.tf",
-        "line": 221
+        "line": 188
       }
     },
     "cbr_rules": {
@@ -55,7 +45,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 232
+        "line": 214
       }
     },
     "configuration": {
@@ -67,33 +57,46 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 164
+        "line": 109
       }
     },
     "existing_kms_instance_guid": {
       "name": "existing_kms_instance_guid",
       "type": "string",
-      "description": "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Only required if passing a value for var.kms_key_crn, and setting var.skip_iam_authorization_policy to false.",
+      "description": "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Only required if var.kms_encryption_enabled is 'true', var.skip_iam_authorization_policy is 'false', and passing a value for var.kms_key_crn and/or var.backup_encryption_key_crn.",
       "source": [
         "ibm_iam_authorization_policy.kms_policy.target_resource_instance_id"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 21
+        "line": 204
       },
       "immutable": true,
       "computed": true
     },
+    "kms_encryption_enabled": {
+      "name": "kms_encryption_enabled",
+      "type": "bool",
+      "description": "Set this to true to control the encryption keys used to encrypt the data that you store in IBM Cloud® Databases. If set to false, the data is encrypted by using randomly generated keys. For more info on Key Protect integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect. For more info on HPCS integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs",
+      "default": false,
+      "source": [
+        "ibm_iam_authorization_policy.kms_policy.count"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 168
+      }
+    },
     "kms_key_crn": {
       "name": "kms_key_crn",
       "type": "string",
-      "description": "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect\u0026interface=ui#key-byok for current list of supported regions for BYOK. NOTE: If passing a value for this variable, ensure that var.skip_iam_authorization_policy is set to false, or else ensure an appropriate auth policy exists in the account already.",
+      "description": "The root key CRN of a Key Management Services like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. Only used if var.kms_encryption_enabled is set to true.",
       "source": [
         "ibm_database.postgresql_db.key_protect_key"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 215
+        "line": 174
       },
       "immutable": true
     },
@@ -104,7 +107,7 @@
       "default": "3",
       "pos": {
         "filename": "variables.tf",
-        "line": 100
+        "line": 61
       }
     },
     "member_disk_mb": {
@@ -114,7 +117,7 @@
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 87
+        "line": 55
       }
     },
     "member_memory_mb": {
@@ -124,7 +127,7 @@
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
-        "line": 61
+        "line": 49
       }
     },
     "members": {
@@ -134,7 +137,7 @@
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 80
       }
     },
     "name": {
@@ -159,7 +162,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 39
+        "line": 27
       },
       "immutable": true,
       "computed": true
@@ -167,25 +170,25 @@
     "pitr_id": {
       "name": "pitr_id",
       "type": "string",
-      "description": "(Optional) The ID of the postgresql instance that you want to recover back to. Here ID of the postgresql instance is expected to be up and in running state.",
+      "description": "(Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state.",
       "source": [
         "ibm_database.postgresql_db.point_in_time_recovery_deployment_id"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 252
+        "line": 251
       }
     },
     "pitr_time": {
       "name": "pitr_time",
       "type": "string",
-      "description": "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp \u003cdeployment name or CRN\u003e)",
+      "description": "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp \u003cdeployment name or CRN\u003e). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr",
       "source": [
         "ibm_database.postgresql_db.point_in_time_recovery_time"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 258
+        "line": 257
       }
     },
     "plan_validation": {
@@ -212,7 +215,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 55
+        "line": 43
       },
       "cloud_data_type": "region"
     },
@@ -225,7 +228,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 33
+        "line": 21
       }
     },
     "resource_group_id": {
@@ -251,7 +254,7 @@
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
-      "description": "Optional list of tags to be added to created resources",
+      "description": "Optional list of tags to be added to the newly provisioned PostgreSQL instance and the associated service credentials.",
       "default": [],
       "source": [
         "ibm_database.postgresql_db.tags",
@@ -259,7 +262,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 149
+        "line": 103
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -280,7 +283,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 113
+        "line": 67
       }
     },
     "service_endpoints": {
@@ -293,21 +296,18 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 139
+        "line": 93
       },
       "options": "public, private, public-and-private"
     },
     "skip_iam_authorization_policy": {
       "name": "skip_iam_authorization_policy",
       "type": "bool",
-      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance in var.existing_kms_instance_guid. NOTE: This variable is ignored if var.kms_key_crn is set to null.",
+      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to false.",
       "default": false,
-      "source": [
-        "ibm_iam_authorization_policy.kms_policy.count"
-      ],
       "pos": {
         "filename": "variables.tf",
-        "line": 27
+        "line": 198
       }
     }
   },
@@ -317,7 +317,7 @@
       "description": "CBR rule ids created to restrict Postgresql",
       "pos": {
         "filename": "outputs.tf",
-        "line": 38
+        "line": 37
       }
     },
     "crn": {
@@ -416,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 34
+        "line": 41
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -424,7 +424,7 @@
       "type": "ibm_iam_authorization_policy",
       "name": "kms_policy",
       "attributes": {
-        "count": "skip_iam_authorization_policy",
+        "count": "kms_encryption_enabled",
         "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
@@ -433,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 24
+        "line": 31
       }
     },
     "ibm_resource_key.service_credentials": {

@@ -1,11 +1,14 @@
-# Financial Services Cloud Profile
+# Profile for IBM Cloud Framework for Financial Services
 
-This is a profile for PostgreSQL that meets FS Cloud requirements.
-It has been scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) and meets all applicable goals with the following exception:
-- rule-9b2d8054-bc93-44fd-901b-91f677287e84: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
-  - This is ignored because the CBR locks this down and CRA does not check this
+This code is a version of the [parent root module](../../) that includes a default configuration that complies with the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about). See the [Example for IBM Cloud Framework for Financial Services](/examples/fscloud/) for logic that uses this module.
 
-## Note: If no Context Based Restriction(CBR) rules are passed, you must configure Context Based Restrictions externally to be compliant.
+The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) for compliance with the IBM Cloud Framework for Financial Services profile that is specified by the IBM Security and Compliance Center. The scan passed for all applicable goals with one exception:
+
+> rule-beb7b289-706b-4dc0-b01d-b1d15d4331e3: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
+
+The rule is ignored because it is covered by the context-based restriction rule. CRA does not check the rule.
+
+The IBM Cloud Framework for Financial Services mandates the application of an inbound network-based allowlist in front of the ICD PostgreSQL instance. You can comply with this requirement by using the `cbr_rules` variable in the module, which can be used to create a narrow context-based restriction rule that is scoped to the ICD PostgreSQL instance.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
