@@ -19,15 +19,15 @@ variable "plan_validation" {
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Only required if skip_iam_authorization_policy is false"
+  description = "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn is coming from. Only required if passing a value for var.kms_key_crn, and setting var.skip_iam_authorization_policy to false."
   type        = string
   default     = null
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given Resource group to read the encryption key from the Hyper Protect or Key Protect instance in `existing_kms_instance_guid`."
-  default     = true
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance in var.existing_kms_instance_guid. NOTE: This variable is ignored if var.kms_key_crn is set to null."
+  default     = false
 }
 
 variable "remote_leader_crn" {
@@ -214,7 +214,7 @@ variable "auto_scaling" {
 
 variable "kms_key_crn" {
   type        = string
-  description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK"
+  description = "(Optional) The root key CRN of a Key Management Service like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. If `null`, database is encrypted by using randomly generated keys. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok for current list of supported regions for BYOK. NOTE: If passing a value for this variable, ensure that var.skip_iam_authorization_policy is set to false, or else ensure an appropriate auth policy exists in the account already."
   default     = null
 }
 

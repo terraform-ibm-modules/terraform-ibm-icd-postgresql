@@ -17,7 +17,7 @@ locals {
   ) : null
 
   # tflint-ignore: terraform_unused_declarations
-  validate_skip_iam_authorization_policy = var.skip_iam_authorization_policy == false && (var.kms_key_crn == null || var.existing_kms_instance_guid == null) ? tobool("When var.skip_iam_authorization_policy is set to false, a value must be passed for var.existing_kms_instance_guid and var.kms_key_crn. Alternatively, if opting to use default encryption, set var.skip_iam_authorization_policy to true to skip creating any KMS auth policy creation.") : true
+  validate_skip_iam_authorization_policy = var.kms_key_crn != null && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid. Alternatively, if opting to use default encryption") : true
 }
 
 # Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
