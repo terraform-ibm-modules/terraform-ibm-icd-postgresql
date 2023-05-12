@@ -5,9 +5,6 @@ An end-to-end example that uses the [Profile for IBM Cloud Framework for Financi
 The example uses the IBM Cloud Terraform provider to create the following infrastructure:
 
 - A resource group, if one is not passed in.
-- A Key Protect instance with a root key.
-- Backend encryption that uses the generated Key Protect key.
-- An IAM authorization between the PostgreSQL database resource group and the Key Protect instance for the `backup_encryption_key_crn`. This is because backup encryption keys are not yet supported by Hyper Protect Crypto Services.
 - An IAM authorization between the PostgreSQL database resource group and the Hyper Protect Crypto Services permanent instance.
 - An IBM Cloud Databases PostgreSQL database instance and credentials that are encrypted with the Hyper Protect Crypto Services resources that are passed in.
 - A sample virtual private cloud (VPC).

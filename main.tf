@@ -1,22 +1,20 @@
 ##############################################################################
-# ICD Postgresql modules
-#
-# Creates ICD Postgresql instance
+# ICD PostgreSQL module
 ##############################################################################
 
 locals {
-  # Validation
+  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
   # tflint-ignore: terraform_unused_declarations
   validate_pitr_vars = (var.pitr_id != null && var.pitr_time == null) || (var.pitr_time != null && var.pitr_id == null) ? tobool("To use Point-In-Time Recovery (PITR), values for both var.pitr_id and var.pitr_time need to be set. Otherwise, unset both of these.") : true
   # tflint-ignore: terraform_unused_declarations
   validate_kms_vars = var.kms_encryption_enabled && var.kms_key_crn == null && var.backup_encryption_key_crn == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.kms_key_crn and/or var.backup_encryption_key_crn") : true
   # tflint-ignore: terraform_unused_declarations
-  validate_backup_encryption_key = var.kms_encryption_enabled && can(regex(".*hs-crypto.*", local.backup_encryption_key_crn)) ? tobool("Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported. You must either pass a Key Protect CRN for the value of var.backup_encryption_key_crn, or don't pass any value for it to use the default encryption.") : true
-  # tflint-ignore: terraform_unused_declarations
   validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_key_crn is not null, a value must be passed for var.existing_kms_instance_guid.") : true
 
-  # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn'
-  backup_encryption_key_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.kms_key_crn
+  # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn'. If this is a HPCS key (which is not currently supported for backup encryption), default to 'null' meaning encryption is done using randomly generated keys
+  # More info https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs
+  backup_encryption_key_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+
   # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
   # Determine what KMS service is being used for database encryption
@@ -27,7 +25,7 @@ locals {
   ) : null
 }
 
-# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
+# Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
   count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
   source_service_name         = "databases-for-postgresql"
@@ -60,7 +58,7 @@ resource "ibm_database" "postgresql_db" {
   point_in_time_recovery_time          = var.pitr_time
 
   group {
-    group_id = "member" #Only member type is allowed for postgresql
+    group_id = "member" # Only member type is allowed for postgresql
     memory {
       allocation_mb = var.member_memory_mb
     }

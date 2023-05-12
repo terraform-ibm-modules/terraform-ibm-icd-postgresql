@@ -101,7 +101,7 @@ variable "read_only_replicas_count" {
 }
 
 variable "replica_member_memory_mb" {
-  type        = string
+  type        = number
   description = "Memory allocation required for postgresql read-only replica database"
   default     = "3072"
   validation {

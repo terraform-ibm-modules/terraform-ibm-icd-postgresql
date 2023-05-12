@@ -10,17 +10,8 @@ import (
 	"testing"
 )
 
-const fsCloudTerraformDir = "examples/fscloud"
-const completeExampleTerraformDir = "examples/complete"
-
-// Restricting due to limited availability of BYOK in certain regions
-const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
-
-// Allow the tests to create a unique resource group for every test to ensure tests do not clash. This is due to the fact that the auth policy created by this module has to be scoped to the resource group and hence would clash if tests used same resource group.
-//const resourceGroup = "geretain-test-postgres"
-
-// For FSCloud test restricting region as Hyper Protect Crypto Service permanent instance deployed in 'us-south'
-const region = "us-south"
+// Use existing resource group
+const resourceGroup = "geretain-test-postgres"
 
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
@@ -41,17 +32,26 @@ func TestMain(m *testing.M) {
 
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
-		TerraformDir: fsCloudTerraformDir,
-		Prefix:       "pg-compliant",
+		TerraformDir: "examples/fscloud",
+		Prefix:       "postgres-fscloud",
+		/*
+		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
+		 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
+		 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
+		 since this module scopes auth policies by resource group.
+		*/
+		//ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"region":                     region,
+			"region":                     "us-south", // For FSCloud locking into us-south since that is where the HPCS permanent instance is
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
-			"pg_version":                 "14", // Always lock to the latest supported Postgres version
+			"pg_version":                 "14", // Always lock this test into the latest supported Postgres version
 		},
 	})
+
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
@@ -62,9 +62,10 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
-		TerraformDir:       completeExampleTerraformDir,
+		TerraformDir:       "examples/complete",
 		Prefix:             "postgres-upg",
-		BestRegionYAMLPath: regionSelectionPath,
+		BestRegionYAMLPath: "../common-dev-assets/common-go-assets/icd-region-prefs.yaml", // Restricting due to limited availability of BYOK in certain regions
+		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "11", // Always lock to the lowest supported Postgres version
 		},

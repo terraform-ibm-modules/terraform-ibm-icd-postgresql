@@ -4,28 +4,28 @@
 
 variable "resource_group_id" {
   type        = string
-  description = "The resource group ID where the postgresql will be created"
+  description = "The resource group ID where the PostgreSQL instance will be created."
 }
 
 variable "name" {
   type        = string
-  description = "Name of the Postgresql instance"
+  description = "The name to give the Postgresql instance."
 }
 
 variable "plan_validation" {
   type        = bool
-  description = "Enable or disable validating the database parameters for postgres during the plan phase"
+  description = "Enable or disable validating the database parameters for PostgreSQL during the plan phase."
   default     = true
 }
 
 variable "remote_leader_crn" {
   type        = string
-  description = "The CRN of the leader database to make the replica(read-only) deployment."
+  description = "A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas"
   default     = null
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance"
+  description = "Version of the PostgreSQL instance to provision"
   type        = string
   default     = null
   validation {
@@ -36,32 +36,35 @@ variable "pg_version" {
       var.pg_version == "12",
       var.pg_version == "11"
     ])
-    error_message = "Version must be 11 or 12 or 13 or 14. If null, the current default ICD postgresql version is used"
+    error_message = "Version must be 11 or 12 or 13 or 14. If no value passed, the current ICD preferred version is used."
   }
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used."
+  description = "The region where you want to deploy your instance."
   type        = string
   default     = "us-south"
 }
 
 variable "member_memory_mb" {
-  type        = string
-  description = "Memory allocation required for postgresql database"
+  type        = number
+  description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
   default     = "1024"
+  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "member_disk_mb" {
-  type        = string
-  description = "Disk allocation required for postgresql database"
+  type        = number
+  description = "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
   default     = "5120"
+  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "member_cpu_count" {
-  type        = string
-  description = "CPU allocation required for postgresql database"
-  default     = "3"
+  type        = number
+  description = "Allocated dedicated CPU per-member. For shared CPU, set to 0."
+  default     = "0"
+  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "service_credential_names" {
@@ -75,24 +78,16 @@ variable "service_credential_names" {
   }
 }
 
-# actual scaling of the resources could take some time to apply
-# Members can be scaled up but not down
 variable "members" {
   type        = number
-  description = "Number of members"
+  description = "Allocated number of members. Members can be scaled up but not down."
   default     = 3
-  validation {
-    condition = alltrue([
-      var.members >= 3,
-      var.members <= 20
-    ])
-    error_message = "member group members must be >= 3 and <= 20 in increments of 1"
-  }
+  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "service_endpoints" {
   type        = string
-  description = "Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private'"
+  description = "Specify whether you want to enable the public, private, or both service endpoints. Supported values are 'public', 'private', or 'public-and-private'."
   default     = "private"
   validation {
     condition     = contains(["public", "private", "public-and-private"], var.service_endpoints)
@@ -102,12 +97,12 @@ variable "service_endpoints" {
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to the newly provisioned PostgreSQL instance and the associated service credentials."
+  description = "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials."
   default     = []
 }
 
 variable "configuration" {
-  description = "(Optional, Json String) Database Configuration in JSON format."
+  description = "Database configuration"
   type = object({
     max_connections            = optional(number)
     max_prepared_transactions  = optional(number)
@@ -179,25 +174,25 @@ variable "kms_key_crn" {
     condition = anytrue([
       var.kms_key_crn == null,
       can(regex(".*kms.*", var.kms_key_crn)),
-      can(regex(".*hs-crypto.*", var.kms_key_crn))
+      can(regex(".*hs-crypto.*", var.kms_key_crn)),
     ])
-    error_message = "Value must be the root key CRN of Key Management Service Key Protect or Hyper Protect Crypto Service (HPCS)"
+    error_message = "Value must be the root key CRN from either the Key Protect or Hyper Protect Crypto Service (HPCS)"
   }
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported."
+  description = "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported, so if no value is passed here, but a HPCS value is passed for var.kms_key_crn, databases backup encryption will use the default encryption keys."
   default     = null
   validation {
     condition     = var.backup_encryption_key_crn == null ? true : length(regexall("^crn:v1:bluemix:public:kms:(us-south|us-east|eu-de):a/[[:xdigit:]]{32}:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}:key:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$", var.backup_encryption_key_crn)) > 0
-    error_message = "Valid values for backup_encryption_key_crn is null or Key Protect key CRN from us-south, us-east or eu-de"
+    error_message = "Valid values for backup_encryption_key_crn is null or a Key Protect key CRN from us-south, us-east or eu-de"
   }
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to false."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to 'false'."
   default     = false
 }
 

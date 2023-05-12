@@ -12,14 +12,20 @@
 
 > WARNING: **This module does not support major version upgrade or updates to encryption and backup encryption keys**: To upgrade version create a new postgresql instance with the updated version and follow the [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli)
 
-> NOTE: The database encryption for backups supports only Key Protect keys, not the Hyper Protect Crypto Key at the moment. More info: https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
+> NOTE: Currently the database encryption for backups supports only Key Protect keys, not Hyper Protect Crypto keys. If enabling KMS encryption and no value is passed for 'backup_encryption_key_crn', the value of 'kms_key_crn' is used. If this value is a HPCS key, the module will default the backup encryption to use randomly generated keys due to this current limitation. More info: https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs
 
 ```hcl
+provider "ibm" {
+  ibmcloud_api_key = "XXXXXXXXXX"
+  region           = "us-south"
+}
+
 module "postgresql_db" {
   # Replace "main" with a GIT release version to lock into a specific release
   source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql?ref=main"
   resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   name              = "my-instance"
+  region            = "us-south"
 }
 ```
 
@@ -31,26 +37,12 @@ You need the following permissions to run this module.
     - **Databases for PostgreSQL** service
         - `Editor` role access
 
-## Read-only Replica considerations
-
-- **There are additional considerations when setting the variables in the read-only-replica example.** Refer [configuring read-only replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas). For load balancing multiple read only replicas are suggested/required.
-
-| Variable | Description | Type | Default |
-|------|---------|---------|:--------:|
-| <a name="input_pg_version"></a> [pg_version](#input\_pg\_version)| A read-only replica must be the same major version as its leader.|`string` | `null` |
-|  <a name="input_region"></a> [region](#input\_region)| The read-only replica can exist in the same region as the source formation or in different one, enabling your data to be replicated across regions. | `string` | `"us-south"` |
-| <a name="input_read_only_replicas"></a> [read_only_replicas](#input\_read\_only\_replicas)| There is a limit of five read-only replicas per leader.|`number` | `1` |
-| <a name="input_member_memory_mb"></a> [member\_memory\_mb](#input\_member\_memory\_mb) | The minimum RAM size of a read-only replica is 3 GB |`string` | `"3072"` |
-| <a name="input_member_disk_mb"></a> [member\_disk\_mb](#input\_member\_disk\_mb)  | The minimum disk size of a read-only replica is 15 GB |`string` | `"15360"` |
-| <a name="input_member_cpu_count"></a> [member\_cpu\_count](#input\_member\_cpu\_count) | The minimum CPU allocation required for read-only replica is 9 | `string` | `"9"` |
-| <a name="input_members"></a> [members](#input\_members)| A read-only replica is a deployment with single data member and does not have any internal high availability.|`number` | `1` |
-
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
 - [ Restore from backup example](examples/backup)
 - [ Basic example](examples/basic)
-- [ Complete example with BYOK encryption, autoscaling, CBR rules, VPE creation and read-only replica provisioning](examples/complete)
+- [ Complete example with BYOK encryption, autoscaling, CBR rules, VPE creation, and read-only replica provisioning](examples/complete)
 - [ Financial Services Cloud profile example](examples/fscloud)
 - [ Point in time recovery example (PITR)](examples/pitr)
 <!-- END EXAMPLES HOOK -->
@@ -82,28 +74,28 @@ You need the following permissions to run this module.
 |------|-------------|------|---------|:--------:|
 | <a name="input_auto_scaling"></a> [auto\_scaling](#input\_auto\_scaling) | Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs. | <pre>object({<br>    cpu = object({<br>      rate_increase_percent       = optional(number, 10)<br>      rate_limit_count_per_member = optional(number, 20)<br>      rate_period_seconds         = optional(number, 900)<br>      rate_units                  = optional(string, "count")<br>    })<br>    disk = object({<br>      capacity_enabled             = optional(bool, false)<br>      free_space_less_than_percent = optional(number, 10)<br>      io_above_percent             = optional(number, 90)<br>      io_enabled                   = optional(bool, false)<br>      io_over_period               = optional(string, "15m")<br>      rate_increase_percent        = optional(number, 10)<br>      rate_limit_mb_per_member     = optional(number, 3670016)<br>      rate_period_seconds          = optional(number, 900)<br>      rate_units                   = optional(string, "mb")<br>    })<br>    memory = object({<br>      io_above_percent         = optional(number, 90)<br>      io_enabled               = optional(bool, false)<br>      io_over_period           = optional(string, "15m")<br>      rate_increase_percent    = optional(number, 10)<br>      rate_limit_mb_per_member = optional(number, 114688)<br>      rate_period_seconds      = optional(number, 900)<br>      rate_units               = optional(string, "mb")<br>    })<br>  })</pre> | `null` | no |
 | <a name="input_backup_crn"></a> [backup\_crn](#input\_backup\_crn) | The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty. | `string` | `null` | no |
-| <a name="input_backup_encryption_key_crn"></a> [backup\_encryption\_key\_crn](#input\_backup\_encryption\_key\_crn) | The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms\_encryption\_enabled is set to true. If no value passed, the value passed for the 'kms\_key\_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported. | `string` | `null` | no |
+| <a name="input_backup_encryption_key_crn"></a> [backup\_encryption\_key\_crn](#input\_backup\_encryption\_key\_crn) | The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms\_encryption\_enabled is set to true. If no value passed, the value passed for the 'kms\_key\_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported, so if no value is passed here, but a HPCS value is passed for var.kms\_key\_crn, databases backup encryption will use the default encryption keys. | `string` | `null` | no |
 | <a name="input_cbr_rules"></a> [cbr\_rules](#input\_cbr\_rules) | (Optional, list) List of CBR rules to create | <pre>list(object({<br>    description = string<br>    account_id  = string<br>    rule_contexts = list(object({<br>      attributes = optional(list(object({<br>        name  = string<br>        value = string<br>    }))) }))<br>    enforcement_mode = string<br>  }))</pre> | `[]` | no |
-| <a name="input_configuration"></a> [configuration](#input\_configuration) | (Optional, Json String) Database Configuration in JSON format. | <pre>object({<br>    max_connections            = optional(number)<br>    max_prepared_transactions  = optional(number)<br>    deadlock_timeout           = optional(number)<br>    effective_io_concurrency   = optional(number)<br>    max_replication_slots      = optional(number)<br>    max_wal_senders            = optional(number)<br>    shared_buffers             = optional(number)<br>    synchronous_commit         = optional(string)<br>    wal_level                  = optional(string)<br>    archive_timeout            = optional(number)<br>    log_min_duration_statement = optional(number)<br>  })</pre> | `null` | no |
+| <a name="input_configuration"></a> [configuration](#input\_configuration) | Database configuration | <pre>object({<br>    max_connections            = optional(number)<br>    max_prepared_transactions  = optional(number)<br>    deadlock_timeout           = optional(number)<br>    effective_io_concurrency   = optional(number)<br>    max_replication_slots      = optional(number)<br>    max_wal_senders            = optional(number)<br>    shared_buffers             = optional(number)<br>    synchronous_commit         = optional(string)<br>    wal_level                  = optional(string)<br>    archive_timeout            = optional(number)<br>    log_min_duration_statement = optional(number)<br>  })</pre> | `null` | no |
 | <a name="input_existing_kms_instance_guid"></a> [existing\_kms\_instance\_guid](#input\_existing\_kms\_instance\_guid) | The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms\_key\_crn and var.backup\_encryption\_key\_crn is coming from. Only required if var.kms\_encryption\_enabled is 'true', var.skip\_iam\_authorization\_policy is 'false', and passing a value for var.kms\_key\_crn and/or var.backup\_encryption\_key\_crn. | `string` | `null` | no |
 | <a name="input_kms_encryption_enabled"></a> [kms\_encryption\_enabled](#input\_kms\_encryption\_enabled) | Set this to true to control the encryption keys used to encrypt the data that you store in IBM Cloud® Databases. If set to false, the data is encrypted by using randomly generated keys. For more info on Key Protect integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect. For more info on HPCS integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs | `bool` | `false` | no |
 | <a name="input_kms_key_crn"></a> [kms\_key\_crn](#input\_kms\_key\_crn) | The root key CRN of a Key Management Services like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. Only used if var.kms\_encryption\_enabled is set to true. | `string` | `null` | no |
-| <a name="input_member_cpu_count"></a> [member\_cpu\_count](#input\_member\_cpu\_count) | CPU allocation required for postgresql database | `string` | `"3"` | no |
-| <a name="input_member_disk_mb"></a> [member\_disk\_mb](#input\_member\_disk\_mb) | Disk allocation required for postgresql database | `string` | `"5120"` | no |
-| <a name="input_member_memory_mb"></a> [member\_memory\_mb](#input\_member\_memory\_mb) | Memory allocation required for postgresql database | `string` | `"1024"` | no |
-| <a name="input_members"></a> [members](#input\_members) | Number of members | `number` | `3` | no |
-| <a name="input_name"></a> [name](#input\_name) | Name of the Postgresql instance | `string` | n/a | yes |
-| <a name="input_pg_version"></a> [pg\_version](#input\_pg\_version) | Version of the postgresql instance | `string` | `null` | no |
+| <a name="input_member_cpu_count"></a> [member\_cpu\_count](#input\_member\_cpu\_count) | Allocated dedicated CPU per-member. For shared CPU, set to 0. | `number` | `"0"` | no |
+| <a name="input_member_disk_mb"></a> [member\_disk\_mb](#input\_member\_disk\_mb) | Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling | `number` | `"5120"` | no |
+| <a name="input_member_memory_mb"></a> [member\_memory\_mb](#input\_member\_memory\_mb) | Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling | `number` | `"1024"` | no |
+| <a name="input_members"></a> [members](#input\_members) | Allocated number of members. Members can be scaled up but not down. | `number` | `3` | no |
+| <a name="input_name"></a> [name](#input\_name) | The name to give the Postgresql instance. | `string` | n/a | yes |
+| <a name="input_pg_version"></a> [pg\_version](#input\_pg\_version) | Version of the PostgreSQL instance to provision | `string` | `null` | no |
 | <a name="input_pitr_id"></a> [pitr\_id](#input\_pitr\_id) | (Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state. | `string` | `null` | no |
 | <a name="input_pitr_time"></a> [pitr\_time](#input\_pitr\_time) | (Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr | `string` | `null` | no |
-| <a name="input_plan_validation"></a> [plan\_validation](#input\_plan\_validation) | Enable or disable validating the database parameters for postgres during the plan phase | `bool` | `true` | no |
-| <a name="input_region"></a> [region](#input\_region) | The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used. | `string` | `"us-south"` | no |
-| <a name="input_remote_leader_crn"></a> [remote\_leader\_crn](#input\_remote\_leader\_crn) | The CRN of the leader database to make the replica(read-only) deployment. | `string` | `null` | no |
-| <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the postgresql will be created | `string` | n/a | yes |
-| <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to the newly provisioned PostgreSQL instance and the associated service credentials. | `list(string)` | `[]` | no |
+| <a name="input_plan_validation"></a> [plan\_validation](#input\_plan\_validation) | Enable or disable validating the database parameters for PostgreSQL during the plan phase. | `bool` | `true` | no |
+| <a name="input_region"></a> [region](#input\_region) | The region where you want to deploy your instance. | `string` | `"us-south"` | no |
+| <a name="input_remote_leader_crn"></a> [remote\_leader\_crn](#input\_remote\_leader\_crn) | A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas | `string` | `null` | no |
+| <a name="input_resource_group_id"></a> [resource\_group\_id](#input\_resource\_group\_id) | The resource group ID where the PostgreSQL instance will be created. | `string` | n/a | yes |
+| <a name="input_resource_tags"></a> [resource\_tags](#input\_resource\_tags) | Optional list of tags to be added to the PostgreSQL instance and the associated service credentials. | `list(string)` | `[]` | no |
 | <a name="input_service_credential_names"></a> [service\_credential\_names](#input\_service\_credential\_names) | Map of name, role for service credentials that you want to create for the database | `map(string)` | `{}` | no |
-| <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private' | `string` | `"private"` | no |
-| <a name="input_skip_iam_authorization_policy"></a> [skip\_iam\_authorization\_policy](#input\_skip\_iam\_authorization\_policy) | Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing\_kms\_instance\_guid. If set to 'false', a value must be passed for var.existing\_kms\_instance\_guid. No policy is created if var.kms\_encryption\_enabled is set to false. | `bool` | `false` | no |
+| <a name="input_service_endpoints"></a> [service\_endpoints](#input\_service\_endpoints) | Specify whether you want to enable the public, private, or both service endpoints. Supported values are 'public', 'private', or 'public-and-private'. | `string` | `"private"` | no |
+| <a name="input_skip_iam_authorization_policy"></a> [skip\_iam\_authorization\_policy](#input\_skip\_iam\_authorization\_policy) | Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing\_kms\_instance\_guid. If set to 'false', a value must be passed for var.existing\_kms\_instance\_guid. No policy is created if var.kms\_encryption\_enabled is set to 'false'. | `bool` | `false` | no |
 
 ## Outputs
 

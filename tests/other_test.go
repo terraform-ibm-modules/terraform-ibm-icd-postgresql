@@ -7,17 +7,16 @@ import (
 	"testing"
 )
 
-const restoredTerraformDir = "examples/backup"
-const pitrTerraformDir = "examples/pitr"
 const basicExampleTerraformDir = "examples/basic"
 
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: restoredTerraformDir,
-		Prefix:       "pg-backup",
+		Testing:       t,
+		TerraformDir:  "examples/backup",
+		Prefix:        "pg-backup",
+		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "13",
 		},
@@ -32,9 +31,10 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: pitrTerraformDir,
-		Prefix:       "pg-pitr",
+		Testing:       t,
+		TerraformDir:  "examples/pitr",
+		Prefix:        "pg-pitr",
+		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
 			"pg_version": permanentResources["postgresqlPITRVersion"],
@@ -51,10 +51,10 @@ func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       basicExampleTerraformDir,
-		Prefix:             "postgres",
-		BestRegionYAMLPath: regionSelectionPath,
+		Testing:       t,
+		TerraformDir:  "examples/basic",
+		Prefix:        "postgres",
+		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12",
 		},

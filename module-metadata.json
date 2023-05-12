@@ -7,7 +7,7 @@
       "description": "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.",
       "pos": {
         "filename": "variables.tf",
-        "line": 131
+        "line": 126
       }
     },
     "backup_crn": {
@@ -19,16 +19,16 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 234
+        "line": 229
       }
     },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported.",
+      "description": "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported, so if no value is passed here, but a HPCS value is passed for var.kms_key_crn, databases backup encryption will use the default encryption keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 188
+        "line": 183
       }
     },
     "cbr_rules": {
@@ -45,19 +45,19 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 214
+        "line": 209
       }
     },
     "configuration": {
       "name": "configuration",
       "type": "object({\n    max_connections            = optional(number)\n    max_prepared_transactions  = optional(number)\n    deadlock_timeout           = optional(number)\n    effective_io_concurrency   = optional(number)\n    max_replication_slots      = optional(number)\n    max_wal_senders            = optional(number)\n    shared_buffers             = optional(number)\n    synchronous_commit         = optional(string)\n    wal_level                  = optional(string)\n    archive_timeout            = optional(number)\n    log_min_duration_statement = optional(number)\n  })",
-      "description": "(Optional, Json String) Database Configuration in JSON format.",
+      "description": "Database configuration",
       "source": [
         "ibm_database.postgresql_db.configuration"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 109
+        "line": 104
       }
     },
     "existing_kms_instance_guid": {
@@ -69,7 +69,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 204
+        "line": 199
       },
       "immutable": true,
       "computed": true
@@ -84,7 +84,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 168
+        "line": 163
       }
     },
     "kms_key_crn": {
@@ -96,34 +96,34 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 174
+        "line": 169
       },
       "immutable": true
     },
     "member_cpu_count": {
       "name": "member_cpu_count",
-      "type": "string",
-      "description": "CPU allocation required for postgresql database",
-      "default": "3",
+      "type": "number",
+      "description": "Allocated dedicated CPU per-member. For shared CPU, set to 0.",
+      "default": "0",
       "pos": {
         "filename": "variables.tf",
-        "line": 61
+        "line": 63
       }
     },
     "member_disk_mb": {
       "name": "member_disk_mb",
-      "type": "string",
-      "description": "Disk allocation required for postgresql database",
+      "type": "number",
+      "description": "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
       "default": "5120",
       "pos": {
         "filename": "variables.tf",
-        "line": 55
+        "line": 56
       }
     },
     "member_memory_mb": {
       "name": "member_memory_mb",
-      "type": "string",
-      "description": "Memory allocation required for postgresql database",
+      "type": "number",
+      "description": "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
       "default": "1024",
       "pos": {
         "filename": "variables.tf",
@@ -133,17 +133,17 @@
     "members": {
       "name": "members",
       "type": "number",
-      "description": "Number of members",
+      "description": "Allocated number of members. Members can be scaled up but not down.",
       "default": 3,
       "pos": {
         "filename": "variables.tf",
-        "line": 80
+        "line": 81
       }
     },
     "name": {
       "name": "name",
       "type": "string",
-      "description": "Name of the Postgresql instance",
+      "description": "The name to give the Postgresql instance.",
       "required": true,
       "source": [
         "ibm_database.postgresql_db.name"
@@ -156,7 +156,7 @@
     "pg_version": {
       "name": "pg_version",
       "type": "string",
-      "description": "Version of the postgresql instance",
+      "description": "Version of the PostgreSQL instance to provision",
       "source": [
         "ibm_database.postgresql_db.version"
       ],
@@ -176,7 +176,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 251
+        "line": 246
       }
     },
     "pitr_time": {
@@ -188,13 +188,13 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 257
+        "line": 252
       }
     },
     "plan_validation": {
       "name": "plan_validation",
       "type": "bool",
-      "description": "Enable or disable validating the database parameters for postgres during the plan phase",
+      "description": "Enable or disable validating the database parameters for PostgreSQL during the plan phase.",
       "default": true,
       "source": [
         "ibm_database.postgresql_db.plan_validation"
@@ -207,7 +207,7 @@
     "region": {
       "name": "region",
       "type": "string",
-      "description": "The region postgresql is to be created on. The region must support BYOK region if Key Protect Key is used or KYOK region if Hyper Protect Crypto Service (HPCS) is used.",
+      "description": "The region where you want to deploy your instance.",
       "default": "us-south",
       "required": true,
       "source": [
@@ -222,7 +222,7 @@
     "remote_leader_crn": {
       "name": "remote_leader_crn",
       "type": "string",
-      "description": "The CRN of the leader database to make the replica(read-only) deployment.",
+      "description": "A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas",
       "source": [
         "ibm_database.postgresql_db.remote_leader_id"
       ],
@@ -234,7 +234,7 @@
     "resource_group_id": {
       "name": "resource_group_id",
       "type": "string",
-      "description": "The resource group ID where the postgresql will be created",
+      "description": "The resource group ID where the PostgreSQL instance will be created.",
       "required": true,
       "source": [
         "ibm_database.postgresql_db.resource_group_id",
@@ -254,7 +254,7 @@
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
-      "description": "Optional list of tags to be added to the newly provisioned PostgreSQL instance and the associated service credentials.",
+      "description": "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials.",
       "default": [],
       "source": [
         "ibm_database.postgresql_db.tags",
@@ -262,7 +262,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 103
+        "line": 98
       },
       "cloud_data_type": "tags",
       "min_length": 1,
@@ -283,31 +283,31 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 67
+        "line": 70
       }
     },
     "service_endpoints": {
       "name": "service_endpoints",
       "type": "string",
-      "description": "Sets the endpoint of the Postgresql instance, valid values are 'public', 'private', or 'public-and-private'",
+      "description": "Specify whether you want to enable the public, private, or both service endpoints. Supported values are 'public', 'private', or 'public-and-private'.",
       "default": "private",
       "source": [
         "ibm_database.postgresql_db.service_endpoints"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 93
+        "line": 88
       },
       "options": "public, private, public-and-private"
     },
     "skip_iam_authorization_policy": {
       "name": "skip_iam_authorization_policy",
       "type": "bool",
-      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to false.",
+      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to 'false'.",
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 198
+        "line": 193
       }
     }
   },
@@ -416,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 41
+        "line": 39
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -433,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 31
+        "line": 29
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -449,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 168
       }
     }
   },
@@ -528,7 +528,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 130
       }
     }
   }
