@@ -134,7 +134,7 @@
       "name": "members",
       "type": "number",
       "description": "Allocated number of members. Members can be scaled up but not down.",
-      "default": 3,
+      "default": 2,
       "pos": {
         "filename": "variables.tf",
         "line": 81
