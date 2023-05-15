@@ -32,19 +32,30 @@ variable "region" {
 variable "member_memory_mb" {
   type        = number
   description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = "1024"
+  default     = 1024
 }
 
 variable "member_disk_mb" {
   type        = number
   description = "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = "5120"
+  default     = 5120
 }
 
 variable "member_cpu_count" {
   type        = number
   description = "Allocated dedicated CPU per-member. For shared CPU, set to 0."
-  default     = "3"
+  default     = 3
+}
+
+variable "service_credential_names" {
+  description = "Map of name, role for service credentials that you want to create for the database"
+  type        = map(string)
+  default     = {}
+
+  validation {
+    condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
+    error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
+  }
 }
 
 variable "members" {
@@ -86,6 +97,39 @@ variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect instance passed in var.existing_kms_instance_guid."
   default     = false
+}
+
+variable "auto_scaling" {
+  type = object({
+    cpu = object({
+      rate_increase_percent       = optional(number, 10)
+      rate_limit_count_per_member = optional(number, 20)
+      rate_period_seconds         = optional(number, 900)
+      rate_units                  = optional(string, "count")
+    })
+    disk = object({
+      capacity_enabled             = optional(bool, false)
+      free_space_less_than_percent = optional(number, 10)
+      io_above_percent             = optional(number, 90)
+      io_enabled                   = optional(bool, false)
+      io_over_period               = optional(string, "15m")
+      rate_increase_percent        = optional(number, 10)
+      rate_limit_mb_per_member     = optional(number, 3670016)
+      rate_period_seconds          = optional(number, 900)
+      rate_units                   = optional(string, "mb")
+    })
+    memory = object({
+      io_above_percent         = optional(number, 90)
+      io_enabled               = optional(bool, false)
+      io_over_period           = optional(string, "15m")
+      rate_increase_percent    = optional(number, 10)
+      rate_limit_mb_per_member = optional(number, 114688)
+      rate_period_seconds      = optional(number, 900)
+      rate_units               = optional(string, "mb")
+    })
+  })
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs."
+  default     = null
 }
 
 ##############################################################

@@ -37,6 +37,7 @@ func TestRunFSCloudExample(t *testing.T) {
 		Testing:      t,
 		TerraformDir: "examples/fscloud",
 		Prefix:       "postgres-fscloud",
+		Region:       "us-south", // For FSCloud locking into us-south since that is where the HPCS permanent instance is
 		/*
 		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
 		 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
@@ -45,7 +46,6 @@ func TestRunFSCloudExample(t *testing.T) {
 		*/
 		//ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"region":                     "us-south", // For FSCloud locking into us-south since that is where the HPCS permanent instance is
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
 			"pg_version":                 "14", // Always lock this test into the latest supported Postgres version

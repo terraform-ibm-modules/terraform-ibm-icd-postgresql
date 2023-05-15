@@ -25,7 +25,7 @@ variable "remote_leader_crn" {
 }
 
 variable "pg_version" {
-  description = "Version of the PostgreSQL instance to provision"
+  description = "Version of the PostgreSQL instance to provision."
   type        = string
   default     = null
   validation {
@@ -49,21 +49,21 @@ variable "region" {
 variable "member_memory_mb" {
   type        = number
   description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = "1024"
+  default     = 1024
   # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "member_disk_mb" {
   type        = number
   description = "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = "5120"
+  default     = 5120
   # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
 variable "member_cpu_count" {
   type        = number
-  description = "Allocated dedicated CPU per-member. For shared CPU, set to 0."
-  default     = "0"
+  description = "Allocated dedicated CPU per-member. For shared CPU, set to 0. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 0
   # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
 }
 
@@ -97,7 +97,7 @@ variable "service_endpoints" {
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials."
+  description = "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials (if creating)."
   default     = []
 }
 

@@ -17,4 +17,6 @@ module "postgresql_db" {
   member_disk_mb                = var.member_disk_mb
   member_cpu_count              = var.member_cpu_count
   members                       = var.members
+  service_credential_names      = var.service_credential_names
+  auto_scaling                  = var.auto_scaling
 }

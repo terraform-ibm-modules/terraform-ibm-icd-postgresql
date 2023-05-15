@@ -137,21 +137,3 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"
 }
-
-##############################################################################
-# ICD postgresql read-only-replica
-##############################################################################
-
-module "read_only_replica_postgresql_db" {
-  count             = 1 # There is a limit of five read-only replicas per leader
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-read-only-replica-${count.index}"
-  region            = var.region
-  resource_tags     = var.resource_tags
-  pg_version        = var.pg_version
-  remote_leader_crn = module.postgresql_db.crn
-  member_memory_mb  = var.replica_member_memory_mb
-  member_disk_mb    = var.replica_member_disk_mb
-  member_cpu_count  = var.replica_member_cpu_count
-}

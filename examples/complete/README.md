@@ -8,4 +8,3 @@ An end-to-end example that does the following:
 - Create a Virtual Private Cloud (VPC).
 - Create Context Based Restriction (CBR) to only allow Postgresql to be accessible from the VPC.
 - Create a security group and a VPE for the PostgreSQL instance.
-- Create a read-only replica of the leader Postgresql database instance. For more info on Read-only Replicas, see [Configuring Read-only Replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)

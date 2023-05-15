@@ -35,10 +35,10 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		TerraformDir:  "examples/pitr",
 		Prefix:        "pg-pitr",
 		ResourceGroup: resourceGroup,
+		Region:        "us-south", // TODO: Replace with value from common yaml once https://github.com/terraform-ibm-modules/common-dev-assets/pull/610 is merged
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
 			"pg_version": permanentResources["postgresqlPITRVersion"],
-			"region":     region,
 		},
 	})
 
