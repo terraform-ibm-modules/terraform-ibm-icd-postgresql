@@ -33,3 +33,16 @@ variable "resource_tags" {
   description = "Optional list of tags to be added to created resources"
   default     = []
 }
+
+variable "read_only_replicas_count" {
+  type        = number
+  description = "Number of read-only replicas per leader"
+  default     = 1
+  validation {
+    condition = alltrue([
+      var.read_only_replicas_count >= 1,
+      var.read_only_replicas_count <= 5
+    ])
+    error_message = "There is a limit of five read-only replicas per leader"
+  }
+}

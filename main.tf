@@ -1,28 +1,34 @@
 ##############################################################################
-# ICD Postgresql modules
-#
-# Creates ICD Postgresql instance
+# ICD PostgreSQL module
 ##############################################################################
 
 locals {
-  # The backup encryption key crn doesn't support Hyper Protect Crypto Service (HPCS) at the moment. If 'backup_encryption_key_crn' is null, will use 'kms_key_crn' as encryption key if its Key Protect key otherwise it will use using randomly generated keys.
-  # https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=cli
-  kp_backup_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+  # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
+  # tflint-ignore: terraform_unused_declarations
+  validate_pitr_vars = (var.pitr_id != null && var.pitr_time == null) || (var.pitr_time != null && var.pitr_id == null) ? tobool("To use Point-In-Time Recovery (PITR), values for both var.pitr_id and var.pitr_time need to be set. Otherwise, unset both of these.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = var.kms_encryption_enabled && var.kms_key_crn == null && var.backup_encryption_key_crn == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.kms_key_crn and/or var.backup_encryption_key_crn") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
 
+  # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn'. If this is a HPCS key (which is not currently supported for backup encryption), default to 'null' meaning encryption is done using randomly generated keys
+  # More info https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs
+  backup_encryption_key_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+
+  # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
+
+  # Determine what KMS service is being used for database encryption
   kms_service = var.kms_key_crn != null ? (
     can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
       can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
     )
   ) : null
-
-  # tflint-ignore: terraform_unused_declarations
-  validate_hpcs_guid_input = var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("A value must be passed for var.existing_kms_instance_guid when creating an instance, var.skip_iam_authorization_policy is false.") : true
 }
 
-# Create IAM Authorization Policies to allow postgresql to access kms for the encryption key
+# Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.skip_iam_authorization_policy ? 0 : 1
+  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
   source_service_name         = "databases-for-postgresql"
   source_resource_group_id    = var.resource_group_id
   target_service_name         = local.kms_service
@@ -32,35 +38,26 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on        = [ibm_iam_authorization_policy.kms_policy]
-  resource_group_id = var.resource_group_id
-  name              = var.name
-  service           = "databases-for-postgresql"
-  location          = var.region
-  plan              = "standard" # Only standard plan is available for postgres
-  backup_id         = var.backup_crn
-  plan_validation   = var.plan_validation
-  remote_leader_id  = var.remote_leader_crn
-  version           = var.pg_version
-  tags              = var.resource_tags
-  service_endpoints = var.service_endpoints
-  configuration     = var.configuration != null ? jsonencode(var.configuration) : null
-
-  key_protect_key           = var.kms_key_crn
-  backup_encryption_key_crn = local.kp_backup_crn
-
+  depends_on                           = [ibm_iam_authorization_policy.kms_policy]
+  resource_group_id                    = var.resource_group_id
+  name                                 = var.name
+  service                              = "databases-for-postgresql"
+  location                             = var.region
+  plan                                 = "standard" # Only standard plan is available for postgres
+  backup_id                            = var.backup_crn
+  plan_validation                      = var.plan_validation
+  remote_leader_id                     = var.remote_leader_crn
+  version                              = var.pg_version
+  tags                                 = var.resource_tags
+  service_endpoints                    = var.service_endpoints
+  configuration                        = var.configuration != null ? jsonencode(var.configuration) : null
+  key_protect_key                      = var.kms_key_crn
+  backup_encryption_key_crn            = local.backup_encryption_key_crn
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
 
-  dynamic "allowlist" {
-    for_each = (var.allowlist != null ? var.allowlist : [])
-    content {
-      address     = (allowlist.value.address != "" ? allowlist.value.address : null)
-      description = (allowlist.value.description != "" ? allowlist.value.description : null)
-    }
-  }
   group {
-    group_id = "member" #Only member type is allowed for postgresql
+    group_id = "member" # Only member type is allowed for postgresql
     memory {
       allocation_mb = var.member_memory_mb
     }

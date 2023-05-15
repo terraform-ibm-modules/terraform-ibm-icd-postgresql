@@ -14,7 +14,7 @@ module "resource_group" {
 ##############################################################################
 
 module "key_protect_all_inclusive" {
-  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.1.0"
   resource_group_id = module.resource_group.resource_group_id
   # Note: Database instance and Key Protect must be created in the same region when using BYOK
   # See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok
@@ -67,16 +67,18 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                   = "../../"
-  resource_group_id        = module.resource_group.resource_group_id
-  name                     = "${var.prefix}-postgres"
-  region                   = var.region
-  service_endpoints        = "private"
-  pg_version               = var.pg_version
-  kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  resource_tags            = var.resource_tags
-  service_credential_names = var.service_credential_names
-  auto_scaling             = var.auto_scaling
+  source                     = "../../"
+  resource_group_id          = module.resource_group.resource_group_id
+  name                       = "${var.prefix}-postgres"
+  region                     = var.region
+  service_endpoints          = "private"
+  pg_version                 = var.pg_version
+  kms_encryption_enabled     = true
+  kms_key_crn                = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
+  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
+  resource_tags              = var.resource_tags
+  service_credential_names   = var.service_credential_names
+  auto_scaling               = var.auto_scaling
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
@@ -134,22 +136,4 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
 resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"
-}
-
-##############################################################################
-# ICD postgresql read-only-replica
-##############################################################################
-
-module "read_only_replica_postgresql_db" {
-  count             = var.read_only_replicas_count
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-read-only-replica-${count.index}"
-  region            = var.region
-  resource_tags     = var.resource_tags
-  pg_version        = var.pg_version
-  remote_leader_crn = module.postgresql_db.crn
-  member_memory_mb  = var.replica_member_memory_mb
-  member_disk_mb    = var.replica_member_disk_mb
-  member_cpu_count  = var.replica_member_cpu_count
 }

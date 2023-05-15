@@ -21,3 +21,20 @@ module "postgresql_db" {
   region            = var.region
   resource_tags     = var.resource_tags
 }
+
+##############################################################################
+# ICD postgresql read-only-replica
+##############################################################################
+
+module "read_only_replica_postgresql_db" {
+  count             = var.read_only_replicas_count
+  source            = "../.."
+  resource_group_id = module.resource_group.resource_group_id
+  name              = "${var.prefix}-read-only-replica-${count.index}"
+  region            = var.region
+  resource_tags     = var.resource_tags
+  pg_version        = var.pg_version
+  remote_leader_crn = module.postgresql_db.crn
+  member_memory_mb  = 2304  # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM
+  member_disk_mb    = 10752 # Must be an increment of 1536 megabytes. The minimum size of a read-only replica is 10 GB of disk
+}

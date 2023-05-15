@@ -86,22 +86,8 @@ variable "auto_scaling" {
   }
 }
 
-variable "read_only_replicas_count" {
-  type        = number
-  description = "No of read-only replicas per leader"
-  default     = 1
-  validation {
-    condition = alltrue([
-      var.read_only_replicas_count >= 1,
-      var.read_only_replicas_count <= 5
-    ])
-    error_message = "There is a limit of five read-only replicas per leader"
-  }
-
-}
-
 variable "replica_member_memory_mb" {
-  type        = string
+  type        = number
   description = "Memory allocation required for postgresql read-only replica database"
   default     = "3072"
   validation {
@@ -114,7 +100,7 @@ variable "replica_member_memory_mb" {
 }
 
 variable "replica_member_disk_mb" {
-  type        = string
+  type        = number
   description = "Disk allocation required for postgresql read-only replica database"
   default     = "15360"
   validation {
@@ -127,7 +113,7 @@ variable "replica_member_disk_mb" {
 }
 
 variable "replica_member_cpu_count" {
-  type        = string
+  type        = number
   description = "CPU allocation required for the postgresql read-only replica database"
   default     = "9"
   validation {

@@ -34,7 +34,6 @@ output "service_credentials_object" {
   sensitive   = true
 }
 
-
 output "cbr_rule_ids" {
   description = "CBR rule ids created to restrict Postgresql"
   value       = module.cbr_rule[*].rule_id
