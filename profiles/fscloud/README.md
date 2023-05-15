@@ -6,7 +6,7 @@ The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)
 
 > rule-beb7b289-706b-4dc0-b01d-b1d15d4331e3: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
 
-The IBM Cloud Framework for Financial Services mandates the application of an inbound network-based allowlist in front of the ICD PostgreSQL instance. You can comply with this requirement by using the `cbr_rules` variable in the module, which can be used to create a narrow context-based restriction rule that is scoped to the ICD PostgreSQL instance. Currently CRA does not support checking for context-based restrictions so hence the above failing rule can be ignored once you are setting context-based restrictions.
+The IBM Cloud Framework for Financial Services mandates the application of an inbound network-based allowlist in front of the ICD PostgreSQL instance. You can comply with this requirement by using the `cbr_rules` variable in the module, which can be used to create a narrow context-based restriction rule that is scoped to the IBM Cloud Databases for PostgreSQL instance. CRA does not support checking for context-based restrictions, so you can ignore the failing rule after you are set the context-based restrictions.
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ## Requirements
