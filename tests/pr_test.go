@@ -13,6 +13,9 @@ import (
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
 
+// Restricting due to limited availability of BYOK in certain regions
+const regionSelectionPath = "../common-dev-assets/common-go-assets/icd-region-prefs.yaml"
+
 // Define a struct with fields that match the structure of the YAML data
 const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-resources.yaml"
 
@@ -64,7 +67,7 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		Testing:            t,
 		TerraformDir:       "examples/complete",
 		Prefix:             "postgres-upg",
-		BestRegionYAMLPath: "../common-dev-assets/common-go-assets/icd-region-prefs.yaml", // Restricting due to limited availability of BYOK in certain regions
+		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "11", // Always lock to the lowest supported Postgres version

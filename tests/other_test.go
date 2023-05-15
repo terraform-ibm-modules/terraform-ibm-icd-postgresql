@@ -2,21 +2,21 @@
 package test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"testing"
 )
 
-const basicExampleTerraformDir = "examples/basic"
-
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  "examples/backup",
-		Prefix:        "pg-backup",
-		ResourceGroup: resourceGroup,
+		Testing:            t,
+		TerraformDir:       "examples/backup",
+		Prefix:             "pg-backup",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "13",
 		},
@@ -35,7 +35,7 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		TerraformDir:  "examples/pitr",
 		Prefix:        "pg-pitr",
 		ResourceGroup: resourceGroup,
-		Region:        "us-south", // TODO: Replace with value from common yaml once https://github.com/terraform-ibm-modules/common-dev-assets/pull/610 is merged
+		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
 			"pg_version": permanentResources["postgresqlPITRVersion"],
@@ -51,10 +51,11 @@ func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  "examples/basic",
-		Prefix:        "postgres",
-		ResourceGroup: resourceGroup,
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "postgres",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12",
 		},
