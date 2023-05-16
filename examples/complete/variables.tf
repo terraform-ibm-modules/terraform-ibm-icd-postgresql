@@ -29,7 +29,7 @@ variable "resource_tags" {
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance"
+  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
   type        = string
   default     = null
 }
@@ -38,9 +38,10 @@ variable "service_credential_names" {
   description = "Map of name, role for service credentials that you want to create for the database"
   type        = map(string)
   default = {
-    "postgressql_credential_microservices" : "Administrator",
-    "postgressql_credential_dev_1" : "Administrator",
-    "postgressql_credential_dev_2" : "Administrator"
+    "postgressql_admin" : "Administrator",
+    "postgressql_operator" : "Operator",
+    "postgressql_viewer" : "Viewer",
+    "postgressql_editor" : "Editor",
   }
 }
 
@@ -83,44 +84,5 @@ variable "auto_scaling" {
     memory = {
       io_enabled : true,
     }
-  }
-}
-
-variable "replica_member_memory_mb" {
-  type        = number
-  description = "Memory allocation required for postgresql read-only replica database"
-  default     = "3072"
-  validation {
-    condition = alltrue([
-      var.replica_member_memory_mb >= 3072,
-      var.replica_member_memory_mb <= 114688
-    ])
-    error_message = "member group memory must be >= 3072 and <= 114688 in increments of 384"
-  }
-}
-
-variable "replica_member_disk_mb" {
-  type        = number
-  description = "Disk allocation required for postgresql read-only replica database"
-  default     = "15360"
-  validation {
-    condition = alltrue([
-      var.replica_member_disk_mb >= 15360,
-      var.replica_member_disk_mb <= 4194304
-    ])
-    error_message = "member group disk must be >= 15360 and <= 4194304 in increments of 1536"
-  }
-}
-
-variable "replica_member_cpu_count" {
-  type        = number
-  description = "CPU allocation required for the postgresql read-only replica database"
-  default     = "9"
-  validation {
-    condition = alltrue([
-      var.replica_member_cpu_count >= 9,
-      var.replica_member_cpu_count <= 28
-    ])
-    error_message = "member group cpu must be >= 9 and <= 28 in increments of 1"
   }
 }

@@ -25,7 +25,7 @@ variable "remote_leader_crn" {
 }
 
 variable "pg_version" {
-  description = "Version of the PostgreSQL instance to provision."
+  description = "Version of the PostgreSQL instance to provision. If no value passed, the current ICD preferred version is used."
   type        = string
   default     = null
   validation {

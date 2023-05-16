@@ -71,7 +71,6 @@ module "postgresql_db" {
   resource_group_id          = module.resource_group.resource_group_id
   name                       = "${var.prefix}-postgres"
   region                     = var.region
-  service_endpoints          = "private"
   pg_version                 = var.pg_version
   kms_encryption_enabled     = true
   kms_key_crn                = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
@@ -133,6 +132,7 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
   ]
 }
 
+# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
 resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"

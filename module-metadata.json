@@ -156,7 +156,7 @@
     "pg_version": {
       "name": "pg_version",
       "type": "string",
-      "description": "Version of the PostgreSQL instance to provision.",
+      "description": "Version of the PostgreSQL instance to provision. If no value passed, the current ICD preferred version is used.",
       "source": [
         "ibm_database.postgresql_db.version"
       ],
@@ -416,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 40
+        "line": 42
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -433,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 30
+        "line": 32
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -449,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 167
+        "line": 169
       }
     }
   },
@@ -528,7 +528,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 129
+        "line": 131
       }
     }
   }
