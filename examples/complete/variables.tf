@@ -29,7 +29,7 @@ variable "resource_tags" {
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
+  description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   type        = string
   default     = null
 }

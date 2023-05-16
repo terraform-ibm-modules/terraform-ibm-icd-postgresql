@@ -15,4 +15,4 @@ The example uses the IBM Cloud Terraform provider to create the following infras
 
 ## Before you begin
 
-- You need a Hyper Protect Crypto Service instance and root key available in the region that you want to deploy your PostgreSQL database instance to.
+- You need a Hyper Protect Crypto Services instance and root key available in the region that you want to deploy your PostgreSQL database instance to.

@@ -25,7 +25,7 @@ variable "remote_leader_crn" {
 }
 
 variable "pg_version" {
-  description = "Version of the PostgreSQL instance to provision. If no value passed, the current ICD preferred version is used."
+  description = "Version of the PostgreSQL instance to provision. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   type        = string
   default     = null
   validation {
@@ -50,21 +50,21 @@ variable "member_memory_mb" {
   type        = number
   description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
   default     = 1024
-  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "member_disk_mb" {
   type        = number
-  description = "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  description = "Allocated disk per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
   default     = 5120
-  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "member_cpu_count" {
   type        = number
-  description = "Allocated dedicated CPU per-member. For shared CPU, set to 0. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  description = "Allocated dedicated CPU per member. For shared CPU, set to 0. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
   default     = 0
-  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "service_credential_names" {
@@ -82,7 +82,7 @@ variable "members" {
   type        = number
   description = "Allocated number of members. Members can be scaled up but not down."
   default     = 2
-  # Validation is done in terraform plan phase by IBM provider, so no need to add any extra validation here
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "service_endpoints" {
