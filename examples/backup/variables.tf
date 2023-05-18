@@ -16,6 +16,12 @@ variable "prefix" {
   default     = "pg-res"
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
+  type        = string
+  default     = null
+}
+
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
@@ -25,6 +31,12 @@ variable "resource_group" {
 variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
+  default     = []
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "Optional list of access management tags to add to resources that are created"
   default     = []
 }
 

@@ -1,7 +1,7 @@
 # Point in time recovery example (PITR)
 
-This example provides an end-to-end creation of a new PostgreSQL instance, then creating a new PostgreSQL instance pointing to a PITR time. This example uses the IBM Cloud terraform provider to:
+This example provides an end-to-end solution that:
 
-- Create a new resource group if one is not passed in.
-- Create a new ICD Postgresql database instance.
-- Create a new PostgreSQL instance pointing to a PITR time.
+- Creates a new resource group if one is not passed in.
+- Creates a new ICD Postgresql database instance.
+- Creates a new PostgreSQL instance pointing to a PITR time.

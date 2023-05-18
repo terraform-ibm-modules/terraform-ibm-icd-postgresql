@@ -14,7 +14,7 @@ module "resource_group" {
 ##############################################################################
 
 module "key_protect_all_inclusive" {
-  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.0.0"
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-key-protect-all-inclusive.git?ref=v4.1.0"
   resource_group_id = module.resource_group.resource_group_id
   # Note: Database instance and Key Protect must be created in the same region when using BYOK
   # See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok
@@ -22,15 +22,6 @@ module "key_protect_all_inclusive" {
   key_protect_instance_name = "${var.prefix}-kp"
   resource_tags             = var.resource_tags
   key_map                   = { "icd-pg" = ["${var.prefix}-pg"] }
-}
-
-# Create IAM Access Policy to allow Key protect to access Postgres instance
-resource "ibm_iam_authorization_policy" "policy" {
-  source_service_name         = "databases-for-postgresql"
-  source_resource_group_id    = module.resource_group.resource_group_id
-  target_service_name         = "kms"
-  target_resource_instance_id = module.key_protect_all_inclusive.key_protect_guid
-  roles                       = ["Reader"]
 }
 
 ##############################################################################
@@ -76,16 +67,18 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                   = "../../"
-  resource_group_id        = module.resource_group.resource_group_id
-  name                     = "${var.prefix}-postgres"
-  region                   = var.region
-  service_endpoints        = "private"
-  pg_version               = var.pg_version
-  kms_key_crn              = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  resource_tags            = var.resource_tags
-  service_credential_names = var.service_credential_names
-  access_tags              = var.access_tags
+  source                     = "../../"
+  resource_group_id          = module.resource_group.resource_group_id
+  name                       = "${var.prefix}-postgres"
+  region                     = var.region
+  pg_version                 = var.pg_version
+  kms_encryption_enabled     = true
+  kms_key_crn                = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
+  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
+  resource_tags              = var.resource_tags
+  service_credential_names   = var.service_credential_names
+  auto_scaling               = var.auto_scaling
+  access_tags                = var.access_tags
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
@@ -140,6 +133,7 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
   ]
 }
 
+# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
 resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"

@@ -1,15 +1,18 @@
 # Financial Services Cloud profile example
 
-## *Note:* This example is only deploying Postgresql in a compliant manner the other infrastructure is not necessarily compliant.
+An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../profiles/fscloud/) to deploy an instance of IBM Cloud Databases for PostgreSQL.
 
-### Requirements
-This example expects you have Hyper Protect Crypto Service instances in the region you wish to deploy your Postgresql database instance.
+The example uses the IBM Cloud Terraform provider to create the following infrastructure:
 
-### Deploys
-An example using the fscloud profile to deploy a compliant Postgresql instance. This example uses the IBM Cloud terraform provider to:
+- A resource group, if one is not passed in.
+- An IAM authorization between all PostgreSQL database instances in the given resource group, and the Hyper Protect Crypto Services instance that is passed in.
+- An IBM Cloud Databases PostgreSQL database instance that is encrypted with the Hyper Protect Crypto Services root key that is passed in.
+- Service Credentials for the PostgreSQL database instance.
+- A sample virtual private cloud (VPC).
+- A context-based restriction (CBR) rule to only allow PostgreSQL to be accessible from within the VPC.
 
-- Create a new resource group if one is not passed in.
-- Create an IAM Authorization between PostgreSQL Database Resource group and HPSC permanent Instance.
-- Create a new ICD Postgresql database instance and credentials that is encrypted using the Hyper Protect Crypto Service resources that are passed in.
-- Create a Sample VPC.
-- Create Context Based Restriction(CBR) to only allow Postgresql to be accessible from the VPC.
+:exclamation: **Important:** In this example, only the IBM Cloud Databases for PostgreSQL instance complies with the IBM Cloud Framework for Financial Services. Other parts of the infrastructure do not necessarily comply.
+
+## Before you begin
+
+- You need a Hyper Protect Crypto Services instance and root key available in the region that you want to deploy your PostgreSQL database instance to.

@@ -16,6 +16,12 @@ variable "prefix" {
   default     = "pg"
 }
 
+variable "pg_version" {
+  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
+  type        = string
+  default     = null
+}
+
 variable "resource_group" {
   type        = string
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
@@ -30,24 +36,19 @@ variable "resource_tags" {
 
 variable "access_tags" {
   type        = list(string)
-  description = "Optional list of access management tags to be added to created resources"
+  description = "Optional list of access management tags to add to resources that are created"
   default     = []
 }
 
-variable "configuration" {
-  description = "(Optional, Json String) Database Configuration in JSON format."
-  type = object({
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
-    synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
-  })
-  default = null
+variable "read_only_replicas_count" {
+  type        = number
+  description = "Number of read-only replicas per leader"
+  default     = 1
+  validation {
+    condition = alltrue([
+      var.read_only_replicas_count >= 1,
+      var.read_only_replicas_count <= 5
+    ])
+    error_message = "There is a limit of five read-only replicas per leader"
+  }
 }

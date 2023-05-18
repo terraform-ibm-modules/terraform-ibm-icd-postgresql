@@ -30,12 +30,12 @@ variable "resource_tags" {
 
 variable "access_tags" {
   type        = list(string)
-  description = "Optional list of access management tags to be added to created resources"
+  description = "Optional list of access management tags to add to resources that are created"
   default     = []
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance"
+  description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   type        = string
   default     = null
 }
@@ -44,8 +44,51 @@ variable "service_credential_names" {
   description = "Map of name, role for service credentials that you want to create for the database"
   type        = map(string)
   default = {
-    "postgressql_credential_microservices" : "Administrator",
-    "postgressql_credential_dev_1" : "Administrator",
-    "postgressql_credential_dev_2" : "Administrator"
+    "postgressql_admin" : "Administrator",
+    "postgressql_operator" : "Operator",
+    "postgressql_viewer" : "Viewer",
+    "postgressql_editor" : "Editor",
+  }
+}
+
+variable "auto_scaling" {
+  type = object({
+    cpu = object({
+      rate_increase_percent       = optional(number)
+      rate_limit_count_per_member = optional(number)
+      rate_period_seconds         = optional(number)
+      rate_units                  = optional(string)
+    })
+    disk = object({
+      capacity_enabled             = optional(bool)
+      free_space_less_than_percent = optional(number)
+      io_above_percent             = optional(number)
+      io_enabled                   = optional(bool)
+      io_over_period               = optional(string)
+      rate_increase_percent        = optional(number)
+      rate_limit_mb_per_member     = optional(number)
+      rate_period_seconds          = optional(number)
+      rate_units                   = optional(string)
+    })
+    memory = object({
+      io_above_percent         = optional(number)
+      io_enabled               = optional(bool)
+      io_over_period           = optional(string)
+      rate_increase_percent    = optional(number)
+      rate_limit_mb_per_member = optional(number)
+      rate_period_seconds      = optional(number)
+      rate_units               = optional(string)
+    })
+  })
+  description = "(Optional) Configure rules to allow your database to automatically increase its resources. Single block of autoscaling is allowed at once."
+  default = {
+    cpu = {}
+    disk = {
+      capacity_enabled : true,
+      io_enabled : true
+    }
+    memory = {
+      io_enabled : true,
+    }
   }
 }

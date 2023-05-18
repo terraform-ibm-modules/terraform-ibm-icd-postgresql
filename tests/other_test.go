@@ -2,20 +2,63 @@
 package test
 
 import (
+	"fmt"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"testing"
 )
 
-const restoredTerraformDir = "examples/backup"
-
 func TestRunRestoredDBExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: restoredTerraformDir,
-		Prefix:       "pg-backup",
+		Testing:            t,
+		TerraformDir:       "examples/backup",
+		Prefix:             "pg-backup",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pg_version": "13",
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  "examples/pitr",
+		Prefix:        "pg-pitr",
+		ResourceGroup: resourceGroup,
+		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
+		TerraformVars: map[string]interface{}{
+			"pitr_id":    permanentResources["postgresqlPITRCrn"],
+			"pg_version": permanentResources["postgresqlPITRVersion"],
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "postgres",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pg_version": "12",
+		},
 	})
 
 	output, err := options.RunTestConsistency()

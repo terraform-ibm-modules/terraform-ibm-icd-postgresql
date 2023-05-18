@@ -16,3 +16,8 @@ output "version" {
   description = "Postgresql instance version"
   value       = module.postgresql_db.version
 }
+
+output "crn" {
+  description = "Postgresql instance crn"
+  value       = module.postgresql_db.crn
+}

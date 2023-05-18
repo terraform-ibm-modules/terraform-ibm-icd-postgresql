@@ -4,72 +4,80 @@
 
 variable "resource_group_id" {
   type        = string
-  description = "The resource group ID where the postgresql will be created"
+  description = "The resource group ID where the PostgreSQL instance will be created."
 }
 
 variable "name" {
   type        = string
-  description = "Name of the Postgresql instance"
+  description = "The name to give the Postgresql instance."
 }
 
 variable "existing_kms_instance_guid" {
-  description = "The GUID of the Hyper Protect Crypto service."
+  description = "The GUID of the Hyper Protect Crypto Services instance."
   type        = string
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance"
-  # Version must be 11 or 12 or 13 or 14. If null, the current default ICD postgresql version is used
-  type    = string
-  default = null
+  description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
+  type        = string
+  default     = null
 }
 
 variable "region" {
-  description = "The region postgresql is to be created on. The region must support KYOK."
+  description = "The region where you want to deploy your instance. Must be the same region as the Hyper Protect Crypto Services instance."
   type        = string
   default     = "us-south"
 }
 
 variable "member_memory_mb" {
-  type        = string
-  description = "Memory allocation required for postgresql database" # member group memory must be >= 1024 and <= 114688
-  default     = "1024"
+  type        = number
+  description = "Allocated memory per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 1024
 }
 
 variable "member_disk_mb" {
-  type        = string
-  description = "Disk allocation required for postgresql database" # member group disk must be >= 5120 and <= 4194304
-  default     = "5120"
+  type        = number
+  description = "Allocated disk per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 5120
 }
 
 variable "member_cpu_count" {
-  type        = string
-  description = "CPU allocation required for postgresql database" # member group cpu must be >= 3 and <= 28
-  default     = "3"
+  type        = number
+  description = "Allocated dedicated CPU per member. For shared CPU, set to 0. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 3
 }
 
-# actual scaling of the resources could take some time to apply
-# Members can be scaled up but not down
+variable "service_credential_names" {
+  description = "Map of name, role for service credentials that you want to create for the database"
+  type        = map(string)
+  default     = {}
+
+  validation {
+    condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
+    error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
+  }
+}
+
 variable "members" {
   type        = number
-  description = "Number of members" # member group members must be >= 3 and <= 20
-  default     = 3
+  description = "Allocated number of members. Members can be scaled up but not down."
+  default     = 2
 }
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be applied to the PostgreSQL database instance."
+  description = "Optional list of tags to be added to the PostgreSQL instance."
   default     = []
 }
 
 variable "access_tags" {
   type        = list(string)
-  description = "Optional list of access management tags to be added to created resources"
+  description = "Optional list of access management tags to add to resources that are created"
   default     = []
 }
 
 variable "configuration" {
-  description = "(Optional, Json String) Database Configuration in JSON format."
+  description = "Database configuration."
   type = object({
     max_connections            = optional(number)
     max_prepared_transactions  = optional(number)
@@ -88,18 +96,46 @@ variable "configuration" {
 
 variable "kms_key_crn" {
   type        = string
-  description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
-}
-
-variable "backup_encryption_key_crn" {
-  type        = string
-  description = "The CRN of a Key Protect Key to use for encrypting backups. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported."
+  description = "The root key CRN of the Hyper Protect Crypto Service (HPCS) to use for disk encryption."
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the provided resource group reader access to the instance specified in the existing_kms_instance_guid variable."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance. The HPCS instance is passed in through the var.existing_kms_instance_guid variable."
   default     = false
+}
+
+variable "auto_scaling" {
+  type = object({
+    cpu = object({
+      rate_increase_percent       = optional(number, 10)
+      rate_limit_count_per_member = optional(number, 30)
+      rate_period_seconds         = optional(number, 900)
+      rate_units                  = optional(string, "count")
+    })
+    disk = object({
+      capacity_enabled             = optional(bool, false)
+      free_space_less_than_percent = optional(number, 10)
+      io_above_percent             = optional(number, 90)
+      io_enabled                   = optional(bool, false)
+      io_over_period               = optional(string, "15m")
+      rate_increase_percent        = optional(number, 10)
+      rate_limit_mb_per_member     = optional(number, 3670016)
+      rate_period_seconds          = optional(number, 900)
+      rate_units                   = optional(string, "mb")
+    })
+    memory = object({
+      io_above_percent         = optional(number, 90)
+      io_enabled               = optional(bool, false)
+      io_over_period           = optional(string, "15m")
+      rate_increase_percent    = optional(number, 10)
+      rate_limit_mb_per_member = optional(number, 114688)
+      rate_period_seconds      = optional(number, 900)
+      rate_units               = optional(string, "mb")
+    })
+  })
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs."
+  default     = null
 }
 
 ##############################################################

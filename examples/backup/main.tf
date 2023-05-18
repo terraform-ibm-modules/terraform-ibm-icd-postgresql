@@ -14,8 +14,10 @@ module "postgresql_db" {
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-postgres"
+  pg_version        = var.pg_version
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
 }
 
 data "ibm_database_backups" "backup_database" {
@@ -28,7 +30,9 @@ module "restored_postgresql_db" {
   source            = "../.."
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-postgres-restored"
+  pg_version        = var.pg_version
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   backup_crn        = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn
 }
