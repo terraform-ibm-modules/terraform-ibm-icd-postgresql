@@ -47,12 +47,6 @@ variable "service_credential_names" {
 
 variable "auto_scaling" {
   type = object({
-    cpu = object({
-      rate_increase_percent       = optional(number)
-      rate_limit_count_per_member = optional(number)
-      rate_period_seconds         = optional(number)
-      rate_units                  = optional(string)
-    })
     disk = object({
       capacity_enabled             = optional(bool)
       free_space_less_than_percent = optional(number)
