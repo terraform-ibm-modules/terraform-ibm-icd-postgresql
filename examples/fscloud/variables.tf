@@ -54,3 +54,38 @@ variable "service_credential_names" {
     "postgressql_editor" : "Editor",
   }
 }
+
+variable "auto_scaling" {
+  type = object({
+    disk = object({
+      capacity_enabled             = optional(bool)
+      free_space_less_than_percent = optional(number)
+      io_above_percent             = optional(number)
+      io_enabled                   = optional(bool)
+      io_over_period               = optional(string)
+      rate_increase_percent        = optional(number)
+      rate_limit_mb_per_member     = optional(number)
+      rate_period_seconds          = optional(number)
+      rate_units                   = optional(string)
+    })
+    memory = object({
+      io_above_percent         = optional(number)
+      io_enabled               = optional(bool)
+      io_over_period           = optional(string)
+      rate_increase_percent    = optional(number)
+      rate_limit_mb_per_member = optional(number)
+      rate_period_seconds      = optional(number)
+      rate_units               = optional(string)
+    })
+  })
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs."
+  default = {
+    disk = {
+      capacity_enabled : true,
+      io_enabled : true
+    }
+    memory = {
+      io_enabled : true,
+    }
+  }
+}
