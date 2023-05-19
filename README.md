@@ -41,8 +41,8 @@ You need the following permissions to run this module.
 
 - [ Restore from backup example](examples/backup)
 - [ Basic with read-only replica example](examples/basic)
-- [ Complete example with BYOK encryption, autoscaling, CBR rules and VPE creation](examples/complete)
-- [ Financial Services Cloud profile example](examples/fscloud)
+- [ Complete example with BYOK encryption, CBR rules and VPE creation](examples/complete)
+- [ Financial Services Cloud profile example with autoscaling enabled](examples/fscloud)
 - [ Point in time recovery example (PITR)](examples/pitr)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
