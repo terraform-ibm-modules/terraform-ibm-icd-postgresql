@@ -1,4 +1,4 @@
-# Financial Services Cloud profile example
+# Financial Services Cloud profile example with autoscaling enabled
 
 An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../profiles/fscloud/) to deploy an instance of IBM Cloud Databases for PostgreSQL.
 
@@ -7,6 +7,7 @@ The example uses the IBM Cloud Terraform provider to create the following infras
 - A resource group, if one is not passed in.
 - An IAM authorization between all PostgreSQL database instances in the given resource group, and the Hyper Protect Crypto Services instance that is passed in.
 - An IBM Cloud Databases PostgreSQL database instance that is encrypted with the Hyper Protect Crypto Services root key that is passed in.
+- Autoscaling rules for the IBM Cloud Databases PostgreSQL database instance.
 - Service Credentials for the PostgreSQL database instance.
 - A sample virtual private cloud (VPC).
 - A context-based restriction (CBR) rule to only allow PostgreSQL to be accessible from within the VPC.
