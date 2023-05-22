@@ -77,7 +77,6 @@ module "postgresql_db" {
   existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
-  auto_scaling               = var.auto_scaling
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

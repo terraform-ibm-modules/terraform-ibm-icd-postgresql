@@ -82,12 +82,6 @@ resource "ibm_database" "postgresql_db" {
   dynamic "auto_scaling" {
     for_each = local.auto_scaling_enabled
     content {
-      cpu {
-        rate_increase_percent       = var.auto_scaling.cpu.rate_increase_percent
-        rate_limit_count_per_member = var.auto_scaling.cpu.rate_limit_count_per_member
-        rate_period_seconds         = var.auto_scaling.cpu.rate_period_seconds
-        rate_units                  = var.auto_scaling.cpu.rate_units
-      }
       disk {
         capacity_enabled             = var.auto_scaling.disk.capacity_enabled
         free_space_less_than_percent = var.auto_scaling.disk.free_space_less_than_percent
