@@ -3,7 +3,7 @@
   "variables": {
     "auto_scaling": {
       "name": "auto_scaling",
-      "type": "object({\n    cpu = object({\n      rate_increase_percent       = optional(number, 10)\n      rate_limit_count_per_member = optional(number, 20)\n      rate_period_seconds         = optional(number, 900)\n      rate_units                  = optional(string, \"count\")\n    })\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
+      "type": "object({\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
       "description": "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.",
       "pos": {
         "filename": "variables.tf",
@@ -19,16 +19,16 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 229
+        "line": 223
       }
     },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "The CRN of a Key Protect key, that you want to use for encrypting disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. If no value passed, the value passed for the 'kms_key_crn' variable will be used. BYOK for backups is available only in US regions us-south and us-east, and eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, you must use a key from us-south or eu-de. Take note that Hyper Protect Crypto Services for IBM Cloud® Databases backups is not currently supported, so if no value is passed here, but a HPCS value is passed for var.kms_key_crn, databases backup encryption will use the default encryption keys.",
+      "description": "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 183
+        "line": 177
       }
     },
     "cbr_rules": {
@@ -45,7 +45,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 209
+        "line": 203
       }
     },
     "configuration": {
@@ -63,13 +63,13 @@
     "existing_kms_instance_guid": {
       "name": "existing_kms_instance_guid",
       "type": "string",
-      "description": "The GUID of the Hyper Protect or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Only required if var.kms_encryption_enabled is 'true', var.skip_iam_authorization_policy is 'false', and passing a value for var.kms_key_crn and/or var.backup_encryption_key_crn.",
+      "description": "The GUID of the Hyper Protect Crypto Services or Key Protect instance in which the key specified in var.kms_key_crn and var.backup_encryption_key_crn is coming from. Required only if var.kms_encryption_enabled is set to true, var.skip_iam_authorization_policy is set to false, and you pass a value for var.kms_key_crn, var.backup_encryption_key_crn, or both.",
       "source": [
         "ibm_iam_authorization_policy.kms_policy.target_resource_instance_id"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 199
+        "line": 193
       },
       "immutable": true,
       "computed": true
@@ -84,26 +84,26 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 163
+        "line": 157
       }
     },
     "kms_key_crn": {
       "name": "kms_key_crn",
       "type": "string",
-      "description": "The root key CRN of a Key Management Services like Key Protect or Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. Only used if var.kms_encryption_enabled is set to true.",
+      "description": "The root key CRN of a Key Management Services like Key Protect or Hyper Protect Crypto Services (HPCS) that you want to use for disk encryption. Only used if var.kms_encryption_enabled is set to true.",
       "source": [
         "ibm_database.postgresql_db.key_protect_key"
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 169
+        "line": 163
       },
       "immutable": true
     },
     "member_cpu_count": {
       "name": "member_cpu_count",
       "type": "number",
-      "description": "Allocated dedicated CPU per-member. For shared CPU, set to 0. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
+      "description": "Allocated dedicated CPU per member. For shared CPU, set to 0. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
       "default": 0,
       "pos": {
         "filename": "variables.tf",
@@ -113,7 +113,7 @@
     "member_disk_mb": {
       "name": "member_disk_mb",
       "type": "number",
-      "description": "Allocated disk per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
+      "description": "Allocated disk per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling",
       "default": 5120,
       "pos": {
         "filename": "variables.tf",
@@ -156,7 +156,7 @@
     "pg_version": {
       "name": "pg_version",
       "type": "string",
-      "description": "Version of the PostgreSQL instance to provision.",
+      "description": "Version of the PostgreSQL instance to provision. If no value is passed, the current preferred version of IBM Cloud Databases is used.",
       "source": [
         "ibm_database.postgresql_db.version"
       ],
@@ -176,7 +176,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 246
+        "line": 240
       }
     },
     "pitr_time": {
@@ -188,7 +188,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 252
+        "line": 246
       }
     },
     "plan_validation": {
@@ -303,11 +303,11 @@
     "skip_iam_authorization_policy": {
       "name": "skip_iam_authorization_policy",
       "type": "bool",
-      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the given resource group to read the encryption key from the Hyper Protect or Key Protect instance passed in var.existing_kms_instance_guid. If set to 'false', a value must be passed for var.existing_kms_instance_guid. No policy is created if var.kms_encryption_enabled is set to 'false'.",
+      "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the Hyper Protect Crypto Services (HPCS) instance. If set to false, pass in a value for the HPCS instance in the  var.existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 193
+        "line": 187
       }
     }
   },
@@ -416,7 +416,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 40
+        "line": 42
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -433,7 +433,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 30
+        "line": 32
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -449,7 +449,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 167
+        "line": 163
       }
     }
   },
@@ -528,7 +528,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 129
+        "line": 125
       }
     }
   }

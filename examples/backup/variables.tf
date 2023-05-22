@@ -17,7 +17,7 @@ variable "prefix" {
 }
 
 variable "pg_version" {
-  description = "Version of the postgresql instance"
+  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
   type        = string
   default     = null
 }
