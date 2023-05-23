@@ -34,6 +34,12 @@ variable "resource_tags" {
   default     = []
 }
 
+variable "access_tags" {
+  type        = list(string)
+  description = "Optional list of access management tags to add to resources that are created"
+  default     = []
+}
+
 variable "pitr_id" {
   type        = string
   description = "The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
