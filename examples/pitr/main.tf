@@ -20,6 +20,7 @@ module "postgresql_db_pitr" {
   name              = "${var.prefix}-postgres-pitr"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   member_memory_mb  = 3072
   member_disk_mb    = 15360
   member_cpu_count  = 9

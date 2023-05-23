@@ -1,13 +1,34 @@
 {
   "path": ".",
   "variables": {
+    "access_tags": {
+      "name": "access_tags",
+      "type": "list(string)",
+      "description": "A list of access tags to apply to the PostgreSQL instance created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details",
+      "default": [],
+      "source": [
+        "ibm_resource_tag.postgresql_tag.count",
+        "ibm_resource_tag.postgresql_tag.tags"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 104
+      },
+      "min_length": 1,
+      "max_length": 128,
+      "matches": "^[A-Za-z0-9:_ .-]+$",
+      "computed": true,
+      "elem": {
+        "type": "TypeString"
+      }
+    },
     "auto_scaling": {
       "name": "auto_scaling",
       "type": "object({\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
       "description": "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.",
       "pos": {
         "filename": "variables.tf",
-        "line": 126
+        "line": 139
       }
     },
     "backup_crn": {
@@ -19,7 +40,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 223
+        "line": 236
       }
     },
     "backup_encryption_key_crn": {
@@ -28,7 +49,7 @@
       "description": "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 177
+        "line": 190
       }
     },
     "cbr_rules": {
@@ -45,7 +66,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 203
+        "line": 216
       }
     },
     "configuration": {
@@ -57,7 +78,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 104
+        "line": 117
       }
     },
     "existing_kms_instance_guid": {
@@ -69,7 +90,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 193
+        "line": 206
       },
       "immutable": true,
       "computed": true
@@ -84,7 +105,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 157
+        "line": 170
       }
     },
     "kms_key_crn": {
@@ -96,7 +117,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 163
+        "line": 176
       },
       "immutable": true
     },
@@ -176,7 +197,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 240
+        "line": 253
       }
     },
     "pitr_time": {
@@ -188,7 +209,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 246
+        "line": 259
       }
     },
     "plan_validation": {
@@ -307,7 +328,7 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 187
+        "line": 200
       }
     }
   },
@@ -449,7 +470,23 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 163
+        "line": 170
+      }
+    },
+    "ibm_resource_tag.postgresql_tag": {
+      "mode": "managed",
+      "type": "ibm_resource_tag",
+      "name": "postgresql_tag",
+      "attributes": {
+        "count": "access_tags",
+        "tags": "access_tags"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 122
       }
     }
   },
@@ -528,7 +565,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 125
+        "line": 132
       }
     }
   }
