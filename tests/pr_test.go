@@ -71,7 +71,9 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "11", // Always lock to the lowest supported Postgres version
+			"pg_version": "11",                                                                                                // Always lock to the lowest supported Postgres version
+			"users":      "[{\n    name = \"testuser\",\n    password = \"password1234\" \n    type     = \"database\"\n  }]", // pragma: allowlist secret
+			"admin_pass": "password1234",                                                                                      // pragma: allowlist secret
 		},
 	})
 

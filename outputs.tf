@@ -38,3 +38,13 @@ output "cbr_rule_ids" {
   description = "CBR rule ids created to restrict Postgresql"
   value       = module.cbr_rule[*].rule_id
 }
+
+output "hostname" {
+  description = "Database hostname"
+  value       = flatten(data.ibm_database_connection.database_connection[*].postgres[*].hosts[*].hostname)
+}
+
+output "port" {
+  description = "Database port"
+  value       = flatten(data.ibm_database_connection.database_connection[*].postgres[*].hosts[*].port)
+}

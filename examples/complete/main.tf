@@ -72,6 +72,8 @@ module "postgresql_db" {
   name                       = "${var.prefix}-postgres"
   region                     = var.region
   pg_version                 = var.pg_version
+  admin_pass                 = var.admin_pass
+  users                      = var.users
   kms_encryption_enabled     = true
   kms_key_crn                = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
