@@ -44,3 +44,10 @@ variable "pitr_id" {
   type        = string
   description = "The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
 }
+
+variable "members" {
+  type        = number
+  description = "Allocated number of members. Members can be scaled up but not down."
+  default     = 2
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
+}
