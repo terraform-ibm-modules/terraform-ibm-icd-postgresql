@@ -39,6 +39,7 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
 			"pg_version": permanentResources["postgresqlPITRVersion"],
+			"members":    "3", // Lock members to 3 as the permanent postgres instances has 3 members
 		},
 	})
 
