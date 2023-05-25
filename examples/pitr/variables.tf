@@ -49,5 +49,4 @@ variable "members" {
   type        = number
   description = "Allocated number of members. Members must be same or higher than the source deployment PostgreSQL instance."
   default     = 2
-  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
