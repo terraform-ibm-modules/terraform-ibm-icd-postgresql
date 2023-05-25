@@ -55,6 +55,7 @@ variable "users" {
     role     = optional(string)
   }))
   default     = []
+  sensitive   = true
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters."
 }
 
