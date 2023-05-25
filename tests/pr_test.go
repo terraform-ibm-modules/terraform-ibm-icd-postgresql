@@ -2,6 +2,8 @@
 package test
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
@@ -49,6 +51,7 @@ func TestRunFSCloudExample(t *testing.T) {
 		*/
 		//ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
+			"users":                      "[{name = \"testuser\",password = \"password1234\",type = \"database\"}]", // pragma: allowlist secret
 			"access_tags":                permanentResources["accessTags"],
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
@@ -64,6 +67,11 @@ func TestRunFSCloudExample(t *testing.T) {
 func TestRunUpgradeCompleteExample(t *testing.T) {
 	t.Parallel()
 
+	// Generate a 10 char long random string for the admin_pass
+	randomBytes := make([]byte, 10)
+	_, err := rand.Read(randomBytes)
+	randomPass := base64.URLEncoding.EncodeToString(randomBytes)[:10]
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/complete",
@@ -71,9 +79,9 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "11",                                                                                                // Always lock to the lowest supported Postgres version
-			"users":      "[{\n    name = \"testuser\",\n    password = \"password1234\" \n    type     = \"database\"\n  }]", // pragma: allowlist secret
-			"admin_pass": "password1234",                                                                                      // pragma: allowlist secret
+			"pg_version": "11",                                                                      // Always lock to the lowest supported Postgres version
+			"users":      "[{name = \"testuser\",password = \"password1234\",type = \"database\"}]", // pragma: allowlist secret
+			"admin_pass": randomPass,
 		},
 	})
 

@@ -60,7 +60,7 @@ resource "ibm_database" "postgresql_db" {
   point_in_time_recovery_time          = var.pitr_time
 
   dynamic "users" {
-    for_each = (var.users != null ? var.users : [])
+    for_each = nonsensitive(var.users != null ? var.users : [])
     content {
       name     = users.value.name
       password = users.value.password
