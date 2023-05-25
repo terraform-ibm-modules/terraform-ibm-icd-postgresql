@@ -47,7 +47,7 @@ variable "pitr_id" {
 
 variable "members" {
   type        = number
-  description = "Allocated number of members. Members can be scaled up but not down."
+  description = "Allocated number of members. Members must be same or higher."
   default     = 2
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
