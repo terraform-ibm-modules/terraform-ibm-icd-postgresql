@@ -41,10 +41,10 @@ output "cbr_rule_ids" {
 
 output "hostname" {
   description = "Database hostname"
-  value       = flatten(data.ibm_database_connection.database_connection[*].postgres[*].hosts[*].hostname)
+  value       = local.hostname
 }
 
 output "port" {
   description = "Database port"
-  value       = flatten(data.ibm_database_connection.database_connection[*].postgres[*].hosts[*].port)
+  value       = local.port
 }
