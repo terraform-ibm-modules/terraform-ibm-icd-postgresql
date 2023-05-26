@@ -41,10 +41,10 @@ output "cbr_rule_ids" {
 
 output "hostname" {
   description = "Database hostname"
-  value       = local.hostname
+  value       = nonsensitive(local.hostname)
 }
 
 output "port" {
   description = "Database port"
-  value       = local.port
+  value       = nonsensitive(local.port)
 }

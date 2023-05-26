@@ -395,7 +395,6 @@
     "hostname": {
       "name": "hostname",
       "description": "Database hostname",
-      "value": "local.hostname",
       "pos": {
         "filename": "outputs.tf",
         "line": 42
@@ -413,7 +412,6 @@
     "port": {
       "name": "port",
       "description": "Database port",
-      "value": "local.port",
       "pos": {
         "filename": "outputs.tf",
         "line": 47
