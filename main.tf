@@ -208,7 +208,7 @@ locals {
 }
 
 data "ibm_database_connection" "database_connection" {
-  count         = length(var.users) > 0 ? length(var.users) : 0
+  count         = length(var.users) > 0 ? 1 : 0
   endpoint_type = var.service_endpoints
   deployment_id = ibm_database.postgresql_db.id
   user_id       = var.users[0].name

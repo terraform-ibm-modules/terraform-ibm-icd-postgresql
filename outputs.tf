@@ -40,11 +40,11 @@ output "cbr_rule_ids" {
 }
 
 output "hostname" {
-  description = "Database hostname"
+  description = "Database hostname. Only contains value when var.service_credential_names or var.users are set."
   value       = nonsensitive(local.hostname)
 }
 
 output "port" {
-  description = "Database port"
+  description = "Database port. Only contains value when var.service_credential_names or var.users are set."
   value       = nonsensitive(local.port)
 }

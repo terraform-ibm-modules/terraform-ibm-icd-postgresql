@@ -394,7 +394,7 @@
     },
     "hostname": {
       "name": "hostname",
-      "description": "Database hostname",
+      "description": "Database hostname. Only contains value when var.service_credential_names or var.users are set.",
       "pos": {
         "filename": "outputs.tf",
         "line": 42
@@ -411,7 +411,7 @@
     },
     "port": {
       "name": "port",
-      "description": "Database port",
+      "description": "Database port. Only contains value when var.service_credential_names or var.users are set.",
       "pos": {
         "filename": "outputs.tf",
         "line": 47

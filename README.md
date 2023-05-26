@@ -114,9 +114,9 @@ To attach access management tags to resources in this module, you need the follo
 | <a name="output_cbr_rule_ids"></a> [cbr\_rule\_ids](#output\_cbr\_rule\_ids) | CBR rule ids created to restrict Postgresql |
 | <a name="output_crn"></a> [crn](#output\_crn) | Postgresql instance crn |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
-| <a name="output_hostname"></a> [hostname](#output\_hostname) | Database hostname |
+| <a name="output_hostname"></a> [hostname](#output\_hostname) | Database hostname. Only contains value when var.service\_credential\_names or var.users are set. |
 | <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
-| <a name="output_port"></a> [port](#output\_port) | Database port |
+| <a name="output_port"></a> [port](#output\_port) | Database port. Only contains value when var.service\_credential\_names or var.users are set. |
 | <a name="output_service_credentials_json"></a> [service\_credentials\_json](#output\_service\_credentials\_json) | Service credentials json map |
 | <a name="output_service_credentials_object"></a> [service\_credentials\_object](#output\_service\_credentials\_object) | Service credentials object |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
