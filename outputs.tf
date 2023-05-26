@@ -38,3 +38,13 @@ output "cbr_rule_ids" {
   description = "CBR rule ids created to restrict Postgresql"
   value       = module.cbr_rule[*].rule_id
 }
+
+output "hostname" {
+  description = "Database hostname. Only contains value when var.service_credential_names or var.users are set."
+  value       = nonsensitive(local.hostname)
+}
+
+output "port" {
+  description = "Database port. Only contains value when var.service_credential_names or var.users are set."
+  value       = nonsensitive(local.port)
+}

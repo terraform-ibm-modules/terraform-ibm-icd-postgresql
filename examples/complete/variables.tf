@@ -40,6 +40,25 @@ variable "pg_version" {
   default     = null
 }
 
+variable "admin_pass" {
+  type        = string
+  default     = null
+  sensitive   = true
+  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. The admin password must be in the range of 10-32 characters."
+}
+
+variable "users" {
+  type = list(object({
+    name     = string
+    password = string
+    type     = string
+    role     = optional(string)
+  }))
+  default     = []
+  sensitive   = true
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters."
+}
+
 variable "service_credential_names" {
   description = "Map of name, role for service credentials that you want to create for the database"
   type        = map(string)

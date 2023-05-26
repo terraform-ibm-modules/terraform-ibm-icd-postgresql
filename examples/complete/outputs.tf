@@ -32,3 +32,13 @@ output "cbr_rule_ids" {
   description = "CBR rule ids created to restrict Postgresql"
   value       = module.postgresql_db.cbr_rule_ids
 }
+
+output "hostname" {
+  description = "Postgresql instance hostname"
+  value       = module.postgresql_db.hostname
+}
+
+output "port" {
+  description = "Postgresql instance port"
+  value       = module.postgresql_db.port
+}

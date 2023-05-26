@@ -51,12 +51,23 @@ resource "ibm_database" "postgresql_db" {
   remote_leader_id                     = var.remote_leader_crn
   version                              = var.pg_version
   tags                                 = var.resource_tags
+  adminpassword                        = var.admin_pass
   service_endpoints                    = var.service_endpoints
   configuration                        = var.configuration != null ? jsonencode(var.configuration) : null
   key_protect_key                      = var.kms_key_crn
   backup_encryption_key_crn            = local.backup_encryption_key_crn
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
+
+  dynamic "users" {
+    for_each = nonsensitive(var.users != null ? var.users : [])
+    content {
+      name     = users.value.name
+      password = users.value.password
+      type     = users.value.type
+      role     = (users.value.role != "" ? users.value.role : null)
+    }
+  }
 
   group {
     group_id = "member" # Only member type is allowed for postgresql
@@ -185,6 +196,7 @@ locals {
   service_credentials_object = length(var.service_credential_names) > 0 ? {
     hostname    = ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.hostname"]
     certificate = ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.certificate.certificate_base64"]
+    port        = ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.port"]
     credentials = {
       for service_credential in ibm_resource_key.service_credentials :
       service_credential["name"] => {
@@ -193,4 +205,18 @@ locals {
       }
     }
   } : null
+}
+
+data "ibm_database_connection" "database_connection" {
+  count         = length(var.users) > 0 ? 1 : 0
+  endpoint_type = var.service_endpoints
+  deployment_id = ibm_database.postgresql_db.id
+  user_id       = var.users[0].name
+  user_type     = var.users[0].type
+}
+
+locals {
+  # Used for output only
+  hostname = length(var.service_credential_names) > 0 ? ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.hostname"] : length(var.users) > 0 ? flatten(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname) : null
+  port     = length(var.service_credential_names) > 0 ? ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.port"] : length(var.users) > 0 ? flatten(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port) : null
 }
