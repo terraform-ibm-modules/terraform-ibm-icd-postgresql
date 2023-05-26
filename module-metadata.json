@@ -22,13 +22,26 @@
         "type": "TypeString"
       }
     },
+    "admin_pass": {
+      "name": "admin_pass",
+      "type": "string",
+      "description": "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. The admin password must be in the range of 10-32 characters.",
+      "sensitive": true,
+      "source": [
+        "ibm_database.postgresql_db.adminpassword"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 135
+      }
+    },
     "auto_scaling": {
       "name": "auto_scaling",
       "type": "object({\n    disk = object({\n      capacity_enabled             = optional(bool, false)\n      free_space_less_than_percent = optional(number, 10)\n      io_above_percent             = optional(number, 90)\n      io_enabled                   = optional(bool, false)\n      io_over_period               = optional(string, \"15m\")\n      rate_increase_percent        = optional(number, 10)\n      rate_limit_mb_per_member     = optional(number, 3670016)\n      rate_period_seconds          = optional(number, 900)\n      rate_units                   = optional(string, \"mb\")\n    })\n    memory = object({\n      io_above_percent         = optional(number, 90)\n      io_enabled               = optional(bool, false)\n      io_over_period           = optional(string, \"15m\")\n      rate_increase_percent    = optional(number, 10)\n      rate_limit_mb_per_member = optional(number, 114688)\n      rate_period_seconds      = optional(number, 900)\n      rate_units               = optional(string, \"mb\")\n    })\n  })",
       "description": "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs.",
       "pos": {
         "filename": "variables.tf",
-        "line": 139
+        "line": 158
       }
     },
     "backup_crn": {
@@ -40,7 +53,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 236
+        "line": 255
       }
     },
     "backup_encryption_key_crn": {
@@ -49,7 +62,7 @@
       "description": "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys.",
       "pos": {
         "filename": "variables.tf",
-        "line": 190
+        "line": 209
       }
     },
     "cbr_rules": {
@@ -66,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 216
+        "line": 235
       }
     },
     "configuration": {
@@ -90,7 +103,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 206
+        "line": 225
       },
       "immutable": true,
       "computed": true
@@ -105,7 +118,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 170
+        "line": 189
       }
     },
     "kms_key_crn": {
@@ -117,7 +130,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 176
+        "line": 195
       },
       "immutable": true
     },
@@ -197,7 +210,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 253
+        "line": 272
       }
     },
     "pitr_time": {
@@ -209,7 +222,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 259
+        "line": 278
       }
     },
     "plan_validation": {
@@ -312,7 +325,9 @@
       "type": "string",
       "description": "Specify whether you want to enable the public, private, or both service endpoints. Supported values are 'public', 'private', or 'public-and-private'.",
       "default": "private",
+      "required": true,
       "source": [
+        "data.ibm_database_connection.database_connection.endpoint_type",
         "ibm_database.postgresql_db.service_endpoints"
       ],
       "pos": {
@@ -328,7 +343,23 @@
       "default": false,
       "pos": {
         "filename": "variables.tf",
-        "line": 200
+        "line": 219
+      }
+    },
+    "users": {
+      "name": "users",
+      "type": "list(object({\n    name     = string\n    password = string # pragma: allowlist secret\n    type     = string # \"type\" is required to generate the connection string for the outputs.\n    role     = optional(string)\n  }))",
+      "description": "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management\u0026interface=ui",
+      "default": [],
+      "sensitive": true,
+      "source": [
+        "data.ibm_database_connection.database_connection.count",
+        "data.ibm_database_connection.database_connection.user_id",
+        "data.ibm_database_connection.database_connection.user_type"
+      ],
+      "pos": {
+        "filename": "variables.tf",
+        "line": 142
       }
     }
   },
@@ -361,6 +392,15 @@
       },
       "type": "TypeString"
     },
+    "hostname": {
+      "name": "hostname",
+      "description": "Database hostname",
+      "value": "local.hostname",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 42
+      }
+    },
     "id": {
       "name": "id",
       "description": "Postgresql instance id",
@@ -368,6 +408,15 @@
       "pos": {
         "filename": "outputs.tf",
         "line": 5
+      }
+    },
+    "port": {
+      "name": "port",
+      "description": "Database port",
+      "value": "local.port",
+      "pos": {
+        "filename": "outputs.tf",
+        "line": 47
       }
     },
     "service_credentials_json": {
@@ -418,6 +467,7 @@
       "type": "ibm_database",
       "name": "postgresql_db",
       "attributes": {
+        "adminpassword": "admin_pass",
         "backup_id": "backup_crn",
         "configuration": "configuration",
         "key_protect_key": "kms_key_crn",
@@ -470,7 +520,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 170
+        "line": 181
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -486,11 +536,30 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 122
+        "line": 133
       }
     }
   },
-  "data_resources": {},
+  "data_resources": {
+    "data.ibm_database_connection.database_connection": {
+      "mode": "data",
+      "type": "ibm_database_connection",
+      "name": "database_connection",
+      "attributes": {
+        "count": "users",
+        "endpoint_type": "service_endpoints",
+        "user_id": "users",
+        "user_type": "users"
+      },
+      "provider": {
+        "name": "ibm"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 210
+      }
+    }
+  },
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
@@ -565,7 +634,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 132
+        "line": 143
       }
     }
   }
