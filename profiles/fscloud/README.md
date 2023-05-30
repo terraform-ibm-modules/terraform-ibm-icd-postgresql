@@ -56,6 +56,8 @@ No resources.
 |------|-------------|
 | <a name="output_crn"></a> [crn](#output\_crn) | Postgresql instance crn |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |
+| <a name="output_hostname"></a> [hostname](#output\_hostname) | Postgresql instance hostname |
 | <a name="output_id"></a> [id](#output\_id) | Postgresql instance id |
+| <a name="output_port"></a> [port](#output\_port) | Postgresql instance port |
 | <a name="output_version"></a> [version](#output\_version) | Postgresql instance version |
 <!-- END OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
