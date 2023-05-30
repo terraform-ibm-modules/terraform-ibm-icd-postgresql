@@ -71,17 +71,6 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 	_, err := rand.Read(randomBytes)
 	randomPass := base64.URLEncoding.EncodeToString(randomBytes)[:10]
 
-	// User Object
-	type User struct {
-		Name     string
-		Password string
-		Type     string
-	}
-
-	users := []User{
-		{Name: "testuser", Password: randomPass, Type: "database"}, // pragma: allowlist secret
-	}
-
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/complete",
@@ -90,7 +79,13 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "11", // Always lock to the lowest supported Postgres version
-			"users":      users,
+			"users": []map[string]interface{}{
+				{
+					"name":     "testuser",
+					"password": randomPass, // pragma: allowlist secret
+					"type":     "database",
+				},
+			},
 			"admin_pass": randomPass,
 		},
 	})
