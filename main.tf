@@ -1,7 +1,28 @@
 ##############################################################################
 # ICD PostgreSQL module
 ##############################################################################
+data "ibm_cbr_zone" "cbr_zone" {
+  count   = length(local.network_zone_id)
+  zone_id = local.network_zone_id[count.index]
+}
 
+locals {
+   has_service_ref = anytrue([for cbr_zone in data.ibm_cbr_zone.cbr_zone : cbr_zone.addresses[*].type == "serviceRef"])
+
+   network_zone_id          = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
+
+  # network_zone_id          = flatten([for rule in var.cbr_rules : [for context in rule.rule_contexts : [for attribute in context.attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]])
+  # validate_cbr_zone        = anytrue(flatten([for cbr_zone in data.ibm_cbr_zone.cbr_zone : [for address in cbr_zone.addresses : address.type == "serviceRef" ? true : false]]))
+  # is_valid   =  local.validate_cbr_zone == true? tobool("Cloud Databases does not support service reference in network zone.")  : ""
+}
+resource "null_resource" "validate_service" {
+  lifecycle {
+    precondition {
+      condition      = local.has_service_ref == true  # this condition must fail to give error message
+      error_message  = "Cloud Databases does not support service reference in network zone."
+    }
+  }
+}
 locals {
   # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
   # tflint-ignore: terraform_unused_declarations
