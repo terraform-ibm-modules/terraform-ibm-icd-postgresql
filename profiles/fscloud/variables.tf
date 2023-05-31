@@ -47,6 +47,25 @@ variable "member_cpu_count" {
   default     = 3
 }
 
+variable "admin_pass" {
+  type        = string
+  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. The admin password must be in the range of 10-32 characters."
+  default     = null
+  sensitive   = true
+}
+
+variable "users" {
+  type = list(object({
+    name     = string
+    password = string # pragma: allowlist secret
+    type     = string # "type" is required to generate the connection string for the outputs.
+    role     = optional(string)
+  }))
+  default     = []
+  sensitive   = true
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
+}
+
 variable "service_credential_names" {
   description = "Map of name, role for service credentials that you want to create for the database"
   type        = map(string)

@@ -235,9 +235,3 @@ data "ibm_database_connection" "database_connection" {
   user_id       = var.users[0].name
   user_type     = var.users[0].type
 }
-
-locals {
-  # Used for output only
-  hostname = length(var.service_credential_names) > 0 ? ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.hostname"] : length(var.users) > 0 ? flatten(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname) : null
-  port     = length(var.service_credential_names) > 0 ? ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.port"] : length(var.users) > 0 ? flatten(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port) : null
-}
