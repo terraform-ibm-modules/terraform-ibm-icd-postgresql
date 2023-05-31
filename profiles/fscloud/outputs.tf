@@ -21,3 +21,13 @@ output "crn" {
   description = "Postgresql instance crn"
   value       = module.postgresql_db.crn
 }
+
+output "hostname" {
+  description = "Postgresql instance hostname"
+  value       = module.postgresql_db.hostname
+}
+
+output "port" {
+  description = "Postgresql instance port"
+  value       = module.postgresql_db.port
+}
