@@ -20,9 +20,11 @@ module "postgresql_db_pitr" {
   name              = "${var.prefix}-postgres-pitr"
   region            = var.region
   resource_tags     = var.resource_tags
+  access_tags       = var.access_tags
   member_memory_mb  = 3072
   member_disk_mb    = 15360
   member_cpu_count  = 9
+  members           = var.members
   pg_version        = var.pg_version
   pitr_id           = var.pitr_id
   pitr_time         = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time

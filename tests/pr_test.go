@@ -2,6 +2,8 @@
 package test
 
 import (
+	"crypto/rand"
+	"encoding/base64"
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
@@ -49,6 +51,7 @@ func TestRunFSCloudExample(t *testing.T) {
 		*/
 		//ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
+			"access_tags":                permanentResources["accessTags"],
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
 			"pg_version":                 "14", // Always lock this test into the latest supported Postgres version
@@ -63,6 +66,11 @@ func TestRunFSCloudExample(t *testing.T) {
 func TestRunUpgradeCompleteExample(t *testing.T) {
 	t.Parallel()
 
+	// Generate a 10 char long random string for the admin_pass
+	randomBytes := make([]byte, 10)
+	_, err := rand.Read(randomBytes)
+	randomPass := base64.URLEncoding.EncodeToString(randomBytes)[:10]
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/complete",
@@ -71,6 +79,14 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "11", // Always lock to the lowest supported Postgres version
+			"users": []map[string]interface{}{
+				{
+					"name":     "testuser",
+					"password": randomPass, // pragma: allowlist secret
+					"type":     "database",
+				},
+			},
+			"admin_pass": randomPass,
 		},
 	})
 

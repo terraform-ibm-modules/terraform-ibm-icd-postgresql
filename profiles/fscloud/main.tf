@@ -11,12 +11,15 @@ module "postgresql_db" {
   kms_key_crn                   = var.kms_key_crn
   backup_encryption_key_crn     = null # Need to use default encryption until ICD adds HPCS support for backup encryption
   resource_tags                 = var.resource_tags
+  access_tags                   = var.access_tags
   cbr_rules                     = var.cbr_rules
   configuration                 = var.configuration
   member_memory_mb              = var.member_memory_mb
   member_disk_mb                = var.member_disk_mb
   member_cpu_count              = var.member_cpu_count
   members                       = var.members
+  admin_pass                    = var.admin_pass
+  users                         = var.users
   service_credential_names      = var.service_credential_names
   auto_scaling                  = var.auto_scaling
 }
