@@ -1,7 +1,6 @@
 # IBM Cloud Databases for Postgresql module
 
-[![Graduated](<https://img.shields.io/badge/Status-Graduated%20(GA%20candidate)-green>)](https://github.ibm.com/GoldenEye/documentation/blob/master/status.md)
-[![Build status](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/actions/workflows/ci.yml/badge.svg)](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/actions/workflows/ci.yml)
+[![Graduated (Supported)](https://img.shields.io/badge/Status-Graduated%20(Supported)-brightgreen)](https://terraform-ibm-modules.github.io/documentation/#/badge-status)
 [![pre-commit](https://img.shields.io/badge/pre--commit-enabled-brightgreen?logo=pre-commit&logoColor=white)](https://github.com/pre-commit/pre-commit)
 [![latest release](https://img.shields.io/github/v/release/terraform-ibm-modules/terraform-ibm-icd-postgresql?logo=GitHub&sort=semver)](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/releases/latest)
 [![Renovate enabled](https://img.shields.io/badge/renovate-enabled-brightgreen.svg)](https://renovatebot.com/)

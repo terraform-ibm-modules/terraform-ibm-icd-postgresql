@@ -5,7 +5,7 @@
 # any change of this settings.yml file is detected by the GitHub App and
 # the settings of this repository are updated immediately.
 #
-_extends: repo-settings:.github/common-settings.yml
+_extends: repo-settings:.github/common-settings-v2.yml
 
 # repo-specific settings
 #
@@ -23,3 +23,5 @@ repository:
   # Uncomment this description property
   # and update the description to the current repo description.
   description: "Implements a ICD Postgresql instance with tags, users, memory allocation, disk allocation, cpu allocation and context based restrictions"
+
+  topics: core-team, terraform, ibm-cloud, terraform-module, postgresql
