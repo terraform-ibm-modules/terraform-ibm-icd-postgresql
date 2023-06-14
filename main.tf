@@ -4,10 +4,19 @@
 data "ibm_cbr_zone" "cbr_zone" {
   count   = length(local.network_zone_id)
   zone_id = local.network_zone_id[count.index]
+
+  # lifecycle {
+  #   postcondition {
+  #     # condition      = local.has_service_ref == true  # this condition must fail to give error message
+  #     # condition = anytrue([for cbr_zone in data.ibm_cbr_zone.cbr_zone : cbr_zone.addresses[*].type == "serviceRef"])
+  #     condition      = self.addresses[*].type != "serviceRef"
+  #     error_message  = "Cloud Databases does not support service reference in network zone." 
+  #   }
+  # }
 }
 
 locals {
-   has_service_ref = anytrue([for cbr_zone in data.ibm_cbr_zone.cbr_zone : cbr_zone.addresses[*].type == "serviceRef"])
+   has_service_ref          = anytrue([for cbr_zone in data.ibm_cbr_zone.cbr_zone : cbr_zone.addresses[*].type == "serviceRef"])
 
    network_zone_id          = flatten([for rule in var.cbr_rules : [for contexts in rule.rule_contexts : [for attributes in contexts : [for attribute in attributes : attribute.value if contains(["networkZoneId"], attribute.name)]]]])
 
@@ -18,7 +27,7 @@ locals {
 resource "null_resource" "validate_service" {
   lifecycle {
     precondition {
-      condition      = local.has_service_ref == true  # this condition must fail to give error message
+      condition      = local.has_service_ref == false  # this condition must fail to give error message
       error_message  = "Cloud Databases does not support service reference in network zone."
     }
   }
@@ -144,6 +153,10 @@ resource "ibm_database" "postgresql_db" {
       key_protect_key,
       backup_encryption_key_crn,
     ]
+    # precondition {
+    #   condition      = local.has_service_ref == false  # this condition must fail to give error message
+    #   error_message  = "Cloud Databases does not support service reference in network zone."
+    # }
   }
 
   timeouts {
@@ -162,6 +175,7 @@ resource "ibm_resource_tag" "postgresql_tag" {
 # Context Based Restrictions
 ##############################################################################
 module "cbr_rule" {
+  depends_on = [ null_resource.validate_service ] # Add the dependency to get error message
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module?ref=v1.2.0"
   rule_description = var.cbr_rules[count.index].description
