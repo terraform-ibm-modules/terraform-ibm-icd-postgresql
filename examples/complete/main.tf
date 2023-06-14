@@ -115,19 +115,18 @@ resource "ibm_is_security_group" "sg1" {
   vpc  = ibm_is_vpc.example_vpc.id
 }
 
-resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
-  name = "${var.prefix}-vpe-to-pg"
-  target {
-    crn           = module.postgresql_db.crn
-    resource_type = "provider_cloud_service"
-  }
-  vpc = ibm_is_vpc.example_vpc.id
-  ips {
-    subnet = ibm_is_subnet.testacc_subnet.id
-    name   = "${var.prefix}-pg-access-reserved-ip"
-  }
-  resource_group  = module.resource_group.resource_group_id
-  security_groups = [ibm_is_security_group.sg1.id]
+module "vpe" {
+  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-vpe-module?ref=v2.4.0"
+  prefix = "${var.prefix}-vpe-to-pg"
+  cloud_service_by_crn = [
+    {
+      name = "${var.prefix}-postgres"
+      crn  = module.postgresql_db.crn
+    },
+  ]
+  vpc_id             = ibm_is_vpc.example_vpc.id
+  resource_group_id  = module.resource_group.resource_group_id
+  security_group_ids = [ibm_is_security_group.sg1.id]
   depends_on = [
     time_sleep.wait_120_seconds,
     time_sleep.wait_30_seconds
