@@ -21,8 +21,8 @@ provider "ibm" {
 }
 
 module "postgresql_db" {
-  # Replace "main" with a GIT release version to lock into a specific release
-  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql?ref=main"
+  source  = "terraform-ibm-modules/icd-postgresql/ibm"
+  version = "latest" # Replace "latest" with a release version to lock into a specific release
   resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   name              = "my-instance"
   region            = "us-south"
@@ -64,7 +64,7 @@ To attach access management tags to resources in this module, you need the follo
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | git::https://github.com/terraform-ibm-modules/terraform-ibm-cbr//cbr-rule-module | v1.2.0 |
+| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//cbr-rule-module | 1.2.0 |
 
 ## Resources
 
