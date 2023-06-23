@@ -10,10 +10,6 @@ module "resource_group" {
   existing_resource_group_name = var.resource_group
 }
 
-data "ibm_database_point_in_time_recovery" "database_pitr" {
-  deployment_id = var.pitr_id
-}
-
 # New ICD postgresql database instance pointing to a PITR time
 module "postgresql_db_pitr" {
   source            = "../.."
@@ -28,5 +24,5 @@ module "postgresql_db_pitr" {
   members           = var.members
   pg_version        = var.pg_version
   pitr_id           = var.pitr_id
-  pitr_time         = data.ibm_database_point_in_time_recovery.database_pitr.earliest_point_in_time_recovery_time
+  pitr_time         = var.pitr_time
 }
