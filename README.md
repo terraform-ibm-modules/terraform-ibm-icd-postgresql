@@ -21,8 +21,8 @@ provider "ibm" {
 }
 
 module "postgresql_db" {
-  source  = "terraform-ibm-modules/icd-postgresql/ibm"
-  version = "latest" # Replace "latest" with a release version to lock into a specific release
+  source            = "terraform-ibm-modules/icd-postgresql/ibm"
+  version           = "latest" # Replace "latest" with a release version to lock into a specific release
   resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   name              = "my-instance"
   region            = "us-south"
@@ -58,7 +58,7 @@ To attach access management tags to resources in this module, you need the follo
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.3.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.49.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.54.0, < 2.0.0 |
 
 ## Modules
 
