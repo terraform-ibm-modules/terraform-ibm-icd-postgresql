@@ -21,8 +21,8 @@ provider "ibm" {
 }
 
 module "postgresql_db" {
-  source  = "terraform-ibm-modules/icd-postgresql/ibm"
-  version = "latest" # Replace "latest" with a release version to lock into a specific release
+  source            = "terraform-ibm-modules/icd-postgresql/ibm"
+  version           = "latest" # Replace "latest" with a release version to lock into a specific release
   resource_group_id = "xxXXxxXXxXxXXXXxxXxxxXXXXxXXXXX"
   name              = "my-instance"
   region            = "us-south"
