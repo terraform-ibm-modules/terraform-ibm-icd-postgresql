@@ -117,7 +117,7 @@ resource "ibm_is_security_group" "sg1" {
 
 module "vpe" {
   source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-vpe-module?ref=v2.4.0"
-  prefix = "${var.prefix}-vpe-to-pg"
+  prefix = "vpe-to-pg"
   cloud_service_by_crn = [
     {
       name = "${var.prefix}-postgres"
@@ -125,6 +125,7 @@ module "vpe" {
     },
   ]
   vpc_id             = ibm_is_vpc.example_vpc.id
+  subnet_zone_list   = var.subnet_zone_list
   resource_group_id  = module.resource_group.resource_group_id
   security_group_ids = [ibm_is_security_group.sg1.id]
   depends_on = [
