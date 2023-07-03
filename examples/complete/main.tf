@@ -119,8 +119,9 @@ resource "ibm_is_security_group" "sg1" {
 }
 
 module "vpe" {
-  source = "git::https://github.com/terraform-ibm-modules/terraform-ibm-vpe-module?ref=v2.4.0"
-  prefix = "vpe-to-pg"
+  source  = "terraform-ibm-modules/vpe-module/ibm"
+  version = "2.4.0"
+  prefix  = "vpe-to-pg"
   cloud_service_by_crn = [
     {
       name = "${var.prefix}-postgres"
