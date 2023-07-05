@@ -43,6 +43,12 @@ To attach access management tags to resources in this module, you need the follo
     - **Tagging** service
         - `Administrator` platform access
 
+<!-- BEGIN TF SUBMODULES HOOK -->
+## Modules
+
+- [ Profile for IBM Cloud Framework for Financial Services](modules/fscloud)
+<!-- END TF SUBMODULES HOOK -->
+
 <!-- BEGIN EXAMPLES HOOK -->
 ## Examples
 
