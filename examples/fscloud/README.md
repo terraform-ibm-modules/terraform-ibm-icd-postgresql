@@ -1,6 +1,6 @@
 # Financial Services Cloud profile example with autoscaling enabled
 
-An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../profiles/fscloud/) to deploy an instance of IBM Cloud Databases for PostgreSQL.
+An end-to-end example that uses the [Profile for IBM Cloud Framework for Financial Services](../../modules/fscloud/) to deploy an instance of IBM Cloud Databases for PostgreSQL.
 
 The example uses the IBM Cloud Terraform provider to create the following infrastructure:
 
