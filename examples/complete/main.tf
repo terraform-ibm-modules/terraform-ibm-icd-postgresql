@@ -200,5 +200,5 @@ module "secrets_manager_service_credentials_cert" {
   secret_name               = "${var.prefix}-es-cert"
   secret_description        = "postgresql_db Service Credential Certificate"
   imported_cert_certificate = base64decode(module.postgresql_db.service_credentials_object.certificate)
-  secret_type               = "imported_cert" #checkov:skip=CKV_SECRET_6
+  secret_type               = "imported_cert" #checkov: skip=CKV_SECRET_6
 }
