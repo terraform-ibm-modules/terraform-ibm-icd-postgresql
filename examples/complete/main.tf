@@ -142,3 +142,58 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"
 }
+
+##############################################################################
+## Secrets Manager layer
+##############################################################################
+
+# Create Secrets Manager Instance (if not using existing one)
+resource "ibm_resource_instance" "secrets_manager" {
+  count             = var.existing_sm_instance_guid == null ? 1 : 0
+  name              = "${var.prefix}-sm" #checkov:skip=CKV_SECRET_6: does not require high entropy string as is static value
+  service           = "secrets-manager"
+  service_endpoints = "public-and-private"
+  plan              = "trial"
+  location          = var.region
+  resource_group_id = module.resource_group.resource_group_id
+
+  timeouts {
+    create = "30m" # Extending provisioning time to 30 minutes
+  }
+}
+
+# Add a Secrets Group to the secret manager instance
+module "secrets_manager_secrets_group" {
+  source               = "git::https://github.ibm.com/GoldenEye/secrets-manager-secret-group-module.git?ref=2.0.1"
+  region               = local.sm_region
+  secrets_manager_guid = local.sm_guid
+  #tfsec:ignore:general-secrets-no-plaintext-exposure
+  secret_group_name        = "${var.prefix}-es-secrets"
+  secret_group_description = "service secret-group" #tfsec:ignore:general-secrets-no-plaintext-exposure
+}
+
+# Add service credentials to secret manager as a username/password secret type in the created secret group
+module "secrets_manager_service_credentials_user_pass" {
+  source                  = "git::https://github.ibm.com/GoldenEye/secrets-manager-secret-module?ref=3.1.1"
+  for_each                = var.service_credential_names
+  region                  = local.sm_region
+  secrets_manager_guid    = local.sm_guid
+  secret_group_id         = module.secrets_manager_secrets_group.secret_group_id
+  secret_name             = "${var.prefix}-${each.key}-credentials"
+  secret_description      = "postgresql_db Service Credentials for ${each.key}"
+  secret_username         = module.postgresql_db.service_credentials_object.credentials[each.key].username
+  secret_payload_password = module.postgresql_db.service_credentials_object.credentials[each.key].password
+  secret_type             = "username_password" #checkov:skip=CKV_SECRET_6
+}
+
+# Add secrets manager certificate to secret manager as a certificate secret type in the created secret group
+module "secrets_manager_service_credentials_cert" {
+  source                    = "git::https://github.ibm.com/GoldenEye/secrets-manager-secret-module?ref=3.1.1"
+  region                    = local.sm_region
+  secrets_manager_guid      = local.sm_guid
+  secret_group_id           = module.secrets_manager_secrets_group.secret_group_id
+  secret_name               = "${var.prefix}-es-cert"
+  secret_description        = "postgresql_db Service Credential Certificate"
+  imported_cert_certificate = base64decode(module.postgresql_db.service_credentials_object.certificate)
+  secret_type               = "imported_cert" #checkov:skip=CKV_SECRET_6
+}
