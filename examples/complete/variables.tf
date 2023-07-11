@@ -69,3 +69,15 @@ variable "service_credential_names" {
     "postgressql_editor" : "Editor",
   }
 }
+
+variable "existing_sm_instance_guid" {
+  type        = string
+  description = "Existing Secrets Manager GUID. If not provided an new instance will be provisioned"
+  default     = null
+}
+
+variable "existing_sm_instance_region" {
+  type        = string
+  description = "Required if value is passed into var.existing_sm_instance_guid"
+  default     = null
+}

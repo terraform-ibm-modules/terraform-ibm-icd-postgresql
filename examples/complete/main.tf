@@ -1,3 +1,8 @@
+locals {
+  sm_guid   = var.existing_sm_instance_guid == null ? ibm_resource_instance.secrets_manager[0].guid : var.existing_sm_instance_guid
+  sm_region = var.existing_sm_instance_region == null ? var.region : var.existing_sm_instance_region
+}
+
 ##############################################################################
 # Resource Group
 ##############################################################################
