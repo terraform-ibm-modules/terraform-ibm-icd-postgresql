@@ -78,6 +78,6 @@ variable "existing_sm_instance_guid" {
 
 variable "existing_sm_instance_region" {
   type        = string
-  description = "Required if value is passed into var.existing_sm_instance_guid"
+  description = "Required if value is passed into  var.existing_sm_instance_guid"
   default     = null
 }
