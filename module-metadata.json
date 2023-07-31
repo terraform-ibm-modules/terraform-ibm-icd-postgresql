@@ -288,17 +288,15 @@
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
-      "description": "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials (if creating).",
+      "description": "Optional list of tags to be added to the PostgreSQL instance.",
       "default": [],
       "source": [
-        "ibm_database.postgresql_db.tags",
-        "ibm_resource_key.service_credentials.tags"
+        "ibm_database.postgresql_db.tags"
       ],
       "pos": {
         "filename": "variables.tf",
         "line": 98
       },
-      "cloud_data_type": "tags",
       "min_length": 1,
       "max_length": 128,
       "matches": "^[A-Za-z0-9:_ .-]+$",
@@ -510,8 +508,7 @@
       "type": "ibm_resource_key",
       "name": "service_credentials",
       "attributes": {
-        "for_each": "service_credential_names",
-        "tags": "resource_tags"
+        "for_each": "service_credential_names"
       },
       "provider": {
         "name": "ibm"
@@ -554,7 +551,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 211
+        "line": 210
       }
     }
   },
