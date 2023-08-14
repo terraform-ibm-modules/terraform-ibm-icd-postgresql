@@ -97,7 +97,7 @@ variable "service_endpoints" {
 
 variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials (if creating)."
+  description = "Optional list of tags to be added to the PostgreSQL instance."
   default     = []
 }
 
