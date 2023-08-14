@@ -6,7 +6,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"testing"
-	"time"
 )
 
 func TestRunRestoredDBExample(t *testing.T) {
@@ -29,10 +28,6 @@ func TestRunRestoredDBExample(t *testing.T) {
 }
 
 func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
-	getCurrDate := time.Now()
-	subDate := getCurrDate.AddDate(0, 0, -1) // Subtracting 1 day from the current time considering this as latest available point
-	pitrTime := subDate.UTC().Format(time.RFC3339)
-
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -43,7 +38,6 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
-			"pitr_time":  pitrTime,
 			"pg_version": permanentResources["postgresqlPITRVersion"],
 			"members":    "3", // Lock members to 3 as the permanent postgres instances has 3 members
 		},
