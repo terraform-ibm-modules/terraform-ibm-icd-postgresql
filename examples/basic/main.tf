@@ -24,6 +24,14 @@ module "postgresql_db" {
   access_tags       = var.access_tags
 }
 
+# On destroy, we are seeing that even though the replica has been returned as
+# destroyed by terraform, the leader instance destroy can fail with: "You
+# must delete all replicas before disabling the leader. Try again with valid
+# values or contact support if the issue persists."
+# The ICD team have recommended to wait for a period of time after the replica
+# destroy completes before attempting to destroy the leader instance, so hence
+# adding a time sleep here.
+
 resource "time_sleep" "wait_time" {
   depends_on = [module.postgresql_db]
 
