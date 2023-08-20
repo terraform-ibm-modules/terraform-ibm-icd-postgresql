@@ -38,6 +38,13 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   roles                       = ["Reader"]
 }
 
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_authorization_policy" {
+  depends_on = [ibm_iam_authorization_policy.kms_policy]
+
+  create_duration = "30s"
+}
+
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
   depends_on                           = [ibm_iam_authorization_policy.kms_policy]
@@ -143,7 +150,7 @@ resource "ibm_resource_tag" "postgresql_tag" {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//cbr-rule-module"
-  version          = "1.2.1"
+  version          = "1.6.1"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
@@ -184,7 +191,6 @@ resource "ibm_resource_key" "service_credentials" {
   name                 = each.key
   role                 = each.value
   resource_instance_id = ibm_database.postgresql_db.id
-  tags                 = var.resource_tags
 }
 
 locals {

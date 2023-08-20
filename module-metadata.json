@@ -288,17 +288,15 @@
     "resource_tags": {
       "name": "resource_tags",
       "type": "list(string)",
-      "description": "Optional list of tags to be added to the PostgreSQL instance and the associated service credentials (if creating).",
+      "description": "Optional list of tags to be added to the PostgreSQL instance.",
       "default": [],
       "source": [
-        "ibm_database.postgresql_db.tags",
-        "ibm_resource_key.service_credentials.tags"
+        "ibm_database.postgresql_db.tags"
       ],
       "pos": {
         "filename": "variables.tf",
         "line": 98
       },
-      "cloud_data_type": "tags",
       "min_length": 1,
       "max_length": 128,
       "matches": "^[A-Za-z0-9:_ .-]+$",
@@ -457,6 +455,12 @@
       "version_constraints": [
         "\u003e= 1.54.0, \u003c 2.0.0"
       ]
+    },
+    "time": {
+      "source": "hashicorp/time",
+      "version_constraints": [
+        "\u003e= 0.9.1"
+      ]
     }
   },
   "managed_resources": {
@@ -485,7 +489,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 49
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -510,15 +514,14 @@
       "type": "ibm_resource_key",
       "name": "service_credentials",
       "attributes": {
-        "for_each": "service_credential_names",
-        "tags": "resource_tags"
+        "for_each": "service_credential_names"
       },
       "provider": {
         "name": "ibm"
       },
       "pos": {
         "filename": "main.tf",
-        "line": 182
+        "line": 189
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -534,7 +537,19 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 140
+      }
+    },
+    "time_sleep.wait_for_authorization_policy": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_for_authorization_policy",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 42
       }
     }
   },
@@ -554,7 +569,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 211
+        "line": 217
       }
     }
   },
@@ -562,7 +577,7 @@
     "cbr_rule": {
       "name": "cbr_rule",
       "source": "terraform-ibm-modules/cbr/ibm//cbr-rule-module",
-      "version": "1.2.1",
+      "version": "1.6.1",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
@@ -633,7 +648,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 143
+        "line": 150
       }
     }
   }
