@@ -216,7 +216,7 @@
     "pitr_time": {
       "name": "pitr_time",
       "type": "string",
-      "description": "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp \u003cdeployment name or CRN\u003e). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr",
+      "description": "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) for any time in the last 7 days that you want to restore to. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp \u003cdeployment name or CRN\u003e). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr",
       "source": [
         "ibm_database.postgresql_db.point_in_time_recovery_time"
       ],
