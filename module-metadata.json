@@ -455,6 +455,12 @@
       "version_constraints": [
         "\u003e= 1.54.0, \u003c 2.0.0"
       ]
+    },
+    "time": {
+      "source": "hashicorp/time",
+      "version_constraints": [
+        "\u003e= 0.9.1"
+      ]
     }
   },
   "managed_resources": {
@@ -483,7 +489,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 49
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -515,7 +521,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 182
+        "line": 189
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -531,7 +537,19 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 133
+        "line": 140
+      }
+    },
+    "time_sleep.wait_for_authorization_policy": {
+      "mode": "managed",
+      "type": "time_sleep",
+      "name": "wait_for_authorization_policy",
+      "provider": {
+        "name": "time"
+      },
+      "pos": {
+        "filename": "main.tf",
+        "line": 42
       }
     }
   },
@@ -551,7 +569,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 210
+        "line": 217
       }
     }
   },
@@ -630,7 +648,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 143
+        "line": 150
       }
     }
   }
