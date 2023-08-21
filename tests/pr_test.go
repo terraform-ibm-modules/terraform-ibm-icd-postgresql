@@ -4,12 +4,14 @@ package test
 import (
 	"crypto/rand"
 	"encoding/base64"
-	"github.com/stretchr/testify/assert"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 	"log"
 	"os"
 	"testing"
+
+	"github.com/gruntwork-io/terratest/modules/terraform"
+	"github.com/stretchr/testify/assert"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
 
 // Use existing resource group
@@ -57,10 +59,17 @@ func TestRunFSCloudExample(t *testing.T) {
 			"pg_version":                 "14", // Always lock this test into the latest supported Postgres version
 		},
 	})
-
+	options.SkipTestTearDown = true
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
+
+	// check if outputs exist
+	outputs := terraform.OutputAll(options.Testing, options.TerraformOptions)
+	expectedOutputs := []string{"port", "hostname"}
+	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
+	assert.NoErrorf(t, outputErr, "Some outputs not found or nil")
+	options.TestTearDown()
 }
 
 func TestRunUpgradeCompleteExample(t *testing.T) {
