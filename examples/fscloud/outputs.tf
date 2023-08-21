@@ -15,3 +15,13 @@ output "version" {
   description = "Postgresql instance version"
   value       = module.postgresql_db.version
 }
+
+output "hostname" {
+  description = "Postgresql instance hostname"
+  value       = module.postgresql_db.hostname
+}
+
+output "port" {
+  description = "Postgresql instance port"
+  value       = module.postgresql_db.port
+}
