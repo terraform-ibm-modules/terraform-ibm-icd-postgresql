@@ -45,6 +45,11 @@ variable "pitr_id" {
   description = "The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
 }
 
+variable "pitr_time" {
+  type        = string
+  description = "The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) for any time in the last 7 days that you want to restore to. If empty string (\"\") or spaced string (\" \") is passed, latest_point_in_time_recovery_time will be used as pitr_time. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr"
+}
+
 variable "members" {
   type        = number
   description = "Allocated number of members. Members must be same or higher than the source deployment PostgreSQL instance."

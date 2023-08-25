@@ -38,6 +38,7 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
 		TerraformVars: map[string]interface{}{
 			"pitr_id":    permanentResources["postgresqlPITRCrn"],
+			"pitr_time":  " ",
 			"pg_version": permanentResources["postgresqlPITRVersion"],
 			"members":    "3", // Lock members to 3 as the permanent postgres instances has 3 members
 		},
