@@ -272,6 +272,7 @@
       "required": true,
       "source": [
         "ibm_database.postgresql_db.resource_group_id",
+        "ibm_iam_authorization_policy.kms_policy.description",
         "ibm_iam_authorization_policy.kms_policy.source_resource_group_id"
       ],
       "pos": {
@@ -453,7 +454,7 @@
     "ibm": {
       "source": "IBM-Cloud/ibm",
       "version_constraints": [
-        "\u003e= 1.54.0, \u003c 2.0.0"
+        "\u003e= 1.56.1, \u003c 2.0.0"
       ]
     },
     "time": {
@@ -489,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 49
+        "line": 50
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -498,6 +499,7 @@
       "name": "kms_policy",
       "attributes": {
         "count": "kms_encryption_enabled",
+        "description": "resource_group_id",
         "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
@@ -521,7 +523,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 189
+        "line": 190
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -537,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 140
+        "line": 141
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -549,7 +551,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 43
       }
     }
   },
@@ -569,7 +571,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 217
+        "line": 218
       }
     }
   },
@@ -648,7 +650,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 150
+        "line": 151
       }
     }
   }
