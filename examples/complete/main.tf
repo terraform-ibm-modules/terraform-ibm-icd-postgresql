@@ -129,7 +129,7 @@ module "vpe" {
     },
   ]
   vpc_id             = ibm_is_vpc.example_vpc.id
-  subnet_zone_list   = ibm_is_subnet.testacc_subnet
+  subnet_zone_list   = ibm_is_vpc.example_vpc.subnets[*].zone
   resource_group_id  = module.resource_group.resource_group_id
   security_group_ids = [ibm_is_security_group.sg1.id]
   depends_on = [
