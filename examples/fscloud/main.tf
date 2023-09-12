@@ -38,7 +38,7 @@ resource "ibm_is_subnet" "testacc_subnet" {
 # Create CBR Zone
 ##############################################################################
 module "cbr_zone" {
-  source           = "terraform-ibm-modules/cbr/ibm//cbr-zone-module"
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
   version          = "1.7.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"

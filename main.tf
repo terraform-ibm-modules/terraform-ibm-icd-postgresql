@@ -150,7 +150,7 @@ resource "ibm_resource_tag" "postgresql_tag" {
 ##############################################################################
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
-  source           = "terraform-ibm-modules/cbr/ibm//cbr-rule-module"
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
   version          = "1.7.0"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
