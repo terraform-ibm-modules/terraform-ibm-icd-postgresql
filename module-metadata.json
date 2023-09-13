@@ -272,6 +272,7 @@
       "required": true,
       "source": [
         "ibm_database.postgresql_db.resource_group_id",
+        "ibm_iam_authorization_policy.kms_policy.description",
         "ibm_iam_authorization_policy.kms_policy.source_resource_group_id"
       ],
       "pos": {
@@ -489,7 +490,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 49
+        "line": 50
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -498,6 +499,7 @@
       "name": "kms_policy",
       "attributes": {
         "count": "kms_encryption_enabled",
+        "description": "resource_group_id",
         "source_resource_group_id": "resource_group_id",
         "target_resource_instance_id": "existing_kms_instance_guid"
       },
@@ -521,7 +523,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 189
+        "line": 190
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -537,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 140
+        "line": 141
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -549,7 +551,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 42
+        "line": 43
       }
     }
   },
@@ -569,15 +571,15 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 217
+        "line": 218
       }
     }
   },
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
-      "source": "terraform-ibm-modules/cbr/ibm//cbr-rule-module",
-      "version": "1.6.1",
+      "source": "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module",
+      "version": "1.9.0",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
@@ -598,7 +600,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/main.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/main.tf",
             "line": 7
           }
         }
@@ -610,7 +612,7 @@
           "description": "CBR rule resource instance crn",
           "value": "ibm_cbr_rule.cbr_rule.crn",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 15
           },
           "type": "TypeString",
@@ -621,7 +623,7 @@
           "description": "CBR rule resource instance description",
           "value": "ibm_cbr_rule.cbr_rule.description",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 5
           },
           "type": "TypeString"
@@ -631,7 +633,7 @@
           "description": "CBR rule resource href",
           "value": "ibm_cbr_rule.cbr_rule.href",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 20
           },
           "type": "TypeString"
@@ -641,14 +643,14 @@
           "description": "CBR rule resource instance id",
           "value": "ibm_cbr_rule.cbr_rule.id",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 10
           }
         }
       },
       "pos": {
         "filename": "main.tf",
-        "line": 150
+        "line": 151
       }
     }
   }

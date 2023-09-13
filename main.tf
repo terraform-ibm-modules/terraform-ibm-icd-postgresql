@@ -36,6 +36,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   target_service_name         = local.kms_service
   target_resource_instance_id = var.existing_kms_instance_guid
   roles                       = ["Reader"]
+  description                 = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${var.existing_kms_instance_guid}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -149,8 +150,8 @@ resource "ibm_resource_tag" "postgresql_tag" {
 ##############################################################################
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
-  source           = "terraform-ibm-modules/cbr/ibm//cbr-rule-module"
-  version          = "1.6.1"
+  source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
+  version          = "1.9.0"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
