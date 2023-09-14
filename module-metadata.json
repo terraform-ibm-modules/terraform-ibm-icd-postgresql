@@ -578,8 +578,8 @@
   "module_calls": {
     "cbr_rule": {
       "name": "cbr_rule",
-      "source": "terraform-ibm-modules/cbr/ibm//cbr-rule-module",
-      "version": "1.6.1",
+      "source": "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module",
+      "version": "1.9.0",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
@@ -600,7 +600,7 @@
             "name": "ibm"
           },
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/main.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/main.tf",
             "line": 7
           }
         }
@@ -612,7 +612,7 @@
           "description": "CBR rule resource instance crn",
           "value": "ibm_cbr_rule.cbr_rule.crn",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 15
           },
           "type": "TypeString",
@@ -623,7 +623,7 @@
           "description": "CBR rule resource instance description",
           "value": "ibm_cbr_rule.cbr_rule.description",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 5
           },
           "type": "TypeString"
@@ -633,7 +633,7 @@
           "description": "CBR rule resource href",
           "value": "ibm_cbr_rule.cbr_rule.href",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 20
           },
           "type": "TypeString"
@@ -643,7 +643,7 @@
           "description": "CBR rule resource instance id",
           "value": "ibm_cbr_rule.cbr_rule.id",
           "pos": {
-            "filename": ".terraform/modules/cbr_rule/cbr-rule-module/outputs.tf",
+            "filename": ".terraform/modules/cbr_rule/modules/cbr-rule-module/outputs.tf",
             "line": 10
           }
         }
