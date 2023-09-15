@@ -56,7 +56,7 @@ func TestRunFSCloudExample(t *testing.T) {
 			"access_tags":                permanentResources["accessTags"],
 			"existing_kms_instance_guid": permanentResources["hpcs_south"],
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
-			"pg_version":                 "14", // Always lock this test into the latest supported Postgres version
+			"pg_version":                 "15", // Always lock this test into the latest supported Postgres version
 		},
 	})
 	options.SkipTestTearDown = true
