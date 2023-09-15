@@ -18,7 +18,7 @@ func TestRunRestoredDBExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "14",
+			"pg_version": "13",
 		},
 	})
 
