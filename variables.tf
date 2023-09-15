@@ -37,7 +37,7 @@ variable "pg_version" {
       var.pg_version == "12",
       var.pg_version == "11"
     ])
-    error_message = "Version must be 11 or 12 or 13 or 14 or 15. If no value passed, the current ICD preferred version is used."
+    error_message = "Version must be 11, 12, 13, 14 or 15. If no value passed, the current ICD preferred version is used."
   }
 }
 
