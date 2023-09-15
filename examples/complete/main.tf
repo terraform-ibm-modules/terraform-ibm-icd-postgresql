@@ -36,23 +36,36 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 ##############################################################################
 # VPC
 ##############################################################################
-resource "ibm_is_vpc" "example_vpc" {
-  name           = "${var.prefix}-vpc"
-  resource_group = module.resource_group.resource_group_id
-  tags           = var.resource_tags
+
+module "vpc" {
+  source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version           = "7.3.1"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  prefix            = var.prefix
+  name              = "${var.prefix}-vpc"
+  tags              = var.resource_tags
 }
 
-resource "ibm_is_subnet" "testacc_subnet" {
-  name                     = "${var.prefix}-subnet"
-  vpc                      = ibm_is_vpc.example_vpc.id
-  zone                     = "${var.region}-1"
-  total_ipv4_address_count = 256
-  resource_group           = module.resource_group.resource_group_id
+##############################################################################
+# Security group
+##############################################################################
+
+resource "ibm_is_security_group" "sg1" {
+  name = "${var.prefix}-sg1"
+  vpc  = module.vpc.vpc_id
+}
+
+# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
+resource "time_sleep" "wait_30_seconds" {
+  depends_on       = [ibm_is_security_group.sg1]
+  destroy_duration = "30s"
 }
 
 ##############################################################################
 # Create CBR Zone
 ##############################################################################
+
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
   version          = "1.9.1"
@@ -61,7 +74,7 @@ module "cbr_zone" {
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
   addresses = [{
     type  = "vpc", # to bind a specific vpc to the zone
-    value = ibm_is_vpc.example_vpc.crn,
+    value = module.vpc.vpc_crn,
   }]
 }
 
@@ -113,11 +126,6 @@ resource "time_sleep" "wait_120_seconds" {
 # VPE
 ##############################################################################
 
-resource "ibm_is_security_group" "sg1" {
-  name = "${var.prefix}-sg1"
-  vpc  = ibm_is_vpc.example_vpc.id
-}
-
 module "vpe" {
   source  = "terraform-ibm-modules/vpe-module/ibm"
   version = "2.4.0"
@@ -128,18 +136,12 @@ module "vpe" {
       crn  = module.postgresql_db.crn
     },
   ]
-  vpc_id             = ibm_is_vpc.example_vpc.id
-  subnet_zone_list   = ibm_is_vpc.example_vpc.subnets[*].zone
+  vpc_id             = module.vpc.vpc_id
+  subnet_zone_list   = module.vpc.subnet_zone_list
   resource_group_id  = module.resource_group.resource_group_id
   security_group_ids = [ibm_is_security_group.sg1.id]
   depends_on = [
     time_sleep.wait_120_seconds,
     time_sleep.wait_30_seconds
   ]
-}
-
-# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
-resource "time_sleep" "wait_30_seconds" {
-  depends_on       = [ibm_is_security_group.sg1]
-  destroy_duration = "30s"
 }
