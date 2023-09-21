@@ -83,6 +83,7 @@ module "postgresql_db" {
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
   access_tags                = var.access_tags
+  configuration              = var.configuration
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"
