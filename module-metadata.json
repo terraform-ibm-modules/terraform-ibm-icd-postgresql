@@ -579,7 +579,7 @@
     "cbr_rule": {
       "name": "cbr_rule",
       "source": "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module",
-      "version": "1.10.0",
+      "version": "1.12.0",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
