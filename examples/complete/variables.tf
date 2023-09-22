@@ -69,23 +69,3 @@ variable "service_credential_names" {
     "postgressql_editor" : "Editor",
   }
 }
-
-variable "configuration" {
-  description = "Database configuration"
-  type = object({
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
-    synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
-  })
-  default = {
-    max_connections = 250
-  }
-}
