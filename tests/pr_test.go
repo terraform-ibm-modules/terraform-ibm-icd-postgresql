@@ -25,10 +25,6 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-var ignoreUpdates = []string{
-	"module.postgresql_db.ibm_database.postgresql_db",
-}
-
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
 
@@ -100,9 +96,6 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 				},
 			},
 			"admin_pass": randomPass,
-		},
-		IgnoreUpdates: testhelper.Exemptions{
-			List: ignoreUpdates,
 		},
 	})
 
