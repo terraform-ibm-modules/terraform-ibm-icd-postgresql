@@ -61,6 +61,7 @@ resource "ibm_database" "postgresql_db" {
   tags                                 = var.resource_tags
   adminpassword                        = var.admin_pass
   service_endpoints                    = var.service_endpoints
+  # remove elements with null values: see https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/issues/273
   configuration                        = var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null
   key_protect_key                      = var.kms_key_crn
   backup_encryption_key_crn            = local.backup_encryption_key_crn
