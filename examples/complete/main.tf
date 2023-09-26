@@ -68,7 +68,7 @@ resource "time_sleep" "wait_30_seconds" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.9.2"
+  version          = "1.12.0"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -96,6 +96,9 @@ module "postgresql_db" {
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
   access_tags                = var.access_tags
+  configuration = {
+    max_connections = 250
+  }
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

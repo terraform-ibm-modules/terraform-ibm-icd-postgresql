@@ -523,7 +523,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 190
+        "line": 191
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -539,7 +539,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 141
+        "line": 142
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -571,7 +571,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 218
+        "line": 219
       }
     }
   },
@@ -579,7 +579,7 @@
     "cbr_rule": {
       "name": "cbr_rule",
       "source": "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module",
-      "version": "1.9.2",
+      "version": "1.12.0",
       "attributes": {
         "count": "cbr_rules",
         "enforcement_mode": "cbr_rules",
@@ -650,7 +650,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 151
+        "line": 152
       }
     }
   }
