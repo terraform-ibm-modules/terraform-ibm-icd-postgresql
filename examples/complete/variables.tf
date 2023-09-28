@@ -42,7 +42,7 @@ variable "pg_version" {
 
 variable "admin_pass" {
   type        = string
-  default     = null
+  default     = "0123456789"
   sensitive   = true
   description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. The admin password must be in the range of 10-32 characters."
 }

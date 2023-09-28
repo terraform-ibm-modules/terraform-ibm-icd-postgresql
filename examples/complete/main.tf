@@ -145,3 +145,76 @@ resource "time_sleep" "wait_30_seconds" {
   depends_on       = [ibm_is_security_group.sg1]
   destroy_duration = "30s"
 }
+
+
+resource "tls_private_key" "tls_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "ibm_is_ssh_key" "ssh_key" {
+  name       = "${var.prefix}-ssh-key"
+  public_key = tls_private_key.tls_key.public_key_openssh
+}
+
+
+resource "ibm_is_instance" "vsi" {
+  name           = "${var.prefix}-vsi"
+  image          = "r006-fedc50ed-8ea3-4a66-9559-c482c4e6ed88"
+  profile        = "cx2-2x4"
+  resource_group = module.resource_group.resource_group_id
+  vpc            = ibm_is_vpc.example_vpc.id
+  zone           = var.region
+  keys           = [ibm_is_ssh_key.ssh_key.id]
+  lifecycle {
+    ignore_changes = [
+      image
+    ]
+  }
+
+  primary_network_interface {
+    subnet = ibm_is_vpc.example_vpc.subnets[0].id
+  }
+
+
+  # User can configure timeouts
+  timeouts {
+    create = "15m"
+    update = "15m"
+    delete = "15m"
+  }
+}
+
+resource "ibm_is_floating_ip" "vsi_fip" {
+  name        = "${var.prefix}-fip"
+  target      = ibm_is_instance.vsi.primary_network_interface[0].id
+  access_tags = var.access_tags
+}
+
+locals {
+  # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
+  composed = replace(module.postgresql_db.service_credentials_object.credentials["postgressql_viewer"]["composed"], "sslmode=verify-full", "sslmode=require")
+}
+resource "null_resource" "db_connection" {
+  depends_on = [ibm_is_instance.vsi]
+
+  provisioner "remote-exec" {
+
+    inline = [
+      "sudo apt-get update",
+      "sudo apt-get install postgresql-client",
+
+      "${local.composed} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (1, 100);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (2, 200);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (3, 300);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (4, 400);'",
+    ]
+    connection {
+      type        = "ssh"
+      host        = ibm_is_floating_ip.vsi_fip.address
+      user        = "root"
+      private_key = tls_private_key.tls_key.private_key_pem
+    }
+  }
+}
