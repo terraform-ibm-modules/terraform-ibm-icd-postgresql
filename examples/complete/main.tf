@@ -116,12 +116,12 @@ resource "time_sleep" "wait_120_seconds" {
 # VPE
 ##############################################################################
 
-resource "ibm_is_security_group" "sg1" {
-  name = "${var.prefix}-sg1"
+resource "ibm_is_security_group" "sg-pg" {
+  name = "${var.prefix}-sg-pg"
   vpc  = ibm_is_vpc.example_vpc.id
 }
 
-resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
+resource "ibm_is_virtual_endpoint_gateway" "pg" {
   name = "${var.prefix}-vpe-to-pg"
   target {
     crn           = module.postgresql_db.crn
@@ -133,7 +133,7 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
     name   = "${var.prefix}-pg-access-reserved-ip"
   }
   resource_group  = module.resource_group.resource_group_id
-  security_groups = [ibm_is_security_group.sg1.id]
+  security_groups = [ibm_is_security_group.sg-pg.id]
   depends_on = [
     time_sleep.wait_120_seconds,
     time_sleep.wait_30_seconds
@@ -142,7 +142,7 @@ resource "ibm_is_virtual_endpoint_gateway" "pgvpe" {
 
 # wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
 resource "time_sleep" "wait_30_seconds" {
-  depends_on       = [ibm_is_security_group.sg1]
+  depends_on       = [ibm_is_security_group.sg-pg]
   destroy_duration = "30s"
 }
 
@@ -158,14 +158,33 @@ resource "ibm_is_ssh_key" "ssh_key" {
 }
 
 
+module "create_sgr_rule" {
+  source  = "terraform-ibm-modules/security-group/ibm"
+  version = "v2.0.0"
+  security_group_name   = "${var.prefix}-sg-vsi"
+
+  security_group_rules = [{
+    name      = "allow-ssh-inbound"
+    direction = "inbound"
+    remote    = "0.0.0.0/0"
+    tcp ={
+      port_min = 1
+      port_max = 65535
+    }
+  }]
+  target_ids            = [ibm_is_instance.vsi.primary_network_interface[0].id]
+  vpc_id = ibm_is_vpc.example_vpc.id
+}
+
 resource "ibm_is_instance" "vsi" {
   name           = "${var.prefix}-vsi"
   image          = "r006-fedc50ed-8ea3-4a66-9559-c482c4e6ed88"
   profile        = "cx2-2x4"
   resource_group = module.resource_group.resource_group_id
   vpc            = ibm_is_vpc.example_vpc.id
-  zone           = var.region
+  zone           = "${var.region}-1"
   keys           = [ibm_is_ssh_key.ssh_key.id]
+
   lifecycle {
     ignore_changes = [
       image
@@ -174,6 +193,7 @@ resource "ibm_is_instance" "vsi" {
 
   primary_network_interface {
     subnet = ibm_is_vpc.example_vpc.subnets[0].id
+    # security_groups = [ibm_is_security_group.sg_vsi.id]
   }
 
 
@@ -196,7 +216,7 @@ locals {
   composed = replace(module.postgresql_db.service_credentials_object.credentials["postgressql_viewer"]["composed"], "sslmode=verify-full", "sslmode=require")
 }
 resource "null_resource" "db_connection" {
-  depends_on = [ibm_is_instance.vsi]
+  depends_on = [module.postgresql_db, ibm_is_instance.vsi]
 
   provisioner "remote-exec" {
 
@@ -205,10 +225,11 @@ resource "null_resource" "db_connection" {
       "sudo apt-get install postgresql-client",
 
       "${local.composed} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (1, 100);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (2, 200);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (3, 300);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (4, 400);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (11, 100);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (12, 200);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (13, 300);'",
+      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (14, 400);'",
+      "${local.composed} -c 'SELECT * FROM test;'",
     ]
     connection {
       type        = "ssh"
@@ -218,3 +239,4 @@ resource "null_resource" "db_connection" {
     }
   }
 }
+
