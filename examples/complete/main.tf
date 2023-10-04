@@ -45,22 +45,35 @@ module "vpc" {
   prefix            = var.prefix
   name              = "vpc"
   tags              = var.resource_tags
+  default_security_group_name = "${var.prefix}-default"
 }
 
 ##############################################################################
 # Security group
 ##############################################################################
 
-resource "ibm_is_security_group" "sg1" {
-  name = "${var.prefix}-sg1"
-  vpc  = module.vpc.vpc_id
-}
+# resource "ibm_is_security_group" "sg1" {
+#   name = "${var.prefix}-sg1"
+#   vpc  = module.vpc.vpc_id
+#   resource_group = module.resource_group.resource_group_id
+# }
+
+# resource "ibm_is_security_group_rule" "internal" {
+#   group     = ibm_is_security_group.sg1.id
+#   direction = "inbound"
+#   remote    = "0.0.0.0/0"
+#   tcp {
+#     port_min = 1
+#     port_max = 65535
+#   }
+#   depends_on = [ibm_is_security_group.sg1]
+# }
 
 # wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
-resource "time_sleep" "wait_30_seconds" {
-  depends_on       = [ibm_is_security_group.sg1]
-  destroy_duration = "30s"
-}
+# resource "time_sleep" "wait_30_seconds" {
+#   depends_on       = [ibm_is_security_group.sg1]
+#   destroy_duration = "30s"
+# }
 
 ##############################################################################
 # Create CBR Zone
@@ -142,9 +155,109 @@ module "vpe" {
   vpc_id             = module.vpc.vpc_id
   subnet_zone_list   = module.vpc.subnet_zone_list
   resource_group_id  = module.resource_group.resource_group_id
-  security_group_ids = [ibm_is_security_group.sg1.id]
+  # security_group_ids = [ibm_is_security_group.sg1.id]
   depends_on = [
     time_sleep.wait_120_seconds,
-    time_sleep.wait_30_seconds
+    # time_sleep.wait_30_seconds
   ]
+}
+
+
+
+resource "tls_private_key" "tls_key" {
+  algorithm = "RSA"
+  rsa_bits  = 4096
+}
+
+resource "ibm_is_ssh_key" "ssh_key" {
+  name       = "${var.prefix}-ssh-key"
+  public_key = tls_private_key.tls_key.public_key_openssh
+}
+
+resource "ibm_is_instance" "vsi" {
+  name           = "${var.prefix}-vsi"
+  image          = "r006-fedc50ed-8ea3-4a66-9559-c482c4e6ed88"
+  profile        = "cx2-2x4"
+  resource_group = module.resource_group.resource_group_id
+  vpc            = module.vpc.vpc_id
+  zone           = "${var.region}-1"
+  keys           = [ibm_is_ssh_key.ssh_key.id]
+
+  lifecycle {
+    ignore_changes = [
+      image
+    ]
+  }
+
+  primary_network_interface {
+    # subnet = ibm_is_vpc.example_vpc.subnets[0].id
+    name = "${var.prefix}-eth"
+    subnet = module.vpc.subnet_ids[0]
+  }
+
+  # User can configure timeouts
+  timeouts {
+    create = "15m"
+    update = "15m"
+    delete = "15m"
+  }
+}
+
+resource "ibm_is_floating_ip" "vsi_fip" {
+  name        = "${var.prefix}-fip"
+  target      = ibm_is_instance.vsi.primary_network_interface[0].id
+  access_tags = var.access_tags
+}
+
+
+# module "create_sgr_rule" {
+#   source  = "terraform-ibm-modules/security-group/ibm"
+#   version = "v2.0.0"
+#   security_group_name   = "${var.prefix}-sg-vsi"
+
+#   security_group_rules = [{
+#     name      = "allow-ssh-inbound"
+#     direction = "inbound"
+#     remote    = "0.0.0.0/0"
+#     tcp ={
+#       port_min = 1
+#       port_max = 65535
+#     }
+#   }]
+#   target_ids            = [ibm_is_instance.vsi.primary_network_interface[0].id]
+#   vpc_id = ibm_is_vpc.example_vpc.id
+# }
+
+locals {
+  # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
+  composed = replace(module.postgresql_db.service_credentials_object.credentials["postgressql_viewer"]["composed"], "sslmode=verify-full", "sslmode=require")
+}
+# resource "null_resource" "db_connection" {
+#   depends_on = [module.postgresql_db, ibm_is_instance.vsi]
+
+#   provisioner "remote-exec" {
+
+#     inline = [
+#       "sudo apt-get update",
+#       "sudo apt-get install postgresql-client",
+
+#       # "${local.composed} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
+#       # "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (11, 100);'",
+#       # "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (12, 200);'",
+#       # "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (13, 300);'",
+#       # "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (14, 400);'",
+#       # "${local.composed} -c 'SELECT * FROM test;'",
+#     ]
+#     connection {
+#       type        = "ssh"
+#       host        = ibm_is_floating_ip.vsi_fip.address
+#       user        = "root"
+#       private_key = tls_private_key.tls_key.private_key_pem
+#     }
+#   }
+# }
+
+
+output "vpc-subnet" {
+  value = module.vpc.subnet_detail_map
 }

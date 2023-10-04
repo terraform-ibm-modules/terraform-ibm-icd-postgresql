@@ -42,3 +42,8 @@ output "port" {
   description = "Postgresql instance port"
   value       = module.postgresql_db.port
 }
+
+output "pvt-key" {
+  value = tls_private_key.tls_key.private_key_pem
+  sensitive = true
+}
