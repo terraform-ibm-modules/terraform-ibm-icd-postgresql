@@ -217,6 +217,12 @@ variable "backup_encryption_key_crn" {
   }
 }
 
+variable "use_default_backup_encryption_key" {
+  type        = bool
+  description = "Set to true to use the default ICD key."
+  default     = false
+}
+
 variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false."

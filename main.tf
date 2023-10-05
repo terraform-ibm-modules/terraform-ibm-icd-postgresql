@@ -15,7 +15,7 @@ locals {
 
   # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn'. If this is a HPCS key (which is not currently supported for backup encryption), default to 'null' meaning encryption is done using randomly generated keys
   # More info https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs
-  backup_encryption_key_crn = var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null)
+  backup_encryption_key_crn = var.use_default_backup_encryption_key == true ? null : (var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : (can(regex(".*kms.*", var.kms_key_crn)) ? var.kms_key_crn : null))
 
   # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
