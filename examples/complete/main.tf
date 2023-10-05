@@ -1,6 +1,6 @@
 locals {
-  # reserved IP that will be assigned to VSI deployed in subnet-a
-  vsi-reserved-ip = "10.10.10.10"
+  # reserved IP that will be assigned to VSI
+  vsi_reserved_ip = "10.10.10.10"
 
   # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
   composed = replace(module.postgresql_db.service_credentials_object.credentials["postgressql_viewer"]["composed"], "sslmode=verify-full", "sslmode=require")
@@ -61,12 +61,12 @@ module "vpc" {
       add_vpc_connectivity_rules   = true
       prepend_ibm_rules            = true
       rules = [
-        # Allow all traffic from and to VSI in subnet-a
+        # Allow all traffic from and to VSI
         {
           name        = "allow-all-inbound"
           action      = "allow"
           direction   = "inbound"
-          destination = "${local.vsi-reserved-ip}/32"
+          destination = "${local.vsi_reserved_ip}/32"
           source      = "0.0.0.0/0"
         },
         {
@@ -74,7 +74,7 @@ module "vpc" {
           action      = "allow"
           direction   = "outbound"
           destination = "0.0.0.0/0"
-          source      = "${local.vsi-reserved-ip}/32"
+          source      = "${local.vsi_reserved_ip}/32"
         }
       ]
     }
@@ -117,7 +117,7 @@ module "create_sgr_rule_vsi" {
       port_min = 443
       port_max = 443
     }
-  }, {
+    }, {
     name      = "allow-ping-inbound"
     direction = "inbound"
     remote    = "0.0.0.0/0"
@@ -261,12 +261,11 @@ resource "ibm_is_instance" "vsi" {
     subnet = module.vpc.subnet_ids[0]
     name   = "${var.prefix}-eth"
     primary_ip {
-      address = local.vsi-reserved-ip
+      address     = local.vsi_reserved_ip
       auto_delete = true
     }
   }
 
-  # User can configure timeouts
   timeouts {
     create = "15m"
     update = "15m"
