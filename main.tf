@@ -211,7 +211,6 @@ locals {
       service_credential["name"] => {
         username = service_credential.credentials["connection.postgres.authentication.username"]
         password = service_credential.credentials["connection.postgres.authentication.password"]
-        composed = service_credential.credentials["connection.cli.composed.0"]
       }
     }
   } : null

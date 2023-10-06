@@ -2,8 +2,12 @@ locals {
   # reserved IP that will be assigned to VSI
   vsi_reserved_ip = "10.10.10.10"
 
+  # Change this local variable accordingly if default value of `service_credential_names` is changed in complete example
+  service_credential_name = "postgressql_viewer"
+  service_credential      = jsondecode(module.postgresql_db.service_credentials_json[local.service_credential_name])
   # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
-  composed = replace(module.postgresql_db.service_credentials_object.credentials["postgressql_viewer"]["composed"], "sslmode=verify-full", "sslmode=require")
+  composed_string = replace(local.service_credential.connection.cli.composed[0], "sslmode=verify-full", "sslmode=require")
+
 }
 
 
@@ -282,12 +286,12 @@ resource "null_resource" "db_connection" {
       "sudo apt-get update -y",
       "sudo apt-get install postgresql-client -y",
 
-      "${local.composed} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (11, 100);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (12, 200);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (13, 300);'",
-      "${local.composed} -c 'INSERT INTO test (id, marks) VALUES (14, 400);'",
-      "${local.composed} -c 'SELECT * FROM test;'",
+      "${local.composed_string} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (11, 100);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (12, 200);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (13, 300);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (14, 400);'",
+      "${local.composed_string} -c 'SELECT * FROM test;'",
     ]
     connection {
       type        = "ssh"
