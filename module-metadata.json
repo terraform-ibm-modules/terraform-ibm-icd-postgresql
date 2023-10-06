@@ -53,13 +53,13 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 256
+        "line": 262
       }
     },
     "backup_encryption_key_crn": {
       "name": "backup_encryption_key_crn",
       "type": "string",
-      "description": "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys.",
+      "description": "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used, unless 'use_default_backup_encryption_key' is set to 'true'. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys.",
       "pos": {
         "filename": "variables.tf",
         "line": 210
@@ -79,7 +79,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 236
+        "line": 242
       }
     },
     "configuration": {
@@ -103,7 +103,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 226
+        "line": 232
       },
       "immutable": true,
       "computed": true
@@ -210,7 +210,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 273
+        "line": 279
       }
     },
     "pitr_time": {
@@ -222,7 +222,7 @@
       ],
       "pos": {
         "filename": "variables.tf",
-        "line": 279
+        "line": 285
       }
     },
     "plan_validation": {
@@ -339,6 +339,16 @@
       "name": "skip_iam_authorization_policy",
       "type": "bool",
       "description": "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the KMS instance. If set to false, pass in a value for the KMS instance in the existing_kms_instance_guid variable. In addition, no policy is created if var.kms_encryption_enabled is set to false.",
+      "default": false,
+      "pos": {
+        "filename": "variables.tf",
+        "line": 226
+      }
+    },
+    "use_default_backup_encryption_key": {
+      "name": "use_default_backup_encryption_key",
+      "type": "bool",
+      "description": "Set to true to use default ICD randomly generated keys.",
       "default": false,
       "pos": {
         "filename": "variables.tf",
@@ -490,7 +500,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 50
+        "line": 52
       }
     },
     "ibm_iam_authorization_policy.kms_policy": {
@@ -508,7 +518,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 32
+        "line": 34
       }
     },
     "ibm_resource_key.service_credentials": {
@@ -523,7 +533,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 191
+        "line": 193
       }
     },
     "ibm_resource_tag.postgresql_tag": {
@@ -539,7 +549,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 142
+        "line": 144
       }
     },
     "time_sleep.wait_for_authorization_policy": {
@@ -551,7 +561,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 43
+        "line": 45
       }
     }
   },
@@ -571,7 +581,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 219
+        "line": 221
       }
     }
   },
@@ -650,7 +660,7 @@
       },
       "pos": {
         "filename": "main.tf",
-        "line": 152
+        "line": 154
       }
     }
   }
