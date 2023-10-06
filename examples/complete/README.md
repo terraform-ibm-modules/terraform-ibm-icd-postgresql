@@ -10,3 +10,5 @@ An end-to-end example that does the following:
 - Create a Virtual Private Cloud (VPC).
 - Create Context Based Restriction (CBR) to only allow Postgresql to be accessible from the VPC.
 - Create a security group and a VPE for the PostgreSQL instance.
+- Create a new VSI instance, floating IP and SSH key pair
+- Create a security group for VSI instance

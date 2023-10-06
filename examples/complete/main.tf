@@ -90,11 +90,26 @@ module "vpc" {
 # Security group
 ##############################################################################
 
+module "create_sgr_rule_pg" {
+  source                       = "terraform-ibm-modules/security-group/ibm"
+  version                      = "v2.0.0"
+  add_ibm_cloud_internal_rules = false
+  security_group_name          = "${var.prefix}-security-group-pg"
+  resource_group               = module.resource_group.resource_group_id
+  vpc_id                       = module.vpc.vpc_id
+}
+
+# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
+resource "time_sleep" "wait_30_seconds" {
+  depends_on       = [module.create_sgr_rule_pg]
+  destroy_duration = "30s"
+}
+
 module "create_sgr_rule_vsi" {
   source                       = "terraform-ibm-modules/security-group/ibm"
   version                      = "v2.0.0"
   add_ibm_cloud_internal_rules = false
-  security_group_name          = "${var.prefix}-sg-vsi"
+  security_group_name          = "${var.prefix}-security-group-vsi"
   resource_group               = module.resource_group.resource_group_id
   vpc_id                       = module.vpc.vpc_id
   security_group_rules = [{
@@ -209,11 +224,13 @@ module "vpe" {
       crn  = module.postgresql_db.crn
     },
   ]
-  vpc_id            = module.vpc.vpc_id
-  subnet_zone_list  = module.vpc.subnet_zone_list
-  resource_group_id = module.resource_group.resource_group_id
+  vpc_id             = module.vpc.vpc_id
+  subnet_zone_list   = module.vpc.subnet_zone_list
+  resource_group_id  = module.resource_group.resource_group_id
+  security_group_ids = module.create_sgr_rule_pg.security_group_id
   depends_on = [
     time_sleep.wait_120_seconds,
+    time_sleep.wait_30_seconds
   ]
 }
 
