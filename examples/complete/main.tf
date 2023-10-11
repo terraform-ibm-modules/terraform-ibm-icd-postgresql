@@ -97,12 +97,7 @@ module "create_sgr_rule_pg" {
   security_group_name          = "${var.prefix}-security-group-pg"
   resource_group               = module.resource_group.resource_group_id
   vpc_id                       = module.vpc.vpc_id
-}
-
-# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
-resource "time_sleep" "wait_30_seconds" {
-  depends_on       = [module.create_sgr_rule_pg]
-  destroy_duration = "30s"
+  target_ids                   = [for crn in module.vpe.crn : element(split(":", crn), length(split(":", crn)) - 1)]
 }
 
 module "create_sgr_rule_vsi" {
@@ -224,13 +219,11 @@ module "vpe" {
       crn  = module.postgresql_db.crn
     },
   ]
-  vpc_id             = module.vpc.vpc_id
-  subnet_zone_list   = module.vpc.subnet_zone_list
-  resource_group_id  = module.resource_group.resource_group_id
-  security_group_ids = [module.create_sgr_rule_pg.security_group_id]
+  vpc_id            = module.vpc.vpc_id
+  subnet_zone_list  = module.vpc.subnet_zone_list
+  resource_group_id = module.resource_group.resource_group_id
   depends_on = [
     time_sleep.wait_120_seconds,
-    time_sleep.wait_30_seconds
   ]
 }
 
@@ -295,7 +288,7 @@ resource "ibm_is_instance" "vsi" {
 }
 
 resource "null_resource" "db_connection" {
-  depends_on = [module.postgresql_db, ibm_is_instance.vsi, module.create_sgr_rule_vsi]
+  depends_on = [ibm_is_instance.vsi, module.create_sgr_rule_vsi, module.vpe]
 
   provisioner "remote-exec" {
 
