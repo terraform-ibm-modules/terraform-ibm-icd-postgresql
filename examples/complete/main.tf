@@ -291,7 +291,6 @@ resource "null_resource" "db_connection" {
   depends_on = [ibm_is_instance.vsi, module.create_sgr_rule_vsi, module.vpe]
 
   provisioner "remote-exec" {
-
     inline = [
       "sudo apt-get update -y",
       "sudo apt-get install postgresql-client -y",
@@ -309,5 +308,6 @@ resource "null_resource" "db_connection" {
       user        = "root"
       private_key = tls_private_key.tls_key.private_key_pem
     }
+    on_failure = fail
   }
 }
