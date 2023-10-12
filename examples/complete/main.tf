@@ -7,7 +7,6 @@ locals {
   service_credential      = jsondecode(module.postgresql_db.service_credentials_json[local.service_credential_name])
   # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
   composed_string = replace(local.service_credential.connection.cli.composed[0], "sslmode=verify-full", "sslmode=require")
-
 }
 
 
@@ -85,6 +84,15 @@ module "vpc" {
   ]
 }
 
+module "vpc-1" {
+  source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
+  version           = "7.3.1"
+  resource_group_id = module.resource_group.resource_group_id
+  region            = var.region
+  prefix            = var.prefix
+  name              = "vpc-1"
+}
+
 
 ##############################################################################
 # Security group
@@ -154,7 +162,7 @@ module "cbr_zone" {
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
   addresses = [{
     type  = "vpc", # to bind a specific vpc to the zone
-    value = module.vpc.vpc_crn,
+    value = module.vpc-1.vpc_crn,
   }]
 }
 
@@ -309,5 +317,6 @@ resource "null_resource" "db_connection" {
       user        = "root"
       private_key = tls_private_key.tls_key.private_key_pem
     }
+    on_failure = fail
   }
 }
