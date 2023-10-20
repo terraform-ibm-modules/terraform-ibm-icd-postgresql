@@ -72,6 +72,44 @@ func TestRunFSCloudExample(t *testing.T) {
 	options.TestTearDown()
 }
 
+func TestRunDbConnectivity(t *testing.T) {
+	t.Parallel()
+
+	// Generate a 10 char long random string for the admin_pass
+	randomBytes := make([]byte, 10)
+	_, err := rand.Read(randomBytes)
+	randomPass := base64.URLEncoding.EncodeToString(randomBytes)[:10]
+
+	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "test/resources",
+		Prefix:             "postgres-db-connectivity",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		IgnoreDestroys: testhelper.Exemptions{
+			List: []string{
+				"ibm_is_network_acl_rule.allow-from-vsi",
+				"ibm_is_network_acl_rule.allow-to-vsi",
+			},
+		},
+		TerraformVars: map[string]interface{}{
+			"pg_version": "11", // Always lock to the lowest supported Postgres version
+			"users": []map[string]interface{}{
+				{
+					"name":     "testuser",
+					"password": randomPass, // pragma: allowlist secret
+					"type":     "database",
+				},
+			},
+			"admin_pass": randomPass,
+		},
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunUpgradeCompleteExample(t *testing.T) {
 	t.Parallel()
 

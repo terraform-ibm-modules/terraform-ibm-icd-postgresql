@@ -2,6 +2,14 @@
 # Resource Group
 ##############################################################################
 
+
+locals {
+  # reserved IP that will be assigned to VSI
+  vsi_reserved_ip = "10.10.10.64"
+
+}
+
+
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
   version = "1.1.0"
@@ -45,6 +53,7 @@ module "vpc" {
   prefix            = var.prefix
   name              = "vpc"
   tags              = var.resource_tags
+  network_acls = var.vpc_network_acls
 }
 
 ##############################################################################
