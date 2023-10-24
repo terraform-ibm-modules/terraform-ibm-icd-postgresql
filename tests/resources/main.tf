@@ -1,46 +1,3 @@
-module "database" {
-  source = "../../examples/complete"
-  ibmcloud_api_key = var.ibmcloud_api_key
-  region = var.region
-  prefix = var.prefix
-  resource_group = var.resource_group
-  vpc_network_acls = [
-    {
-      name                         = "vpc-acl"
-      add_ibm_cloud_internal_rules = true
-      add_vpc_connectivity_rules   = true
-      prepend_ibm_rules            = true
-      rules = [
-        # Allow all traffic from and to VSI
-        {
-          name        = "allow-all-inbound"
-          action      = "allow"
-          direction   = "inbound"
-          destination = "${var.vsi_reserved_ip}/32"
-          source      = "0.0.0.0/0"
-        },
-        {
-          name        = "allow-all-outbound"
-          action      = "allow"
-          direction   = "outbound"
-          destination = "0.0.0.0/0"
-          source      = "${var.vsi_reserved_ip}/32"
-        }
-      ]
-    }
-  ]
-}
-
-
-
-locals {
-  # Change this local variable accordingly if default value of `service_credential_names` is changed in complete example
-  service_credential_name = "postgressql_viewer"
-  service_credential      = jsondecode(var.service_credentials_json[local.service_credential_name])
-  # https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-connecting-psql
-  composed_string = replace(local.service_credential.connection.cli.composed[0], "sslmode=verify-full", "sslmode=require")
-}
-
 
 module "create_sgr_rule_vsi" {
   source                       = "terraform-ibm-modules/security-group/ibm"
@@ -142,6 +99,9 @@ resource "ibm_is_instance" "vsi" {
     delete = "15m"
   }
 }
+locals {
+  composed_string = replace(jsondecode(var.service_credential).connection.cli.composed[0], "sslmode=verify-full", "sslmode=require")
+}
 
 resource "null_resource" "db_connection" {
   depends_on = [
@@ -155,10 +115,10 @@ resource "null_resource" "db_connection" {
       "sudo apt-get install postgresql-client -y",
 
       "${local.composed_string} -c 'CREATE TABLE test (id serial PRIMARY KEY, marks serial);'",
-      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (11, 100);'",
-      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (12, 200);'",
-      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (13, 300);'",
-      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (14, 400);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (101, 100);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (102, 200);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (103, 300);'",
+      "${local.composed_string} -c 'INSERT INTO test (id, marks) VALUES (104, 400);'",
       "${local.composed_string} -c 'SELECT * FROM test;'",
     ]
     connection {
@@ -170,4 +130,3 @@ resource "null_resource" "db_connection" {
     on_failure = fail
   }
 }
-

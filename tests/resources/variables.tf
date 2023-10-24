@@ -21,10 +21,15 @@ variable "resource_group" {
   description = "An existing resource group name to use for this example, if unset a new resource group will be created"
   default     = null
 }
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to created resources"
+  default     = []
+}
 
-variable "service_credentials_json" {
-  type = map(string)
-  description = "Service credentials json map"
+variable "service_credential" {
+  type = string
+  description = "Database service credential"
 }
 
 variable "resource_group_id" {

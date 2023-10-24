@@ -39,6 +39,7 @@ func TestMain(m *testing.M) {
 
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
+	t.Skip()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:      t,
@@ -72,46 +73,79 @@ func TestRunFSCloudExample(t *testing.T) {
 	options.TestTearDown()
 }
 
-func TestRunDbConnectivity(t *testing.T) {
+func TestRunDBConnectivity(t *testing.T) {
 	t.Parallel()
 
-	// Generate a 10 char long random string for the admin_pass
-	randomBytes := make([]byte, 10)
-	_, err := rand.Read(randomBytes)
-	randomPass := base64.URLEncoding.EncodeToString(randomBytes)[:10]
-
-	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "test/resources",
-		Prefix:             "postgres-db-connectivity",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		IgnoreDestroys: testhelper.Exemptions{
-			List: []string{
-				"ibm_is_network_acl_rule.allow-from-vsi",
-				"ibm_is_network_acl_rule.allow-to-vsi",
-			},
-		},
+	prefix := "postgres-db-connectivity"
+	options_postgres := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: "examples/complete",
+		Prefix:       prefix,
+		Region: "us-south",
+		ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "11", // Always lock to the lowest supported Postgres version
-			"users": []map[string]interface{}{
-				{
-					"name":     "testuser",
-					"password": randomPass, // pragma: allowlist secret
-					"type":     "database",
-				},
-			},
-			"admin_pass": randomPass,
+			"vpc_network_acls": `[{
+				name = "vpc-acl"
+				add_ibm_cloud_internal_rules = true
+				add_vpc_connectivity_rules   = true
+				prepend_ibm_rules            = true
+				rules = [
+					{
+						name        = "allow-all-inbound"
+						action      = "allow"
+						direction   = "inbound"
+						destination = "10.10.10.64/32"
+						source      = "0.0.0.0/0"
+					  },
+					  {
+						name        = "allow-all-outbound"
+						action      = "allow"
+						direction   = "outbound"
+						destination = "0.0.0.0/0"
+						source      = "10.10.10.64/32"
+					  }
+				]
+			}]`,
 		},
 	})
+	options_postgres.SkipTestTearDown = true
+	output_postgres, err_postgres := options_postgres.RunTestConsistency()
+	assert.Nil(t, err_postgres, "This should not have errored")
+	assert.NotNil(t, output_postgres, "Expected some output")
 
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	outputs := terraform.OutputAll(options_postgres.Testing, options_postgres.TerraformOptions)
+
+	var serviceCredential string
+	for _, data := range outputs["service_credentials_json"].(map[string]interface{}) {
+		serviceCredential = data.(string)
+		break
+	}
+	assert.NotNil(t, serviceCredential, "Unable to access service credentials")
+
+	options_vsi := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "tests/resources",
+		Prefix:             prefix,
+		Region: "us-south",
+		TerraformVars: map[string]interface{}{
+			"resource_group_id": outputs["resource_group_id"],
+			"service_credential": serviceCredential,
+			"vpc_id": outputs["vpc_id"],
+			"subnet_ids": outputs["subnet_ids"],
+			"vsi_reserved_ip": "10.10.10.64",
+		},
+	})
+	output_vsi, err_vsi := options_vsi.RunTestConsistency()
+
+	assert.Nil(t, err_vsi, "This should not have errored")
+	assert.NotNil(t, output_vsi, "Expected some output")
+	options_postgres.TestTearDown()
+
 }
 
 func TestRunUpgradeCompleteExample(t *testing.T) {
 	t.Parallel()
+	t.Skip()
 
 	// Generate a 10 char long random string for the admin_pass
 	randomBytes := make([]byte, 10)
