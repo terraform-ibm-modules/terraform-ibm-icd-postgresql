@@ -42,3 +42,18 @@ output "port" {
   description = "Postgresql instance port"
   value       = module.postgresql_db.port
 }
+
+output "vpc_id" {
+  description = "ID of VPC created"
+  value       = module.vpc.vpc_id
+}
+
+output "subnet_ids" {
+  description = "list of subnet IDs"
+  value       = module.vpc.subnet_ids
+}
+
+output "resource_group_id" {
+  description = "ID of resource_group created"
+  value       = module.resource_group.resource_group_id
+}
