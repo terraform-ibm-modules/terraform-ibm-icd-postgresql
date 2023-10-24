@@ -47,8 +47,9 @@ module "create_sgr_rule_vsi" {
 ##############################################################################
 
 resource "ibm_is_floating_ip" "vsi_fip" {
-  name        = "${var.prefix}-fip"
-  target      = ibm_is_instance.vsi.primary_network_interface[0].id
+  name           = "${var.prefix}-fip"
+  resource_group = var.resource_group_id
+  target         = ibm_is_instance.vsi.primary_network_interface[0].id
 }
 
 ##############################################################################
@@ -61,8 +62,9 @@ resource "tls_private_key" "tls_key" {
 }
 
 resource "ibm_is_ssh_key" "ssh_key" {
-  name       = "${var.prefix}-ssh-key"
-  public_key = tls_private_key.tls_key.public_key_openssh
+  name           = "${var.prefix}-ssh-key"
+  public_key     = tls_private_key.tls_key.public_key_openssh
+  resource_group = var.resource_group_id
 }
 
 ##############################################################################
@@ -77,6 +79,7 @@ resource "ibm_is_instance" "vsi" {
   vpc            = var.vpc_id
   zone           = "${var.region}-1"
   keys           = [ibm_is_ssh_key.ssh_key.id]
+
 
   lifecycle {
     ignore_changes = [
@@ -107,7 +110,7 @@ resource "null_resource" "db_connection" {
   depends_on = [
     ibm_is_instance.vsi,
     module.create_sgr_rule_vsi,
-]
+  ]
 
   provisioner "remote-exec" {
     inline = [

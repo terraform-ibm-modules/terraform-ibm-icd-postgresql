@@ -16,39 +16,27 @@ variable "prefix" {
   default     = "postgres"
 }
 
-variable "resource_group" {
-  type        = string
-  description = "An existing resource group name to use for this example, if unset a new resource group will be created"
-  default     = null
-}
-variable "resource_tags" {
-  type        = list(string)
-  description = "Optional list of tags to be added to created resources"
-  default     = []
-}
-
 variable "service_credential" {
-  type = string
+  type        = string
   description = "Database service credential"
 }
 
 variable "resource_group_id" {
-  type = string
+  type        = string
   description = "Id of existing resource_group"
 }
 
 variable "vpc_id" {
-  type = string
+  type        = string
   description = "Id of existing vpc"
 }
 
 variable "subnet_ids" {
-  type = list(string)
+  type        = list(string)
   description = "List of subnet ids"
 }
 
-variable "vsi_reserved_ip"{
-  type = string
+variable "vsi_reserved_ip" {
+  type        = string
   description = "Reserved IP for vsi"
 }
-
