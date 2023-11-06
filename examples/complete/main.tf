@@ -45,21 +45,21 @@ module "vpc" {
   prefix            = var.prefix
   name              = "vpc"
   tags              = var.resource_tags
+  network_acls      = var.vpc_network_acls
 }
 
 ##############################################################################
 # Security group
 ##############################################################################
 
-resource "ibm_is_security_group" "sg1" {
-  name = "${var.prefix}-sg1"
-  vpc  = module.vpc.vpc_id
-}
-
-# wait 30 secs after security group is destroyed before destroying VPE to workaround race condition
-resource "time_sleep" "wait_30_seconds" {
-  depends_on       = [ibm_is_security_group.sg1]
-  destroy_duration = "30s"
+module "create_sgr_rule_pg" {
+  source                       = "terraform-ibm-modules/security-group/ibm"
+  version                      = "v2.0.0"
+  add_ibm_cloud_internal_rules = false
+  security_group_name          = "${var.prefix}-security-group-pg"
+  resource_group               = module.resource_group.resource_group_id
+  vpc_id                       = module.vpc.vpc_id
+  target_ids                   = [for crn in module.vpe.crn : element(split(":", crn), length(split(":", crn)) - 1)]
 }
 
 ##############################################################################
@@ -139,12 +139,10 @@ module "vpe" {
       crn  = module.postgresql_db.crn
     },
   ]
-  vpc_id             = module.vpc.vpc_id
-  subnet_zone_list   = module.vpc.subnet_zone_list
-  resource_group_id  = module.resource_group.resource_group_id
-  security_group_ids = [ibm_is_security_group.sg1.id]
+  vpc_id            = module.vpc.vpc_id
+  subnet_zone_list  = module.vpc.subnet_zone_list
+  resource_group_id = module.resource_group.resource_group_id
   depends_on = [
-    time_sleep.wait_120_seconds,
-    time_sleep.wait_30_seconds
+    time_sleep.wait_120_seconds
   ]
 }
