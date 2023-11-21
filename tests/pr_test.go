@@ -108,7 +108,7 @@ func TestRunDBConnectivity(t *testing.T) {
 		},
 	})
 	options_postgres.SkipTestTearDown = true
-	output_postgres, err_postgres := options_postgres.RunTestConsistency()
+	output_postgres, err_postgres := options_postgres.RunTest()
 	assert.Nil(t, err_postgres, "This should not have errored")
 	assert.NotNil(t, output_postgres, "Expected some output")
 
@@ -135,12 +135,12 @@ func TestRunDBConnectivity(t *testing.T) {
 		},
 	})
 	output_vsi, err_vsi := options_vsi.RunTestConsistency()
-
+	options_postgres.TestTearDown()
 	assert.Nil(t, err_vsi, "This should not have errored")
 	assert.NotNil(t, output_vsi, "Expected some output")
-	options_postgres.TestTearDown()
 
 }
+
 
 func TestRunUpgradeCompleteExample(t *testing.T) {
 	t.Parallel()
