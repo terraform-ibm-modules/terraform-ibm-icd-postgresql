@@ -12,5 +12,5 @@ jobs:
     with:
       craSCCv2: true
       craTarget: "examples/fscloud"
-      craRuleIgnoreFile: "cra-tf-validate-ignore-rules.json"
+      craConfigYamlFile: "cra-config.yaml"
       craEnvironmentVariables: "TF_VAR_existing_at_instance_crn=${{ vars.AT_INSTANCE_CRN }},TF_VAR_existing_kms_instance_guid=${{ vars.HPCS_SOUTH_GUID }},TF_VAR_kms_key_crn=${{ vars.HPCS_SOUTH_KEY_CRN }}"
