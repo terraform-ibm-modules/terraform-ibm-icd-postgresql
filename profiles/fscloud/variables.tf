@@ -49,7 +49,7 @@ variable "member_cpu_count" {
 
 variable "admin_pass" {
   type        = string
-  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. The admin password must be in the range of 10-32 characters and cannot start with a special character."
+  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block."
   default     = null
   sensitive   = true
 }
