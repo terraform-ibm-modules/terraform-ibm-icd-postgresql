@@ -54,7 +54,7 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                     = "../../profiles/fscloud"
+  source                     = "../../modules/fscloud"
   resource_group_id          = module.resource_group.resource_group_id
   name                       = "${var.prefix}-postgres"
   region                     = var.region
