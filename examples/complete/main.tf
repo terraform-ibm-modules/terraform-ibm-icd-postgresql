@@ -135,8 +135,8 @@ module "vpe" {
   prefix  = "vpe-to-pg"
   cloud_service_by_crn = [
     {
-      name = "${var.prefix}-postgres"
-      crn  = module.postgresql_db.crn
+      service_name = "${var.prefix}-postgres"
+      crn          = module.postgresql_db.crn
     },
   ]
   vpc_id             = module.vpc.vpc_id
