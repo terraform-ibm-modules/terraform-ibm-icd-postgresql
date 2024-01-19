@@ -6,7 +6,7 @@ This code is a version of the [parent root module](../../) that includes a defau
 
 The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) for compliance with the IBM Cloud Framework for Financial Services profile that is specified by the IBM Security and Compliance Center. The scan passed for all applicable goals with one exception:
 
-> rule-beb7b289-706b-4dc0-b01d-b1d15d4331e3: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
+> rule-9b2d8054-bc93-44fd-901b-91f677287e84: Check whether Databases for PostgreSQL network access is restricted to a specific IP range.
 
 The IBM Cloud Framework for Financial Services mandates the application of an inbound network-based allowlist in front of the IBM Cloud Databases for (ICD) PostgreSQL instance. You can comply with this requirement by using the `cbr_rules` variable in the module, which can be used to create a narrow context-based restriction rule that is scoped to the PostgreSQL instance. CRA does not currently support checking for context-based restrictions, so you can ignore the failing rule after you set the context-based restriction.
 
