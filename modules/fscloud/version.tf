@@ -8,7 +8,7 @@ terraform {
     ibm = {
       source = "IBM-Cloud/ibm"
       # Use "greater than or equal to" range in modules
-      version = ">= 1.56.1"
+      version = ">=1.61.0, <2.0.0"
     }
   }
 }
