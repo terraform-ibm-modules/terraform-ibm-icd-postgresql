@@ -23,7 +23,16 @@ module "key_protect_all_inclusive" {
   region                    = var.region
   key_protect_instance_name = "${var.prefix}-kp"
   resource_tags             = var.resource_tags
-  key_map                   = { "icd-pg" = ["${var.prefix}-pg"] }
+  keys = [
+    {
+      key_ring_name = "icd-pg"
+      keys = [
+        {
+          key_name = "${var.prefix}-pg"
+        }
+      ]
+    }
+  ]
 }
 
 ##############################################################################
@@ -92,7 +101,7 @@ module "postgresql_db" {
   users                      = var.users
   kms_encryption_enabled     = true
   kms_key_crn                = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  existing_kms_instance_guid = module.key_protect_all_inclusive.key_protect_guid
+  existing_kms_instance_guid = module.key_protect_all_inclusive.kms_guid
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
   access_tags                = var.access_tags
