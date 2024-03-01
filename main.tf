@@ -50,7 +50,7 @@ resource "time_sleep" "wait_for_authorization_policy" {
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on        = [ibm_iam_authorization_policy.kms_policy]
+  depends_on        = [time_sleep.wait_for_authorization_policy]
   resource_group_id = var.resource_group_id
   name              = var.name
   service           = "databases-for-postgresql"
