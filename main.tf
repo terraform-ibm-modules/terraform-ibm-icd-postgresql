@@ -23,7 +23,7 @@ locals {
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
 
   # Determine if host_flavor is used
-  host_flavor_set = var.member_host_flavor != null
+  host_flavor_set = var.member_host_flavor != null ? true : false
 
   # Determine what KMS service is being used for database encryption
   kms_service = var.kms_key_crn != null ? (
