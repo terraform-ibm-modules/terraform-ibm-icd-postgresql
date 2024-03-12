@@ -63,7 +63,7 @@ variable "member_cpu_count" {
 
 variable "member_host_flavor" {
   type        = string
-  description = ""
+  description = "Allocated host flavor per member."
   default     = null
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }

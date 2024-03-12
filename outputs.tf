@@ -2,10 +2,6 @@
 # Outputs
 ##############################################################################
 
-output "host_flavor_set" {
-  value       = local.host_flavor_set
-}
-
 output "id" {
   description = "Postgresql instance id"
   value       = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].id : ibm_database.postgresql_db[0].id
