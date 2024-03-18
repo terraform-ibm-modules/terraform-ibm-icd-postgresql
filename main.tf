@@ -53,8 +53,6 @@ resource "time_sleep" "wait_for_authorization_policy" {
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  # this resource NOT will be created if host_flavor is set
-  count             = local.host_flavor_set ? 0 : 1
   depends_on        = [time_sleep.wait_for_authorization_policy]
   resource_group_id = var.resource_group_id
   name              = var.name
@@ -84,112 +82,47 @@ resource "ibm_database" "postgresql_db" {
     }
   }
 
-  group {
-    group_id = "member" # Only member type is allowed for postgresql
-    memory {
-      allocation_mb = var.member_memory_mb
-    }
-    disk {
-      allocation_mb = var.member_disk_mb
-    }
-    cpu {
-      allocation_count = var.member_cpu_count
-    }
-    dynamic "members" {
-      for_each = var.remote_leader_crn == null ? [1] : []
-      content {
-        allocation_count = var.members
-      }
-    }
-  }
-
-  ## This for_each block is NOT a loop to attach to multiple auto_scaling blocks.
-  ## This block is only used to conditionally add auto_scaling block depending on var.auto_scaling
-  dynamic "auto_scaling" {
-    for_each = local.auto_scaling_enabled
+  ## This for_each block is NOT a loop to attach to multiple group blocks.
+  ## This is used to conditionally add one, OR, the other group block depending on var.local.host_flavor_set
+  ## This block is for if host_flavor IS set
+  dynamic "group" {
+    for_each = local.host_flavor_set ? [1] : []
     content {
+      group_id = "member" # Only member type is allowed for postgresql
+      host_flavor {
+        id = var.member_host_flavor
+      }
       disk {
-        capacity_enabled             = var.auto_scaling.disk.capacity_enabled
-        free_space_less_than_percent = var.auto_scaling.disk.free_space_less_than_percent
-        io_above_percent             = var.auto_scaling.disk.io_above_percent
-        io_enabled                   = var.auto_scaling.disk.io_enabled
-        io_over_period               = var.auto_scaling.disk.io_over_period
-        rate_increase_percent        = var.auto_scaling.disk.rate_increase_percent
-        rate_limit_mb_per_member     = var.auto_scaling.disk.rate_limit_mb_per_member
-        rate_period_seconds          = var.auto_scaling.disk.rate_period_seconds
-        rate_units                   = var.auto_scaling.disk.rate_units
+        allocation_mb = var.member_disk_mb
       }
-      memory {
-        io_above_percent         = var.auto_scaling.memory.io_above_percent
-        io_enabled               = var.auto_scaling.memory.io_enabled
-        io_over_period           = var.auto_scaling.memory.io_over_period
-        rate_increase_percent    = var.auto_scaling.memory.rate_increase_percent
-        rate_limit_mb_per_member = var.auto_scaling.memory.rate_limit_mb_per_member
-        rate_period_seconds      = var.auto_scaling.memory.rate_period_seconds
-        rate_units               = var.auto_scaling.memory.rate_units
+      dynamic "members" {
+        for_each = var.remote_leader_crn == null ? [1] : []
+        content {
+          allocation_count = var.members
+        }
       }
     }
   }
 
-  lifecycle {
-    ignore_changes = [
-      # Ignore changes to these because a change will destroy and recreate the instance
-      version,
-      key_protect_key,
-      backup_encryption_key_crn,
-    ]
-  }
-
-  timeouts {
-    create = "120m" # Extending provisioning time to 120 minutes
-  }
-}
-
-# Create postgresql database
-resource "ibm_database" "postgresql_db_host_flavor" {
-  # this resource will be created if host_flavor is set
-  count             = local.host_flavor_set ? 1 : 0
-  depends_on        = [time_sleep.wait_for_authorization_policy]
-  resource_group_id = var.resource_group_id
-  name              = var.name
-  service           = "databases-for-postgresql"
-  location          = var.region
-  plan              = "standard" # Only standard plan is available for postgres
-  backup_id         = var.backup_crn
-  remote_leader_id  = var.remote_leader_crn
-  version           = var.pg_version
-  tags              = var.resource_tags
-  adminpassword     = var.admin_pass
-  service_endpoints = var.service_endpoints
-  # remove elements with null values: see https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/issues/273
-  configuration                        = var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null
-  key_protect_key                      = var.kms_key_crn
-  backup_encryption_key_crn            = local.backup_encryption_key_crn
-  point_in_time_recovery_deployment_id = var.pitr_id
-  point_in_time_recovery_time          = var.pitr_time
-
-  dynamic "users" {
-    for_each = nonsensitive(var.users != null ? var.users : [])
+  ## This block is for if host_flavor IS NOT set
+  dynamic "group" {
+    for_each = local.host_flavor_set ? [] : [1]
     content {
-      name     = users.value.name
-      password = users.value.password
-      type     = users.value.type
-      role     = (users.value.role != "" ? users.value.role : null)
-    }
-  }
-
-  group {
-    group_id = "member" # Only member type is allowed for postgresql
-    host_flavor {
-      id = var.member_host_flavor
-    }
-    disk {
-      allocation_mb = var.member_disk_mb
-    }
-    dynamic "members" {
-      for_each = var.remote_leader_crn == null ? [1] : []
-      content {
-        allocation_count = var.members
+      group_id = "member" # Only member type is allowed for postgresql
+      memory {
+        allocation_mb = var.member_memory_mb
+      }
+      disk {
+        allocation_mb = var.member_disk_mb
+      }
+      cpu {
+        allocation_count = var.member_cpu_count
+      }
+      dynamic "members" {
+        for_each = var.remote_leader_crn == null ? [1] : []
+        content {
+          allocation_count = var.members
+        }
       }
     }
   }
@@ -238,7 +171,7 @@ resource "ibm_database" "postgresql_db_host_flavor" {
 
 resource "ibm_resource_tag" "postgresql_tag" {
   count       = length(var.access_tags) == 0 ? 0 : 1
-  resource_id = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].resource_crn : ibm_database.postgresql_db[0].resource_crn
+  resource_id = ibm_database.postgresql_db.resource_crn
   tags        = var.access_tags
   tag_type    = "access"
 }
@@ -262,7 +195,7 @@ module "cbr_rule" {
       },
       {
         name     = "serviceInstance"
-        value    = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].guid : ibm_database.postgresql_db[0].guid
+        value    = ibm_database.postgresql_db.guid
         operator = "stringEquals"
       },
       {
@@ -289,7 +222,7 @@ resource "ibm_resource_key" "service_credentials" {
   for_each             = var.service_credential_names
   name                 = each.key
   role                 = each.value
-  resource_instance_id = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].id : ibm_database.postgresql_db[0].id
+  resource_instance_id = ibm_database.postgresql_db.id
 }
 
 locals {
@@ -316,7 +249,7 @@ locals {
 data "ibm_database_connection" "database_connection" {
   count         = length(var.users) > 0 ? 1 : 0
   endpoint_type = var.service_endpoints
-  deployment_id = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].id : ibm_database.postgresql_db[0].id
+  deployment_id = ibm_database.postgresql_db.id
   user_id       = var.users[0].name
   user_type     = var.users[0].type
 }

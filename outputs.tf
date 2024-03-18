@@ -4,22 +4,22 @@
 
 output "id" {
   description = "Postgresql instance id"
-  value       = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].id : ibm_database.postgresql_db[0].id
+  value       = ibm_database.postgresql_db.id
 }
 
 output "guid" {
   description = "Postgresql instance guid"
-  value       = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].guid : ibm_database.postgresql_db[0].guid
+  value       = ibm_database.postgresql_db.guid
 }
 
 output "version" {
   description = "Postgresql instance version"
-  value       = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].version : ibm_database.postgresql_db[0].version
+  value       = ibm_database.postgresql_db.version
 }
 
 output "crn" {
   description = "Postgresql instance crn"
-  value       = local.host_flavor_set ? ibm_database.postgresql_db_host_flavor[0].resource_crn : ibm_database.postgresql_db[0].resource_crn
+  value       = ibm_database.postgresql_db.resource_crn
 }
 
 output "service_credentials_json" {
