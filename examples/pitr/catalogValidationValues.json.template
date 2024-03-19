@@ -1,0 +1,8 @@
+{
+  "ibmcloud_api_key": $VALIDATION_APIKEY,
+  "region": "us-south",
+  "resource_tags": $TAGS,
+  "prefix": $PREFIX,
+  "pitr_id": $PITR_ID,
+  "pitr_name": $PITR_NAME
+}

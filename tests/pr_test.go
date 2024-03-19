@@ -10,7 +10,6 @@ import (
 
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
-	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
 )
@@ -26,11 +25,8 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-var sharedInfoSvc *cloudinfo.CloudInfoService
-
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
-	sharedInfoSvc, _ = cloudinfo.NewCloudInfoServiceFromEnv("TF_VAR_ibmcloud_api_key", cloudinfo.CloudInfoServiceOptions{})
 
 	var err error
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
@@ -62,7 +58,6 @@ func TestRunFSCloudExample(t *testing.T) {
 			"kms_key_crn":                permanentResources["hpcs_south_root_key_crn"],
 			"pg_version":                 "15", // Always lock this test into the latest supported Postgres version
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
 	options.SkipTestTearDown = true
 	output, err := options.RunTestConsistency()
@@ -82,10 +77,7 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 
 	// Generate a 15 char long random string for the admin_pass
 	randomBytes := make([]byte, 13)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		log.Fatal(err)
-	}
+	rand.Read(randomBytes)
 	randomPass := "A1" + base64.URLEncoding.EncodeToString(randomBytes)[:13]
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
@@ -95,7 +87,7 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "12", // Always lock to the lowest supported Postgres version
+			"pg_version": "11", // Always lock to the lowest supported Postgres version
 			"users": []map[string]interface{}{
 				{
 					"name":     "testuser",
@@ -105,7 +97,6 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 			},
 			"admin_pass": randomPass,
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
 
 	output, err := options.RunTestUpgrade()

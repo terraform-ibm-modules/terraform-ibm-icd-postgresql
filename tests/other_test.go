@@ -21,7 +21,6 @@ func TestRunRestoredDBExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"pg_version": "13",
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
 
 	output, err := options.RunTestConsistency()
@@ -44,7 +43,6 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 			"pg_version": permanentResources["postgresqlPITRVersion"],
 			"members":    "3", // Lock members to 3 as the permanent postgres instances has 3 members
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
 
 	output, err := options.RunTestConsistency()
@@ -64,7 +62,6 @@ func TestRunBasicExample(t *testing.T) {
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12",
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
 
 	output, err := options.RunTestConsistency()
@@ -72,28 +69,21 @@ func TestRunBasicExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func testPlanICDVersions(t *testing.T, version string) {
+func TestRunCompleteExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: "examples/basic",
+		Testing:            t,
+		TerraformDir:       "examples/complete",
+		Prefix:             "pg-complete",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": version,
+			"pg_version": "12",
 		},
-		CloudInfoService: sharedInfoSvc,
 	})
-	output, err := options.RunTestPlan()
+
+	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestPlanICDVersions(t *testing.T) {
-	t.Parallel()
-
-	// This test will run a terraform plan on available stable versions of postgresql
-	versions, _ := sharedInfoSvc.GetAvailableIcdVersions("postgresql")
-	for _, version := range versions {
-		t.Run(version, func(t *testing.T) { testPlanICDVersions(t, version) })
-	}
 }
