@@ -15,13 +15,14 @@ module "resource_group" {
 ##############################################################################
 
 module "postgresql_db" {
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-postgres"
-  pg_version        = var.pg_version
-  region            = var.region
-  resource_tags     = var.resource_tags
-  access_tags       = var.access_tags
+  source             = "../.."
+  resource_group_id  = module.resource_group.resource_group_id
+  name               = "${var.prefix}-postgres"
+  pg_version         = var.pg_version
+  region             = var.region
+  resource_tags      = var.resource_tags
+  access_tags        = var.access_tags
+  member_host_flavor = var.member_host_flavor
 }
 
 # On destroy, we are seeing that even though the replica has been returned as

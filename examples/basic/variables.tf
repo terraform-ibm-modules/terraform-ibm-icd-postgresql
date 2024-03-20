@@ -52,3 +52,9 @@ variable "read_only_replicas_count" {
     error_message = "There is a limit of five read-only replicas per leader"
   }
 }
+
+variable "member_host_flavor" {
+  type        = string
+  description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
+  default     = null
+}
