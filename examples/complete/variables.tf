@@ -69,3 +69,56 @@ variable "service_credential_names" {
     "postgressql_editor" : "Editor",
   }
 }
+
+
+variable "vpc_network_acls" {
+  description = "The list of ACLs to create. Provide at least one rule for each ACL."
+  type = list(
+    object({
+      name                         = string
+      add_ibm_cloud_internal_rules = optional(bool)
+      add_vpc_connectivity_rules   = optional(bool)
+      prepend_ibm_rules            = optional(bool)
+      rules = list(
+        object({
+          name        = string
+          action      = string
+          destination = string
+          direction   = string
+          source      = string
+          tcp = optional(
+            object({
+              port_max        = optional(number)
+              port_min        = optional(number)
+              source_port_max = optional(number)
+              source_port_min = optional(number)
+            })
+          )
+          udp = optional(
+            object({
+              port_max        = optional(number)
+              port_min        = optional(number)
+              source_port_max = optional(number)
+              source_port_min = optional(number)
+            })
+          )
+          icmp = optional(
+            object({
+              type = optional(number)
+              code = optional(number)
+            })
+          )
+        })
+      )
+    })
+  )
+  default = [
+    {
+      name                         = "vpc-acl"
+      add_ibm_cloud_internal_rules = true
+      add_vpc_connectivity_rules   = true
+      prepend_ibm_rules            = true
+      rules                        = []
+    }
+  ]
+}
