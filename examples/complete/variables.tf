@@ -7,13 +7,11 @@ variable "ibmcloud_api_key" {
 variable "region" {
   type        = string
   description = "Region to provision all resources created by this example."
-  default     = "us-south"
 }
 
 variable "prefix" {
   type        = string
   description = "Prefix to append to all resources created by this example"
-  default     = "postgres"
 }
 
 variable "resource_group" {
@@ -42,8 +40,8 @@ variable "pg_version" {
 
 variable "admin_pass" {
   type        = string
-  default     = null
   sensitive   = true
+  default     = null
   description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block."
 }
 

@@ -71,7 +71,6 @@ func TestRunBasicExample(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
-
 func testPlanICDVersions(t *testing.T, version string) {
 	t.Parallel()
 
@@ -96,4 +95,24 @@ func TestPlanICDVersions(t *testing.T) {
 	for _, version := range versions {
 		t.Run(version, func(t *testing.T) { testPlanICDVersions(t, version) })
 	}
+}
+
+func TestRunCompleteExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/complete",
+		Prefix:             "pg-complete",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"pg_version": "12",
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
