@@ -114,3 +114,23 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		assert.NotNil(t, output, "Expected some output")
 	}
 }
+
+func TestRunBasicExampleWithFlavor(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "postgres-flvr",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"member_host_flavor": "b3c.4x16.encrypted",
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}

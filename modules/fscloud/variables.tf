@@ -47,6 +47,12 @@ variable "member_cpu_count" {
   default     = 3
 }
 
+variable "member_host_flavor" {
+  type        = string
+  description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
+  default     = null
+}
+
 variable "admin_pass" {
   type        = string
   description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block."

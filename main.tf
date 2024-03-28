@@ -22,6 +22,9 @@ locals {
   # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
 
+  # Determine if host_flavor is used
+  host_flavor_set = var.member_host_flavor != null ? true : false
+
   # Determine what KMS service is being used for database encryption
   kms_service = var.kms_key_crn != null ? (
     can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
@@ -79,21 +82,47 @@ resource "ibm_database" "postgresql_db" {
     }
   }
 
-  group {
-    group_id = "member" # Only member type is allowed for postgresql
-    memory {
-      allocation_mb = var.member_memory_mb
+  ## This for_each block is NOT a loop to attach to multiple group blocks.
+  ## This is used to conditionally add one, OR, the other group block depending on var.local.host_flavor_set
+  ## This block is for if host_flavor IS set
+  dynamic "group" {
+    for_each = local.host_flavor_set ? [1] : []
+    content {
+      group_id = "member" # Only member type is allowed for postgresql
+      host_flavor {
+        id = var.member_host_flavor
+      }
+      disk {
+        allocation_mb = var.member_disk_mb
+      }
+      dynamic "members" {
+        for_each = var.remote_leader_crn == null ? [1] : []
+        content {
+          allocation_count = var.members
+        }
+      }
     }
-    disk {
-      allocation_mb = var.member_disk_mb
-    }
-    cpu {
-      allocation_count = var.member_cpu_count
-    }
-    dynamic "members" {
-      for_each = var.remote_leader_crn == null ? [1] : []
-      content {
-        allocation_count = var.members
+  }
+
+  ## This block is for if host_flavor IS NOT set
+  dynamic "group" {
+    for_each = local.host_flavor_set ? [] : [1]
+    content {
+      group_id = "member" # Only member type is allowed for postgresql
+      memory {
+        allocation_mb = var.member_memory_mb
+      }
+      disk {
+        allocation_mb = var.member_disk_mb
+      }
+      cpu {
+        allocation_count = var.member_cpu_count
+      }
+      dynamic "members" {
+        for_each = var.remote_leader_crn == null ? [1] : []
+        content {
+          allocation_count = var.members
+        }
       }
     }
   }
