@@ -121,7 +121,7 @@ func TestRunBasicExampleWithFlavor(t *testing.T) {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
-		Prefix:             "postgres",
+		Prefix:             "postgres-flvr",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
