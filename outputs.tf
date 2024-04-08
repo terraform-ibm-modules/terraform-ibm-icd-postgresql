@@ -39,12 +39,23 @@ output "cbr_rule_ids" {
   value       = module.cbr_rule[*].rule_id
 }
 
+output "adminuser" {
+  description = "Database admin user name"
+  value       = ibm_database.postgresql_db.adminuser
+}
+
 output "hostname" {
-  description = "Database hostname. Only contains value when var.service_credential_names or var.users are set."
-  value       = length(var.service_credential_names) > 0 ? nonsensitive(ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.hostname"]) : length(var.users) > 0 ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname : null
+  description = "Database connection hostname"
+  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].hostname
 }
 
 output "port" {
-  description = "Database port. Only contains value when var.service_credential_names or var.users are set."
-  value       = length(var.service_credential_names) > 0 ? nonsensitive(ibm_resource_key.service_credentials[keys(var.service_credential_names)[0]].credentials["connection.postgres.hosts.0.port"]) : length(var.users) > 0 ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port : null
+  description = "Database connection port"
+  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].port
+}
+
+output "certificate_base64" {
+  description = "Database connection certificate"
+  value       = data.ibm_database_connection.database_connection.postgres[0].certificate[0].certificate_base64
+  sensitive   = true
 }
