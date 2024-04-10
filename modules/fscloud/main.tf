@@ -17,6 +17,7 @@ module "postgresql_db" {
   member_memory_mb              = var.member_memory_mb
   member_disk_mb                = var.member_disk_mb
   member_cpu_count              = var.member_cpu_count
+  member_host_flavor            = var.member_host_flavor
   members                       = var.members
   admin_pass                    = var.admin_pass
   users                         = var.users
