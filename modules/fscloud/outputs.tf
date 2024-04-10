@@ -22,12 +22,23 @@ output "crn" {
   value       = module.postgresql_db.crn
 }
 
+output "adminuser" {
+  description = "Database admin user name"
+  value       = module.postgresql_db.adminuser
+}
+
 output "hostname" {
-  description = "Postgresql instance hostname"
+  description = "Database connection hostname"
   value       = module.postgresql_db.hostname
 }
 
 output "port" {
-  description = "Postgresql instance port"
+  description = "Database connection port"
   value       = module.postgresql_db.port
+}
+
+output "certificate_base64" {
+  description = "Database connection certificate"
+  value       = module.postgresql_db.certificate_base64
+  sensitive   = true
 }
