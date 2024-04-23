@@ -17,6 +17,7 @@ func TestRunRestoredDBExample(t *testing.T) {
 		TerraformDir:       "examples/backup",
 		Prefix:             "pg-backup",
 		BestRegionYAMLPath: regionSelectionPath,
+		DefaultRegion:      "us-south",
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "13",
@@ -60,6 +61,7 @@ func TestRunBasicExample(t *testing.T) {
 		TerraformDir:       "examples/basic",
 		Prefix:             "postgres",
 		BestRegionYAMLPath: regionSelectionPath,
+		DefaultRegion:      "us-south",
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12",
@@ -105,6 +107,7 @@ func TestRunCompleteExample(t *testing.T) {
 		TerraformDir:       "examples/complete",
 		Prefix:             "pg-complete",
 		BestRegionYAMLPath: regionSelectionPath,
+		DefaultRegion:      "us-south",
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12",

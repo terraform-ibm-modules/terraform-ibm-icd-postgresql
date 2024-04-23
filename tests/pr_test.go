@@ -93,6 +93,7 @@ func TestRunUpgradeCompleteExample(t *testing.T) {
 		TerraformDir:       "examples/complete",
 		Prefix:             "postgres-upg",
 		BestRegionYAMLPath: regionSelectionPath,
+		DefaultRegion:      "us-south",
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "12", // Always lock to the lowest supported Postgres version
@@ -123,6 +124,7 @@ func TestRunBasicExampleWithFlavor(t *testing.T) {
 		TerraformDir:       "examples/basic",
 		Prefix:             "postgres-flvr",
 		BestRegionYAMLPath: regionSelectionPath,
+		DefaultRegion:      "us-south",
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"member_host_flavor": "b3c.4x16.encrypted",
