@@ -50,7 +50,6 @@ To attach access management tags to resources in this module, you need the follo
 - [ Basic with read-only replica example](examples/basic)
 - [ Complete example with BYOK encryption, CBR rules and VPE creation](examples/complete)
 - [ Financial Services Cloud profile example with autoscaling enabled](examples/fscloud)
-- [ Basic with read-only replica example](examples/multitenant)
 - [ Point in time recovery example (PITR)](examples/pitr)
 <!-- END EXAMPLES HOOK -->
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
