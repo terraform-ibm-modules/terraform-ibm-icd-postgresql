@@ -140,14 +140,10 @@ func TestRunBasicExampleWithFlavorMultitenant(t *testing.T) {
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
-		TerraformDir:       "examples/basic",
+		TerraformDir:       "examples/multitenant",
 		Prefix:             "pg-flvr-multitenant",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"member_host_flavor": "multitenant",
-			"member_memory_mb":   8192, // Requires a minimum of 8192 megabytes with multitenant flavor
-		},
 		CloudInfoService: sharedInfoSvc,
 	})
 
