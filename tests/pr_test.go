@@ -144,7 +144,7 @@ func TestRunBasicExampleWithFlavorMultitenant(t *testing.T) {
 		Prefix:             "pg-flvr-multitenant",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
 
 	output, err := options.RunTestConsistency()

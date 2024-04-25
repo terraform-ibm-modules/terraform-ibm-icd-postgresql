@@ -22,8 +22,8 @@ module "postgresql_db" {
   region             = var.region
   resource_tags      = var.resource_tags
   access_tags        = var.access_tags
-  member_host_flavor = "multitenant" // Requires a minimum of 8192 megabytes with multitenant flavor
-  member_memory_mb    = 8192
+  member_host_flavor = "multitenant"
+  member_memory_mb   = 8192 # Requires a minimum of 8192 megabytes with multitenant flavor
 }
 
 # On destroy, we are seeing that even though the replica has been returned as
