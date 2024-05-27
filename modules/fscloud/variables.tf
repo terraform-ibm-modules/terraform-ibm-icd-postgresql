@@ -115,6 +115,8 @@ variable "configuration" {
     wal_level                  = optional(string)
     archive_timeout            = optional(number)
     log_min_duration_statement = optional(number)
+    log_connections            = optional(string)
+    log_disconnections         = optional(string)
   })
   default = null
 }
