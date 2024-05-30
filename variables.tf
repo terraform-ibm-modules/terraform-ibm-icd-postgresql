@@ -133,6 +133,14 @@ variable "configuration" {
     log_disconnections         = optional(string)
   })
   default = null
+
+  validation {
+    condition = var.configuration == null || (
+      (var.configuration.log_connections == null || contains(["on", "off"], var.configuration.log_connections)) &&
+      (var.configuration.log_disconnections == null || contains(["on", "off"], var.configuration.log_disconnections))
+    )
+    error_message = "The log_connections and log_disconnections fields must be either 'on' or 'off' if specified."
+  }
 }
 
 variable "admin_pass" {
