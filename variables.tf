@@ -135,13 +135,6 @@ variable "configuration" {
   default = null
 
   validation {
-    condition = var.configuration == null || (
-      (var.configuration.log_connections == null || contains(["on", "off"], var.configuration.log_connections)) &&
-      (var.configuration.log_disconnections == null || contains(["on", "off"], var.configuration.log_disconnections))
-    )
-    error_message = "The log_connections and log_disconnections fields must be either 'on' or 'off' if specified."
-  }
-  validation {
     condition     = var.configuration == null ? true : (var.configuration.log_connections == null ? true : contains(["on", "off"], var.configuration.log_connections))
     error_message = "The log_connections field must be either 'on' or 'off' if specified."
   }
