@@ -140,52 +140,52 @@ variable "configuration" {
 
   validation {
     condition     = var.configuration != null ? (var.configuration["max_locks_per_transaction"] != null ? var.configuration["max_locks_per_transaction"] >= 10 : true) : true
-    error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more."
+    error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration["synchronous_commit"]) : true) : true
-    error_message = "Value for `configuration[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`."
+    error_message = "Value for `configuration[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["deadlock_timeout"] != null ? var.configuration["deadlock_timeout"] >= 100 : true) : true
-    error_message = "Value for `configuration[\"deadlock_timeout\"]` must be 100 or more."
+    error_message = "Value for `configuration[\"deadlock_timeout\"]` must be 100 or more, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["log_connections"] != null ? contains(["on", "off"], var.configuration["log_connections"]) : true) : true
-    error_message = "Value for `configuration[\"log_connections\"]` must be either `on` or `off`."
+    error_message = "Value for `configuration[\"log_connections\"]` must be either `on` or `off`, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["log_disconnections"] != null ? contains(["on", "off"], var.configuration["log_disconnections"]) : true) : true
-    error_message = "Value for `configuration[\"log_disconnections\"]` must be either `on` or `off`."
+    error_message = "Value for `configuration[\"log_disconnections\"]` must be either `on` or `off`, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["log_min_duration_statement"] != null ? var.configuration["log_min_duration_statement"] >= 100 : true) : true
-    error_message = "Value for `configuration[\"log_min_duration_statement\"]` must be 100 or more."
+    error_message = "Value for `configuration[\"log_min_duration_statement\"]` must be 100 or more, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["archive_timeout"] != null ? var.configuration["archive_timeout"] >= 300 : true) : true
-    error_message = "Value for `configuration[\"archive_timeout\"]` must be 300 or more."
+    error_message = "Value for `configuration[\"archive_timeout\"]` must be 300 or more, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical"], var.configuration["wal_level"]) : true) : true
-    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`."
+    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["max_replication_slots"] != null ? var.configuration["max_replication_slots"] >= 10 : true) : true
-    error_message = "Value for `configuration[\"max_replication_slots\"]` must be 10 or more."
+    error_message = "Value for `configuration[\"max_replication_slots\"]` must be 10 or more, if specified."
   }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
-    error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more."
+    error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
 }
 
