@@ -28,7 +28,8 @@ module "key_protect_all_inclusive" {
       key_ring_name = "icd-pg"
       keys = [
         {
-          key_name = "${var.prefix}-pg"
+          key_name     = "${var.prefix}-pg"
+          force_delete = true
         }
       ]
     }
