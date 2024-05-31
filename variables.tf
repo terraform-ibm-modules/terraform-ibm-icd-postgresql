@@ -116,31 +116,79 @@ variable "access_tags" {
 }
 
 variable "configuration" {
-  description = "Database configuration"
+  description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
   type = object({
-    max_connections            = optional(number)
+    shared_buffers  = optional(number)
+    max_connections = optional(number)
+    # below field gives error when sent to provider
+    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403
+    # max_locks_per_transaction  = optional(number)
     max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
     synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
     log_connections            = optional(string)
     log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+    archive_timeout            = optional(number)
+    wal_level                  = optional(string)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
   })
   default = null
 
+  # uncomment below validation when max_locks_per_transaction provider bug is resolved
+  # validation {
+  #   condition     = var.configuration != null ? (var.configuration["max_locks_per_transaction"] != null ? var.configuration["max_locks_per_transaction"] >= 10 : true) : true
+  #   error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more, if specified."
+  # }
+
   validation {
-    condition     = var.configuration == null ? true : (var.configuration.log_connections == null ? true : contains(["on", "off"], var.configuration.log_connections))
-    error_message = "The log_connections field must be either 'on' or 'off' if specified."
+    condition     = var.configuration != null ? (var.configuration["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration["synchronous_commit"]) : true) : true
+    error_message = "Value for `configuration[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`, if specified."
   }
+
   validation {
-    condition     = var.configuration == null ? true : (var.configuration.log_disconnections == null ? true : contains(["on", "off"], var.configuration.log_disconnections))
-    error_message = "The log_disconnections field must be either 'on' or 'off' if specified."
+    condition     = var.configuration != null ? (var.configuration["deadlock_timeout"] != null ? var.configuration["deadlock_timeout"] >= 100 : true) : true
+    error_message = "Value for `configuration[\"deadlock_timeout\"]` must be 100 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_connections"] != null ? contains(["on", "off"], var.configuration["log_connections"]) : true) : true
+    error_message = "Value for `configuration[\"log_connections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_disconnections"] != null ? contains(["on", "off"], var.configuration["log_disconnections"]) : true) : true
+    error_message = "Value for `configuration[\"log_disconnections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_min_duration_statement"] != null ? var.configuration["log_min_duration_statement"] >= 100 : true) : true
+    error_message = "Value for `configuration[\"log_min_duration_statement\"]` must be 100 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["archive_timeout"] != null ? var.configuration["archive_timeout"] >= 300 : true) : true
+    error_message = "Value for `configuration[\"archive_timeout\"]` must be 300 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical"], var.configuration["wal_level"]) : true) : true
+    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_replication_slots"] != null ? var.configuration["max_replication_slots"] >= 10 : true) : true
+    error_message = "Value for `configuration[\"max_replication_slots\"]` must be 10 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
+    error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
 }
 
@@ -200,7 +248,7 @@ variable "auto_scaling" {
 
 variable "kms_encryption_enabled" {
   type        = bool
-  description = "Set this to true to control the encryption keys used to encrypt the data that you store in IBM Cloud® Databases. If set to false, the data is encrypted by using randomly generated keys. For more info on Key Protect integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect. For more info on HPCS integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs"
+  description = "Set this to true to control the encryption keys used to encrypt the data that you store in IBM Cloud Databases. If set to false, the data is encrypted by using randomly generated keys. For more info on Key Protect integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect. For more info on HPCS integration, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs"
   default     = false
 }
 
@@ -220,12 +268,8 @@ variable "kms_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect key that you want to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. BYOK for backups is available only in US regions us-south and us-east, and in eu-de. Only keys in the us-south and eu-de are durable to region failures. To ensure that your backups are available even if a region failure occurs, use a key from us-south or eu-de. Hyper Protect Crypto Services for IBM Cloud Databases backups is not currently supported. If no value is passed here, the value passed for the 'kms_key_crn' variable is used, unless 'use_default_backup_encryption_key' is set to 'true'. And if a HPCS value is passed for var.kms_key_crn, the database backup encryption uses the default encryption keys."
+  description = "The CRN of a KMS (Key Protect or Hyper Protect Crypto Service) key to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are limitation per region on the type of KMS service (Key Protect or Hyper Protect Crypto Services) and region for those services. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups "
   default     = null
-  validation {
-    condition     = var.backup_encryption_key_crn == null ? true : length(regexall("^crn:v1:bluemix:public:kms:(us-south|us-east|eu-de):a/[[:xdigit:]]{32}:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}:key:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$", var.backup_encryption_key_crn)) > 0
-    error_message = "Valid values for backup_encryption_key_crn is null or a Key Protect key CRN from us-south, us-east or eu-de"
-  }
 }
 
 variable "use_default_backup_encryption_key" {

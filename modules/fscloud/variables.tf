@@ -102,23 +102,80 @@ variable "access_tags" {
 }
 
 variable "configuration" {
-  description = "Database configuration."
+  description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
   type = object({
-    max_connections            = optional(number)
+    shared_buffers  = optional(number)
+    max_connections = optional(number)
+    # below field gives error when sent to provider
+    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403
+    # max_locks_per_transaction  = optional(number)
     max_prepared_transactions  = optional(number)
-    deadlock_timeout           = optional(number)
-    effective_io_concurrency   = optional(number)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-    shared_buffers             = optional(number)
     synchronous_commit         = optional(string)
-    wal_level                  = optional(string)
-    archive_timeout            = optional(number)
-    log_min_duration_statement = optional(number)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
     log_connections            = optional(string)
     log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+    archive_timeout            = optional(number)
+    wal_level                  = optional(string)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
   })
   default = null
+
+  # uncomment below validation when max_locks_per_transaction provider bug is resolved
+  # validation {
+  #   condition     = var.configuration != null ? (var.configuration["max_locks_per_transaction"] != null ? var.configuration["max_locks_per_transaction"] >= 10 : true) : true
+  #   error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more, if specified."
+  # }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration["synchronous_commit"]) : true) : true
+    error_message = "Value for `configuration[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["deadlock_timeout"] != null ? var.configuration["deadlock_timeout"] >= 100 : true) : true
+    error_message = "Value for `configuration[\"deadlock_timeout\"]` must be 100 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_connections"] != null ? contains(["on", "off"], var.configuration["log_connections"]) : true) : true
+    error_message = "Value for `configuration[\"log_connections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_disconnections"] != null ? contains(["on", "off"], var.configuration["log_disconnections"]) : true) : true
+    error_message = "Value for `configuration[\"log_disconnections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["log_min_duration_statement"] != null ? var.configuration["log_min_duration_statement"] >= 100 : true) : true
+    error_message = "Value for `configuration[\"log_min_duration_statement\"]` must be 100 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["archive_timeout"] != null ? var.configuration["archive_timeout"] >= 300 : true) : true
+    error_message = "Value for `configuration[\"archive_timeout\"]` must be 300 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical"], var.configuration["wal_level"]) : true) : true
+    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_replication_slots"] != null ? var.configuration["max_replication_slots"] >= 10 : true) : true
+    error_message = "Value for `configuration[\"max_replication_slots\"]` must be 10 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
+    error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
+  }
 }
 
 variable "kms_key_crn" {

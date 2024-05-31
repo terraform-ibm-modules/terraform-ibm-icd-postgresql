@@ -16,7 +16,7 @@ module "resource_group" {
 
 module "key_protect_all_inclusive" {
   source            = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version           = "4.11.8"
+  version           = "4.13.0"
   resource_group_id = module.resource_group.resource_group_id
   # Note: Database instance and Key Protect must be created in the same region when using BYOK
   # See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok
@@ -28,7 +28,8 @@ module "key_protect_all_inclusive" {
       key_ring_name = "icd-pg"
       keys = [
         {
-          key_name = "${var.prefix}-pg"
+          key_name     = "${var.prefix}-pg"
+          force_delete = true
         }
       ]
     }
@@ -105,8 +106,25 @@ module "postgresql_db" {
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
   access_tags                = var.access_tags
+  # Example of setting configuration - none of the below is mandatory - those settings are set in this example for illustation purpose and ensure path is exercised in automated test using this example.
   configuration = {
-    max_connections = 250
+    shared_buffers             = 32000
+    max_connections            = 250
+    max_locks_per_transaction  = 64
+    max_prepared_transactions  = 0
+    synchronous_commit         = "local"
+    effective_io_concurrency   = 12
+    deadlock_timeout           = 10000
+    log_connections            = "off"
+    log_disconnections         = "off"
+    log_min_duration_statement = 100
+    tcp_keepalives_idle        = 200
+    tcp_keepalives_interval    = 50
+    tcp_keepalives_count       = 6
+    archive_timeout            = 1000
+    wal_level                  = "hot_standby"
+    max_replication_slots      = 10
+    max_wal_senders            = 20
   }
   cbr_rules = [
     {
@@ -140,7 +158,7 @@ resource "time_sleep" "wait_120_seconds" {
 
 module "vpe" {
   source  = "terraform-ibm-modules/vpe-gateway/ibm"
-  version = "4.1.1"
+  version = "4.1.3"
   prefix  = "vpe-to-pg"
   cloud_service_by_crn = [
     {
