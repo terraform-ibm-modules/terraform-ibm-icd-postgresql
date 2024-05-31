@@ -104,9 +104,11 @@ variable "access_tags" {
 variable "configuration" {
   description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
   type = object({
-    shared_buffers             = optional(number)
-    max_connections            = optional(number)
-    max_locks_per_transaction  = optional(number)
+    shared_buffers  = optional(number)
+    max_connections = optional(number)
+    # below field gives error when sent to provider
+    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403
+    # max_locks_per_transaction  = optional(number)
     max_prepared_transactions  = optional(number)
     synchronous_commit         = optional(string)
     effective_io_concurrency   = optional(number)
@@ -124,10 +126,11 @@ variable "configuration" {
   })
   default = null
 
-  validation {
-    condition     = var.configuration != null ? (var.configuration["max_locks_per_transaction"] != null ? var.configuration["max_locks_per_transaction"] >= 10 : true) : true
-    error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more, if specified."
-  }
+  # uncomment below validation when max_locks_per_transaction provider bug is resolved
+  # validation {
+  #   condition     = var.configuration != null ? (var.configuration["max_locks_per_transaction"] != null ? var.configuration["max_locks_per_transaction"] >= 10 : true) : true
+  #   error_message = "Value for `configuration[\"max_locks_per_transaction\"]` must be 10 or more, if specified."
+  # }
 
   validation {
     condition     = var.configuration != null ? (var.configuration["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration["synchronous_commit"]) : true) : true
