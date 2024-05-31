@@ -83,4 +83,9 @@ module "postgresql_db" {
       }]
     }
   ]
+  # The following are the known configuration value for pgaudit
+  configuration = {
+    log_connections    = "on"
+    log_disconnections = "on"
+  }
 }
