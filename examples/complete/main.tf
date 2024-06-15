@@ -4,7 +4,7 @@
 
 module "resource_group" {
   source  = "terraform-ibm-modules/resource-group/ibm"
-  version = "1.1.5"
+  version = "1.1.6"
   # if an existing resource group is not set (null) create a new one using prefix
   resource_group_name          = var.resource_group == null ? "${var.prefix}-resource-group" : null
   existing_resource_group_name = var.resource_group
@@ -49,7 +49,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.18.2"
+  version           = "7.18.3"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -78,7 +78,7 @@ resource "time_sleep" "wait_30_seconds" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.22.1"
+  version          = "1.22.2"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
