@@ -65,6 +65,7 @@ module "postgresql_db" {
   service_credential_names   = var.service_credential_names
   access_tags                = var.access_tags
   auto_scaling               = var.auto_scaling
+  member_host_flavor         = "b3c.4x16.encrypted"
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

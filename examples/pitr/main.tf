@@ -12,17 +12,19 @@ module "resource_group" {
 
 # New ICD postgresql database instance pointing to a PITR time
 module "postgresql_db_pitr" {
-  source            = "../.."
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-postgres-pitr"
-  region            = var.region
-  resource_tags     = var.resource_tags
-  access_tags       = var.access_tags
-  member_memory_mb  = 3072
-  member_disk_mb    = 15360
-  member_cpu_count  = 9
-  members           = var.members
-  pg_version        = var.pg_version
-  pitr_id           = var.pitr_id
-  pitr_time         = var.pitr_time == "" ? " " : var.pitr_time
+  source             = "../.."
+  resource_group_id  = module.resource_group.resource_group_id
+  name               = "${var.prefix}-postgres-pitr"
+  region             = var.region
+  resource_tags      = var.resource_tags
+  access_tags        = var.access_tags
+  member_memory_mb   = 3072
+  member_disk_mb     = 15360
+  member_cpu_count   = 9
+  member_host_flavor = "multitenant"
+  members            = var.members
+  pg_version         = var.pg_version
+  pitr_id            = var.pitr_id
+  pitr_time          = var.pitr_time == "" ? " " : var.pitr_time
+
 }

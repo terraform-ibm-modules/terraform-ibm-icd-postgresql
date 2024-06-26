@@ -43,7 +43,7 @@ variable "region" {
 variable "member_memory_mb" {
   type        = number
   description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = 1024
+  default     = 4096
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
