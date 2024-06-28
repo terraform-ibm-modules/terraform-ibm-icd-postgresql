@@ -48,6 +48,19 @@ variable "kms_key_crn" {
   description = "The root key CRN of a Hyper Protect Crypto Service (HPCS) that you want to use for disk encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
 }
 
+variable "backup_encryption_key_crn" {
+  type        = string
+  description = "The CRN of a Hyper Protect Crypto Service use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are limitation per region on the Hyper Protect Crypto Services and region for those services. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups"
+  default     = null
+  # Validation happens in the root module
+}
+
+variable "backup_crn" {
+  type        = string
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
+  default     = null
+}
+
 variable "service_credential_names" {
   description = "Map of name, role for service credentials that you want to create for the database"
   type        = map(string)
