@@ -60,6 +60,8 @@ module "postgresql_db" {
   region                     = var.region
   pg_version                 = var.pg_version
   kms_key_crn                = var.kms_key_crn
+  backup_encryption_key_crn  = var.backup_encryption_key_crn
+  backup_crn                 = var.backup_crn
   existing_kms_instance_guid = var.existing_kms_instance_guid
   resource_tags              = var.resource_tags
   service_credential_names   = var.service_credential_names
