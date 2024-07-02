@@ -32,7 +32,7 @@ variable "region" {
 variable "member_memory_mb" {
   type        = number
   description = "Allocated memory per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = 1024
+  default     = 4096
 }
 
 variable "member_disk_mb" {
