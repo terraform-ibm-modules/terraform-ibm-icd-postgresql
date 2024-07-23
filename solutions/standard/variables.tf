@@ -12,7 +12,7 @@ variable "use_existing_resource_group" {
 
 variable "resource_group_name" {
   type        = string
-  description = "The name of a new or an existing resource group to provision the Databases for Postgres in. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name of a new or an existing resource group to provision the Databases for PostgreSQL in. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "prefix" {
@@ -33,12 +33,6 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "plan" {
-  type        = string
-  description = "The name of the service plan for your PostgreSQL instance. Possible values: `enterprise`, `platinum`."
-  default     = "enterprise"
-}
-
 variable "pg_version" {
   description = "The version of the PostgreSQL instance. If no value is specified, the current preferred version of PostgreSQL is used."
   type        = string
@@ -48,6 +42,12 @@ variable "pg_version" {
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
+  default     = []
+}
+
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to the PostgreSQL instance."
   default     = []
 }
 
@@ -95,7 +95,7 @@ variable "service_credential_names" {
 
 variable "admin_pass" {
   type        = string
-  description = "The password for the database administrator. If the admin password is null, the admin user ID cannot be accessed. You can specify more users in a user block."
+  description = "The password for the database administrator. If the admin password is null, the admin user ID cannot be accessed. More users can be specified in a user block."
   default     = null
   sensitive   = true
 }
@@ -109,13 +109,7 @@ variable "users" {
   }))
   default     = []
   sensitive   = true
-  description = "The list of users that have access to the database. Multiple blocks are allowed. The user password must be 10-32 characters. In most cases, you can use IAM service credentials (by specifying `service_credential_names`) to control access to the database instance. This block creates native database users. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui)."
-}
-
-variable "tags" {
-  type        = list(any)
-  description = "The list of tags to be added to the PostgreSQL instance."
-  default     = []
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
 }
 
 variable "kms_endpoint_type" {
@@ -146,13 +140,13 @@ variable "skip_iam_authorization_policy" {
   default     = false
 }
 
-variable "postgresql_key_ring_name" {
+variable "key_ring_name" {
   type        = string
   default     = "postgresql-key-ring"
   description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
-variable "postgresql_key_name" {
+variable "key_name" {
   type        = string
   default     = "postgresql-key"
   description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
@@ -182,5 +176,36 @@ variable "auto_scaling" {
     })
   })
   description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-autoscaling&interface=cli#autoscaling-considerations)."
+  default     = null
+}
+
+
+variable "configuration" {
+  description = "Database Configuration for PostgreSQL instance. Refer https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
+  type = object({
+    shared_buffers             = optional(number)
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    synchronous_commit         = optional(string)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
+    log_connections            = optional(string)
+    log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+    archive_timeout            = optional(number)
+    wal_level                  = optional(string)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
+  })
+  default = null
+}
+
+variable "ibmcloud_kms_api_key" {
+  type        = string
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
+  sensitive   = true
   default     = null
 }

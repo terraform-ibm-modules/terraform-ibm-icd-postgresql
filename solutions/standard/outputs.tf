@@ -3,48 +3,48 @@
 ##############################################################################
 
 output "id" {
-  description = "Postgresql instance id"
-  value       = module.postgresql.id
+  description = "PostgreSQL instance id"
+  value       = module.postgresql_db.id
 }
 
 output "guid" {
-  description = "Postgresql instance guid"
-  value       = module.postgresql.guid
+  description = "PostgreSQL instance guid"
+  value       = module.postgresql_db.guid
 }
 
 output "version" {
-  description = "Postgresql instance version"
-  value       = module.postgresql.version
+  description = "PostgreSQL instance version"
+  value       = module.postgresql_db.version
 }
 
 output "crn" {
-  description = "Postgresql instance crn"
-  value       = module.postgresql.crn
+  description = "PostgreSQL instance crn"
+  value       = module.postgresql_db.crn
 }
 
 output "cbr_rule_ids" {
-  description = "CBR rule ids created to restrict Postgresql"
-  value       = module.postgresql.cbr_rule_ids
+  description = "CBR rule ids created to restrict PostgreSQL"
+  value       = module.postgresql_db.cbr_rule_ids
 }
 
 output "service_credentials_json" {
   description = "Service credentials json map"
-  value       = module.postgresql.service_credentials_json
+  value       = module.postgresql_db.service_credentials_json
   sensitive   = true
 }
 
 output "service_credentials_object" {
   description = "Service credentials object"
-  value       = module.postgresql.service_credentials_object
+  value       = module.postgresql_db.service_credentials_object
   sensitive   = true
 }
 
 output "hostname" {
-  description = "Postgresql instance hostname"
-  value       = module.postgresql.hostname
+  description = "PostgreSQL instance hostname"
+  value       = module.postgresql_db.hostname
 }
 
 output "port" {
-  description = "Postgresql instance port"
-  value       = module.postgresql.port
+  description = "PostgreSQL instance port"
+  value       = module.postgresql_db.port
 }
