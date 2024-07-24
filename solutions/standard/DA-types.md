@@ -44,13 +44,12 @@ If you can't use the IAM-enabled `service_credential_names` input variable for a
 
 ### Options for users
 
- - `name` (required): The username for the user account.
- - `password` (required): The password for the user account in the range of 10-32 characters.
- - `type` (required): The user type. The "type" field is required to generate the connection string for the outputs.
- - `role`: The user role. The role determines the user's access level and permissions.
+- `name` (required): The username for the user account.
+- `password` (required): The password for the user account in the range of 10-32 characters.
+- `type` (required): The user type. The "type" field is required to generate the connection string for the outputs.
+- `role`: The user role. The role determines the user's access level and permissions.
 
 ### Example users
-
 
 ```hcl
 [
@@ -153,6 +152,7 @@ The Configuration variable tunes the PostgreSQL database to suit different use c
 The configuration object in the input contains the following options categorized under three sections. All options are optional.
 
 **1. Memory Settings. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=cli#mem-settings).**
+
 - `shared_buffers`: Determines the amount of memory the database server uses for shared memory buffers. Larger values can improve performance by reducing disk I/O. (default: `32000`).
 
 **2. General Settings. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=cli#gen-settings).**
