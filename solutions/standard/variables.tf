@@ -114,7 +114,7 @@ variable "users" {
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The type of endpoint to use to communicate with the KMS instance. Possible values: `public`, `private`."
+  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
   default     = "private"
   validation {
     condition     = can(regex("public|private", var.kms_endpoint_type))
