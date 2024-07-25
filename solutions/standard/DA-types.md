@@ -80,30 +80,20 @@ Disk autoscaling specifies thresholds when scaling can occur based on disk usage
 The disk object in the `auto_scaling` input contains the following options. All options are optional.
 
 - `capacity_enabled`: Whether disk capacity autoscaling is enabled (default: `false`).
-
 - `free_space_less_than_percent`: The percentage of free disk space that triggers autoscaling (default: `10`).
-
 - `io_above_percent`: The percentage of I/O (input/output) disk usage that triggers autoscaling (default: `90`).
-
 - `io_enabled`: Indicates whether IO-based autoscaling is enabled (default: `false`).
-
 - `io_over_period`: How long I/O usage is evaluated for autoscaling (default: `"15m"` (15 minutes)).
-
 - `rate_increase_percent`: The percentage increase in disk capacity when autoscaling is triggered (default: `10`).
-
 - `rate_limit_mb_per_member`: The limit in megabytes for the rate of disk increase per member (default: `3670016`).
-
 - `rate_period_seconds`: How long (in seconds) the rate limit is applied for disk (default: `900` (15 minutes)).
-
 - `rate_units`: The units to use for the rate increase (default: `"mb"` (megabytes)).
-
 
 ### Memory options for auto_scaling
 
 The memory object within auto_scaling contains the following options. All options are optional.
 
 - `io_above_percent`: The percentage of I/O memory usage that triggers autoscaling (default: `90`).
-
 - `io_enabled`: Whether IO-based autoscaling for memory is enabled (default: `false`).
 - `io_over_period`: How long I/O usage is evaluated for memory autoscaling (default: `"15m"` (15 minutes)).
 - `rate_increase_percent`: The percentage increase in memory capacity that triggers autoscaling (default: `10`).
@@ -158,35 +148,22 @@ The configuration object in the input contains the following options categorized
 **2. General Settings. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=cli#gen-settings).**
 
 - `max_connections`: Sets the maximum number of concurrent connections to the database. Increasing this value allows more users to connect simultaneously but requires more memory. (default: `115`)
-
 - `max_prepared_transactions`: Specifies the maximum number of transactions that can be in the prepared state simultaneously. This is important for applications using two-phase commit. (default: `0`)
-
 - `synchronous_commit`: Determines whether the server commits are synchronous or asynchronous. Setting to off can improve performance but at the risk of losing recent transactions in the event of a crash. (default: `local`)
-
 - `effective_io_concurrency`: Configures the number of concurrent disk I/O operations PostgreSQL can handle, improving performance for SSDs and RAID arrays. (default: `12`)
-
 - `deadlock_timeout`: Specifies the amount of time to wait on a lock before checking for a deadlock condition. Shorter times can help detect deadlocks faster. (default: `10000`)
-
 - `log_connections`: When enabled, logs each successful connection to the server. Useful for monitoring and debugging. (default: `off`)
-
 - `log_disconnections`: When enabled, logs the end of each session, including the duration. Helpful for tracking user activity. (default: `off`)
-
 - `log_min_duration_statement`: Logs the execution time of each statement that exceeds the specified duration. Useful for identifying slow queries. (default: `100`)
-
 - `tcp_keepalives_idle`: Sets the amount of time between TCP keep-alive messages when no data has been sent. Helps to detect dead TCP connections. (default: `111`)
-
 - `tcp_keepalives_interval`: Specifies the interval between TCP keep-alive messages. Important for maintaining long-lived idle connections. (default: `15`)
-
 - `tcp_keepalives_count`: Determines the number of TCP keep-alive messages sent before the server decides the connection is dead. (default: `6`)
 
 **3. WAL Settings. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=cli#wal-settings).**
 
 - `archive_timeout`: Forces a switch to the next WAL file if no new file has been generated within the specified time. Useful for ensuring regular WAL archiving. (default: `1800`)
-
 - `wal_level`: Sets the level of information written to the WAL. Higher levels, like replica or logical, are required for replication and logical decoding. (default: `hot_standby`)
-
 - `max_replication_slots`: Specifies the maximum number of replication slots, which are used for streaming replication and logical decoding. (default: `10`)
-
 - `max_wal_senders`: Determines the maximum number of concurrent WAL sender processes for streaming replication. Increasing this allows more standby servers to connect. (default: `12`)
 
 ### Example configuration
