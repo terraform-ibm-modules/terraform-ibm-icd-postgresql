@@ -1,7 +1,18 @@
+##############################################################################
+# Input Variables
+##############################################################################
+
 variable "ibmcloud_api_key" {
   type        = string
   description = "The IBM Cloud API key to deploy resources."
   sensitive   = true
+}
+
+variable "ibmcloud_kms_api_key" {
+  type        = string
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
+  sensitive   = true
+  default     = null
 }
 
 variable "use_existing_resource_group" {
@@ -39,28 +50,13 @@ variable "pg_version" {
   default     = null
 }
 
-variable "access_tags" {
-  type        = list(string)
-  description = "A list of access tags to apply to the PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
-  default     = []
-}
-
-variable "resource_tags" {
-  type        = list(string)
-  description = "Optional list of tags to be added to the PostgreSQL instance."
-  default     = []
-}
-
+##############################################################################
+# ICD hosting model properties
+##############################################################################
 variable "members" {
   type        = number
   description = "The number of members that are allocated. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)."
   default     = 3
-}
-
-variable "member_memory_mb" {
-  type        = number
-  description = "The memory per member that is allocated. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
-  default     = 4096
 }
 
 variable "member_cpu_count" {
@@ -75,7 +71,6 @@ variable "member_disk_mb" {
   default     = 5120
 }
 
-# Use new hosting model for all DA
 variable "member_host_flavor" {
   type        = string
   description = "The host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
@@ -87,10 +82,10 @@ variable "member_host_flavor" {
   }
 }
 
-variable "service_credential_names" {
-  description = "The map of name and role for service credentials that you want to create for the database."
-  type        = map(string)
-  default     = {}
+variable "member_memory_mb" {
+  type        = number
+  description = "The memory per member that is allocated. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
+  default     = 4096
 }
 
 variable "admin_pass" {
@@ -110,6 +105,92 @@ variable "users" {
   default     = []
   sensitive   = true
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
+}
+
+variable "service_credential_names" {
+  description = "The map of name and role for service credentials that you want to create for the database."
+  type        = map(string)
+  default     = {}
+}
+
+variable "resource_tags" {
+  type        = list(string)
+  description = "Optional list of tags to be added to the PostgreSQL instance."
+  default     = []
+}
+
+variable "access_tags" {
+  type        = list(string)
+  description = "A list of access tags to apply to the PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
+  default     = []
+}
+
+variable "configuration" {
+  description = "Database Configuration for PostgreSQL instance. Refer https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
+  type = object({
+    shared_buffers             = optional(number)
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    synchronous_commit         = optional(string)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
+    log_connections            = optional(string)
+    log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+    archive_timeout            = optional(number)
+    wal_level                  = optional(string)
+    max_replication_slots      = optional(number)
+    max_wal_senders            = optional(number)
+  })
+  default = null
+}
+
+##############################################################
+# Auto Scaling
+##############################################################
+variable "auto_scaling" {
+  type = object({
+    disk = object({
+      capacity_enabled             = optional(bool, false)
+      free_space_less_than_percent = optional(number, 10)
+      io_above_percent             = optional(number, 90)
+      io_enabled                   = optional(bool, false)
+      io_over_period               = optional(string, "15m")
+      rate_increase_percent        = optional(number, 10)
+      rate_limit_mb_per_member     = optional(number, 3670016)
+      rate_period_seconds          = optional(number, 900)
+      rate_units                   = optional(string, "mb")
+    })
+    memory = object({
+      io_above_percent         = optional(number, 90)
+      io_enabled               = optional(bool, false)
+      io_over_period           = optional(string, "15m")
+      rate_increase_percent    = optional(number, 10)
+      rate_limit_mb_per_member = optional(number, 114688)
+      rate_period_seconds      = optional(number, 900)
+      rate_units               = optional(string, "mb")
+    })
+  })
+  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-autoscaling&interface=cli#autoscaling-considerations)."
+  default     = null
+}
+
+##############################################################
+# Encryption
+##############################################################
+variable "key_name" {
+  type        = string
+  default     = "postgresql-key"
+  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "key_ring_name" {
+  type        = string
+  default     = "postgresql-key-ring"
+  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "kms_endpoint_type" {
@@ -138,74 +219,4 @@ variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Whether to create an IAM authorization policy that permits all PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
   default     = false
-}
-
-variable "key_ring_name" {
-  type        = string
-  default     = "postgresql-key-ring"
-  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-
-variable "key_name" {
-  type        = string
-  default     = "postgresql-key"
-  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-
-variable "auto_scaling" {
-  type = object({
-    disk = object({
-      capacity_enabled             = optional(bool, false)
-      free_space_less_than_percent = optional(number, 10)
-      io_above_percent             = optional(number, 90)
-      io_enabled                   = optional(bool, false)
-      io_over_period               = optional(string, "15m")
-      rate_increase_percent        = optional(number, 10)
-      rate_limit_mb_per_member     = optional(number, 3670016)
-      rate_period_seconds          = optional(number, 900)
-      rate_units                   = optional(string, "mb")
-    })
-    memory = object({
-      io_above_percent         = optional(number, 90)
-      io_enabled               = optional(bool, false)
-      io_over_period           = optional(string, "15m")
-      rate_increase_percent    = optional(number, 10)
-      rate_limit_mb_per_member = optional(number, 114688)
-      rate_period_seconds      = optional(number, 900)
-      rate_units               = optional(string, "mb")
-    })
-  })
-  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-autoscaling&interface=cli#autoscaling-considerations)."
-  default     = null
-}
-
-
-variable "configuration" {
-  description = "Database Configuration for PostgreSQL instance. Refer https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
-  type = object({
-    shared_buffers             = optional(number)
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    synchronous_commit         = optional(string)
-    effective_io_concurrency   = optional(number)
-    deadlock_timeout           = optional(number)
-    log_connections            = optional(string)
-    log_disconnections         = optional(string)
-    log_min_duration_statement = optional(number)
-    tcp_keepalives_idle        = optional(number)
-    tcp_keepalives_interval    = optional(number)
-    tcp_keepalives_count       = optional(number)
-    archive_timeout            = optional(number)
-    wal_level                  = optional(string)
-    max_replication_slots      = optional(number)
-    max_wal_senders            = optional(number)
-  })
-  default = null
-}
-
-variable "ibmcloud_kms_api_key" {
-  type        = string
-  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
-  sensitive   = true
-  default     = null
 }
