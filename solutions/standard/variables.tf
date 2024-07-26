@@ -104,11 +104,11 @@ variable "users" {
   }))
   default     = []
   sensitive   = true
-  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)."
 }
 
 variable "service_credential_names" {
-  description = "The map of name and role for service credentials that you want to create for the database."
+  description = "The map of name and role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)."
   type        = map(string)
   default     = {}
 }
@@ -126,7 +126,7 @@ variable "access_tags" {
 }
 
 variable "configuration" {
-  description = "Database Configuration for PostgreSQL instance. Refer https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
+  description = "Database Configuration for PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)"
   type = object({
     shared_buffers             = optional(number)
     max_connections            = optional(number)
@@ -174,7 +174,7 @@ variable "auto_scaling" {
       rate_units               = optional(string, "mb")
     })
   })
-  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-autoscaling&interface=cli#autoscaling-considerations)."
+  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)"
   default     = null
 }
 
