@@ -4,7 +4,7 @@ offerings:
   - name: deploy-arch-ibm-icd-postgresql
     kind: solution
     catalog_id: 7df1e4ca-d54c-4fd0-82ce-3d13247308cd
-    offering_id: [To_be_Added] #TODO: Add the offering id
+    offering_id: 0298facd-3e69-43fa-87c0-4d3d0b3c887e
     variations:
       - name: standard
         mark_ready: true
