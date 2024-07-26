@@ -58,7 +58,7 @@ No resources.
 | Name | Description |
 |------|-------------|
 | <a name="output_adminuser"></a> [adminuser](#output\_adminuser) | Database admin user name |
-| <a name="output_cbr_rule_ids"></a> [cbr\_rule\_ids](#output\_cbr\_rule\_ids) | CBR rule ids created to restrict Redis |
+| <a name="output_cbr_rule_ids"></a> [cbr\_rule\_ids](#output\_cbr\_rule\_ids) | CBR rule ids created to restrict Postgresql |
 | <a name="output_certificate_base64"></a> [certificate\_base64](#output\_certificate\_base64) | Database connection certificate |
 | <a name="output_crn"></a> [crn](#output\_crn) | Postgresql instance crn |
 | <a name="output_guid"></a> [guid](#output\_guid) | Postgresql instance guid |

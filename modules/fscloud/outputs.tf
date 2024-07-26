@@ -56,6 +56,6 @@ output "service_credentials_object" {
 }
 
 output "cbr_rule_ids" {
-  description = "CBR rule ids created to restrict Redis"
+  description = "CBR rule ids created to restrict Postgresql"
   value       = module.postgresql_db.cbr_rule_ids
 }
