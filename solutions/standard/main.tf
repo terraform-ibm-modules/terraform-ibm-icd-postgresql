@@ -42,11 +42,11 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   provider                    = ibm.kms
   source_service_account      = data.ibm_iam_account_settings.iam_account_settings[0].account_id
   source_service_name         = "databases-for-postgresql"
-  source_resource_group_id    = module.resource_group[0].resource_group_id
+  source_resource_group_id    = module.resource_group.resource_group_id
   target_service_name         = local.kms_service_name
   target_resource_instance_id = local.existing_kms_instance_guid
   roles                       = ["Reader"]
-  description                 = "Allow all Postgresql instances in the resource group ${module.resource_group[0].resource_group_id} in the account ${data.ibm_iam_account_settings.iam_account_settings[0].account_id} to read from the ${local.kms_service_name} instance GUID ${local.existing_kms_instance_guid}"
+  description                 = "Allow all Postgresql instances in the resource group ${module.resource_group.resource_group_id} in the account ${data.ibm_iam_account_settings.iam_account_settings[0].account_id} to read from the ${local.kms_service_name} instance GUID ${local.existing_kms_instance_guid}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
