@@ -188,6 +188,7 @@ resource "ibm_database" "postgresql_db" {
       key_protect_key,
       backup_encryption_key_crn,
     ]
+    prevent_destroy = true
   }
 
   timeouts {
