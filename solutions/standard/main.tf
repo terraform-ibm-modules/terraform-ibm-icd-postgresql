@@ -64,7 +64,7 @@ module "kms" {
   version                     = "4.15.2"
   create_key_protect_instance = false
   region                      = local.existing_kms_instance_region
-  existing_kms_instance_crn   = local.existing_kms_instance_guid
+  existing_kms_instance_crn   = var.existing_kms_instance_crn
   key_ring_endpoint_type      = var.kms_endpoint_type
   key_endpoint_type           = var.kms_endpoint_type
   keys = [
