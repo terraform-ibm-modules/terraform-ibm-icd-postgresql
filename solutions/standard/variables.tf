@@ -145,7 +145,24 @@ variable "configuration" {
     max_replication_slots      = optional(number)
     max_wal_senders            = optional(number)
   })
-  default = null
+  default = {
+    shared_buffers             = 32000
+    max_connections            = 115
+    max_prepared_transactions  = 0
+    synchronous_commit         = "local"
+    effective_io_concurrency   = 12
+    deadlock_timeout           = 10000
+    log_connections            = "on"
+    log_disconnections         = "on"
+    log_min_duration_statement = 100
+    tcp_keepalives_idle        = 111
+    tcp_keepalives_interval    = 15
+    tcp_keepalives_count       = 6
+    archive_timeout            = 1800
+    wal_level                  = "replica"
+    max_replication_slots      = 10
+    max_wal_senders            = 12
+  }
 }
 
 ##############################################################
