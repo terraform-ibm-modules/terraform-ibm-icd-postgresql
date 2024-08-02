@@ -60,7 +60,7 @@
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Administrator"
               ],
-              "service_name": "iam-identity"
+              "service_name": "all-account-management-services"
             },
             {
               "role_crns": [
