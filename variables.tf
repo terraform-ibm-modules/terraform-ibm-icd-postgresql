@@ -200,8 +200,8 @@ variable "configuration" {
   }
 
   validation {
-    condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical", "replica"], var.configuration["wal_level"]) : true) : true
-    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby`, `replica` or `logical`, if specified."
+    condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical"], var.configuration["wal_level"]) : true) : true
+    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`, if specified."
   }
 
   validation {
