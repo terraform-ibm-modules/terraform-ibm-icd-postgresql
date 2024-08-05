@@ -22,6 +22,6 @@ repository:
 
   # Uncomment this description property
   # and update the description to the current repo description.
-  description: "Implements a ICD Postgresql instance with tags, users, memory allocation, disk allocation, cpu allocation and context based restrictions"
+  description: "Implements an instance of the IBM Cloud Databases for PostgreSQL service."
 
-  topics: core-team, terraform, ibm-cloud, terraform-module, postgresql, supported, graduated
+  topics: core-team, terraform, ibm-cloud, terraform-module, postgresql, supported, graduated, deployable-architecture

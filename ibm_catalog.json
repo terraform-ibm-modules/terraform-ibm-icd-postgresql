@@ -1,0 +1,267 @@
+{
+  "products": [
+    {
+      "name": "deploy-arch-ibm-icd-postgresql",
+      "label": "Databases for PostgreSQL",
+      "product_kind": "solution",
+      "tags": [
+        "ibm_created",
+        "target_terraform",
+        "terraform",
+        "data_management",
+        "solution"
+      ],
+      "keywords": [
+        "postgresql",
+        "postgres",
+        "IaC",
+        "infrastructure as code",
+        "terraform",
+        "solution",
+        "postgresql standard",
+        "database",
+        "relational"
+      ],
+      "short_description": "Creates and configures an instance of IBM Cloud Databases for PostgreSQL.",
+      "long_description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL with KMS encryption.",
+      "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/README.md",
+      "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/images/postgresql.svg",
+      "provider_name": "IBM",
+      "features": [
+        {
+          "title": "Creates an instance of Databases for PostgreSQL",
+          "description": "Creates and configures an IBM Cloud Databases for PostgreSQL instance."
+        },
+        {
+          "title": "Supports KMS encryption",
+          "description": "Provides KMS encryption for the data that you store in the database."
+        },
+        {
+          "title": "Supports autoscaling",
+          "description": "Provides the autoscaling to allow the database to increase resources in response to usage."
+        }
+      ],
+      "flavors": [
+        {
+          "label": "Standard",
+          "name": "standard",
+          "install_type": "fullstack",
+          "working_directory": "solutions/standard",
+          "compliance": {
+            "authority": "scc-v3",
+            "profiles": [
+              {
+                "profile_name": "IBM Cloud Framework for Financial Services",
+                "profile_version": "1.6.0"
+              }
+            ]},
+          "iam_permissions": [
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Administrator"
+              ],
+              "service_name": "all-account-management-services"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "databases-for-postgresql"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "kms"
+            }
+          ],
+          "architecture": {
+            "descriptions": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL instance with KMS encryption. Supports autoscaling.",
+            "features": [
+              {
+                "title": " Creates an instance of Databases for PostgreSQL",
+                "description": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL with KMS encryption. It accepts or creates a resource group, and provides autoscaling rules."
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Databases for PostgreSQL instance on IBM Cloud",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architecture/deployable-architecture-postgresql.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL instance with KMS encryption."
+              }
+            ]
+          },
+          "configuration": [
+              {
+                "key": "ibmcloud_api_key"
+              },
+              {
+                "key": "use_existing_resource_group"
+              },
+              {
+                "key": "resource_group_name"
+              },
+              {
+                "key": "prefix"
+              },
+              {
+                "key": "name"
+              },
+              {
+                "key": "region",
+                "required": true,
+                "default_value": "us-south",
+                "options": [
+                  {
+                    "displayname": "Chennai (che01)",
+                    "value": "che01"
+                  },
+                  {
+                    "displayname": "Dallas (us-south)",
+                    "value": "us-south"
+                  },
+                  {
+                    "displayname": "Frankfurt (eu-de)",
+                    "value": "eu-de"
+                  },
+                  {
+                    "displayname": "London (eu-gb)",
+                    "value": "eu-gb"
+                  },
+                  {
+                    "displayname": "Madrid (eu-es)",
+                    "value": "eu-es"
+                  },
+                  {
+                    "displayname": "Osaka (jp-osa)",
+                    "value": "jp-osa"
+                  },
+                  {
+                    "displayname": "Paris (par01)",
+                    "value": "par01"
+                  },
+                  {
+                    "displayname": "Sao Paulo (br-sao)",
+                    "value": "br-sao"
+                  },
+                  {
+                    "displayname": "Sydney (au-syd)",
+                    "value": "au-syd"
+                  },
+                  {
+                    "displayname": "Toronto (ca-tor)",
+                    "value": "ca-tor"
+                  },
+                  {
+                    "displayname": "Tokyo (jp-tok)",
+                    "value": "jp-tok"
+                  },
+                  {
+                    "displayname": "Washington (us-east)",
+                    "value": "us-east"
+                  }
+                ]
+              },
+              {
+                "key": "pg_version",
+                "required": true,
+                "options": [
+                  {
+                    "displayname": "12",
+                    "value": "12"
+                  },
+                  {
+                    "displayname": "13",
+                    "value": "13"
+                  },
+                  {
+                    "displayname": "14",
+                    "value": "14"
+                  },
+                  {
+                    "displayname": "15",
+                    "value": "15"
+                  },
+                  {
+                    "displayname": "16",
+                    "value": "16"
+                  }
+                ]
+              },
+              {
+                "key": "members"
+              },
+              {
+                "key": "member_memory_mb"
+              },
+              {
+                "key": "member_cpu_count"
+              },
+              {
+                "key": "member_disk_mb"
+              },
+              {
+                "key": "member_host_flavor"
+              },
+              {
+                "key": "configuration"
+              },
+              {
+                "key": "service_credential_names"
+              },
+              {
+                "key": "admin_pass"
+              },
+              {
+                "key": "users"
+              },
+              {
+                "key": "resource_tags"
+              },
+              {
+                "key": "access_tags"
+              },
+              {
+                "key": "ibmcloud_kms_api_key"
+              },
+              {
+                "key": "existing_kms_instance_crn"
+              },
+              {
+                "key": "existing_kms_key_crn"
+              },
+              {
+                "key": "kms_endpoint_type",
+                "options": [
+                  {
+                    "displayname": "public",
+                    "value": "public"
+                  },
+                  {
+                    "displayname": "private",
+                    "value": "private"
+                  }
+                ]
+              },
+              {
+                "key": "skip_iam_authorization_policy"
+              },
+              {
+                "key": "key_ring_name"
+              },
+              {
+                "key": "key_name"
+              },
+              {
+                "key": "auto_scaling"
+              }
+            ]
+        }
+      ]
+    }
+  ]
+}
