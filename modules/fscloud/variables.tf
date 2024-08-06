@@ -68,7 +68,7 @@ variable "users" {
   type = list(object({
     name     = string
     password = string # pragma: allowlist secret
-    type     = string # "type" is required to generate the connection string for the outputs.
+    type     = optional(string)
     role     = optional(string)
   }))
   default     = []
