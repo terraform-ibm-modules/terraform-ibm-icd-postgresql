@@ -19,18 +19,19 @@ variable "remote_leader_crn" {
 }
 
 variable "pg_version" {
-  description = "Version of the PostgreSQL instance to provision. If no value is passed, the current preferred version of IBM Cloud Databases is used."
+  description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   type        = string
   default     = null
   validation {
     condition = anytrue([
       var.pg_version == null,
+      var.pg_version == "16",
       var.pg_version == "15",
       var.pg_version == "14",
       var.pg_version == "13",
       var.pg_version == "12"
     ])
-    error_message = "Version must be 12, 13, 14 or 15. If no value passed, the current ICD preferred version is used."
+    error_message = "Version must be 12, 13, 14, 15 or 16. If no value passed, the current ICD preferred version is used."
   }
 }
 
@@ -40,17 +41,13 @@ variable "region" {
   default     = "us-south"
 }
 
-variable "member_memory_mb" {
+##############################################################################
+# ICD hosting model properties
+##############################################################################
+variable "members" {
   type        = number
-  description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = 4096
-  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
-}
-
-variable "member_disk_mb" {
-  type        = number
-  description = "Allocated disk per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = 5120
+  description = "Allocated number of members. Members can be scaled up but not down."
+  default     = 2
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
@@ -61,11 +58,44 @@ variable "member_cpu_count" {
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
+variable "member_disk_mb" {
+  type        = number
+  description = "Allocated disk per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 5120
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
+}
+
 variable "member_host_flavor" {
   type        = string
   description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
   default     = null
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
+}
+
+variable "member_memory_mb" {
+  type        = number
+  description = "Allocated memory per member. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
+  default     = 4096
+  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
+}
+
+variable "admin_pass" {
+  type        = string
+  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block."
+  default     = null
+  sensitive   = true
+}
+
+variable "users" {
+  type = list(object({
+    name     = string
+    password = string # pragma: allowlist secret
+    type     = string # "type" is required to generate the connection string for the outputs.
+    role     = optional(string)
+  }))
+  default     = []
+  sensitive   = true
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
 }
 
 variable "service_credential_names" {
@@ -77,13 +107,6 @@ variable "service_credential_names" {
     condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
     error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
   }
-}
-
-variable "members" {
-  type        = number
-  description = "Allocated number of members. Members can be scaled up but not down."
-  default     = 2
-  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "service_endpoints" {
@@ -190,25 +213,6 @@ variable "configuration" {
     condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
     error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
-}
-
-variable "admin_pass" {
-  type        = string
-  description = "The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block."
-  default     = null
-  sensitive   = true
-}
-
-variable "users" {
-  type = list(object({
-    name     = string
-    password = string # pragma: allowlist secret
-    type     = string # "type" is required to generate the connection string for the outputs.
-    role     = optional(string)
-  }))
-  default     = []
-  sensitive   = true
-  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
 }
 
 ##############################################################
