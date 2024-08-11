@@ -187,6 +187,7 @@ resource "ibm_database" "postgresql_db" {
       version,
       key_protect_key,
       backup_encryption_key_crn,
+      connectionstrings, # https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5546
     ]
   }
 
@@ -208,7 +209,7 @@ resource "ibm_resource_tag" "postgresql_tag" {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.23.3"
+  version          = "1.23.5"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
