@@ -20,11 +20,11 @@ module "postgresql_db_pitr" {
   access_tags        = var.access_tags
   member_memory_mb   = 12288
   member_disk_mb     = 15360
-  member_cpu_count   = 9
+  member_cpu_count   = var.member_cpu_count
   member_host_flavor = "multitenant"
   members            = var.members
   pg_version         = var.pg_version
   pitr_id            = var.pitr_id
-  pitr_time          = var.pitr_time == "" ? " " : var.pitr_time
+  pitr_time          = var.pitr_time
 
 }
