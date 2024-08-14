@@ -40,10 +40,10 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
 		TerraformVars: map[string]interface{}{
 			"pitr_id":          permanentResources["postgresqlPITRCrn"],
-			"pitr_time":        "",
+			"pitr_time":        "", // if blank string is passed, earliest_point_in_time_recovery_time will be used to restore
 			"pg_version":       permanentResources["postgresqlPITRVersion"],
 			"members":          "3", // Lock members to 3 as the permanent postgres instances has 3 members
-			"member_cpu_count": 0,
+			"member_cpu_count": 0,   // Lock cpu to 0 as the permanent postgres instances has 0 cpu
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
