@@ -92,7 +92,7 @@ variable "users" {
   type = list(object({
     name     = string
     password = string # pragma: allowlist secret
-    type     = string # "type" is required to generate the connection string for the outputs.
+    type     = optional(string)
     role     = optional(string)
   }))
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
