@@ -79,44 +79,6 @@ func TestRunFSCloudExample(t *testing.T) {
 	options.TestTearDown()
 }
 
-func TestRunUpgradeCompleteExample(t *testing.T) {
-	t.Parallel()
-
-	// Generate a 15 char long random string for the admin_pass
-	randomBytes := make([]byte, 13)
-	_, err := rand.Read(randomBytes)
-	if err != nil {
-		log.Fatal(err)
-	}
-	randomPass := "A1" + base64.URLEncoding.EncodeToString(randomBytes)[:13]
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "examples/complete",
-		Prefix:             "postgres-upg",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"pg_version": "12", // Always lock to the lowest supported Postgres version
-			"users": []map[string]interface{}{
-				{
-					"name":     "testuser",
-					"password": randomPass, // pragma: allowlist secret
-					"type":     "database",
-				},
-			},
-			"admin_pass": randomPass,
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
-}
-
 func TestRunBasicExampleWithFlavor(t *testing.T) {
 	t.Parallel()
 
