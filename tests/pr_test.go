@@ -2,8 +2,6 @@
 package test
 
 import (
-	"crypto/rand"
-	"encoding/base64"
 	"log"
 	"os"
 	"testing"
