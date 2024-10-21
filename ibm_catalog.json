@@ -52,9 +52,10 @@
             "profiles": [
               {
                 "profile_name": "IBM Cloud Framework for Financial Services",
-                "profile_version": "1.6.0"
+                "profile_version": "1.7.0"
               }
-            ]},
+            ]
+          },
           "iam_permissions": [
             {
               "role_crns": [
@@ -96,170 +97,170 @@
             ]
           },
           "configuration": [
-              {
-                "key": "ibmcloud_api_key"
-              },
-              {
-                "key": "use_existing_resource_group"
-              },
-              {
-                "key": "resource_group_name"
-              },
-              {
-                "key": "prefix"
-              },
-              {
-                "key": "name"
-              },
-              {
-                "key": "region",
-                "required": true,
-                "default_value": "us-south",
-                "options": [
-                  {
-                    "displayname": "Chennai (che01)",
-                    "value": "che01"
-                  },
-                  {
-                    "displayname": "Dallas (us-south)",
-                    "value": "us-south"
-                  },
-                  {
-                    "displayname": "Frankfurt (eu-de)",
-                    "value": "eu-de"
-                  },
-                  {
-                    "displayname": "London (eu-gb)",
-                    "value": "eu-gb"
-                  },
-                  {
-                    "displayname": "Madrid (eu-es)",
-                    "value": "eu-es"
-                  },
-                  {
-                    "displayname": "Osaka (jp-osa)",
-                    "value": "jp-osa"
-                  },
-                  {
-                    "displayname": "Paris (par01)",
-                    "value": "par01"
-                  },
-                  {
-                    "displayname": "Sao Paulo (br-sao)",
-                    "value": "br-sao"
-                  },
-                  {
-                    "displayname": "Sydney (au-syd)",
-                    "value": "au-syd"
-                  },
-                  {
-                    "displayname": "Toronto (ca-tor)",
-                    "value": "ca-tor"
-                  },
-                  {
-                    "displayname": "Tokyo (jp-tok)",
-                    "value": "jp-tok"
-                  },
-                  {
-                    "displayname": "Washington (us-east)",
-                    "value": "us-east"
-                  }
-                ]
-              },
-              {
-                "key": "pg_version",
-                "required": true,
-                "options": [
-                  {
-                    "displayname": "12",
-                    "value": "12"
-                  },
-                  {
-                    "displayname": "13",
-                    "value": "13"
-                  },
-                  {
-                    "displayname": "14",
-                    "value": "14"
-                  },
-                  {
-                    "displayname": "15",
-                    "value": "15"
-                  },
-                  {
-                    "displayname": "16",
-                    "value": "16"
-                  }
-                ]
-              },
-              {
-                "key": "members"
-              },
-              {
-                "key": "member_memory_mb"
-              },
-              {
-                "key": "member_cpu_count"
-              },
-              {
-                "key": "member_disk_mb"
-              },
-              {
-                "key": "member_host_flavor"
-              },
-              {
-                "key": "configuration"
-              },
-              {
-                "key": "service_credential_names"
-              },
-              {
-                "key": "admin_pass"
-              },
-              {
-                "key": "users"
-              },
-              {
-                "key": "resource_tags"
-              },
-              {
-                "key": "access_tags"
-              },
-              {
-                "key": "ibmcloud_kms_api_key"
-              },
-              {
-                "key": "existing_kms_instance_crn"
-              },
-              {
-                "key": "existing_kms_key_crn"
-              },
-              {
-                "key": "kms_endpoint_type",
-                "options": [
-                  {
-                    "displayname": "public",
-                    "value": "public"
-                  },
-                  {
-                    "displayname": "private",
-                    "value": "private"
-                  }
-                ]
-              },
-              {
-                "key": "skip_iam_authorization_policy"
-              },
-              {
-                "key": "key_ring_name"
-              },
-              {
-                "key": "key_name"
-              },
-              {
-                "key": "auto_scaling"
-              }
-            ]
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "use_existing_resource_group"
+            },
+            {
+              "key": "resource_group_name"
+            },
+            {
+              "key": "prefix"
+            },
+            {
+              "key": "name"
+            },
+            {
+              "key": "region",
+              "required": true,
+              "default_value": "us-south",
+              "options": [
+                {
+                  "displayname": "Chennai (che01)",
+                  "value": "che01"
+                },
+                {
+                  "displayname": "Dallas (us-south)",
+                  "value": "us-south"
+                },
+                {
+                  "displayname": "Frankfurt (eu-de)",
+                  "value": "eu-de"
+                },
+                {
+                  "displayname": "London (eu-gb)",
+                  "value": "eu-gb"
+                },
+                {
+                  "displayname": "Madrid (eu-es)",
+                  "value": "eu-es"
+                },
+                {
+                  "displayname": "Osaka (jp-osa)",
+                  "value": "jp-osa"
+                },
+                {
+                  "displayname": "Paris (par01)",
+                  "value": "par01"
+                },
+                {
+                  "displayname": "Sao Paulo (br-sao)",
+                  "value": "br-sao"
+                },
+                {
+                  "displayname": "Sydney (au-syd)",
+                  "value": "au-syd"
+                },
+                {
+                  "displayname": "Toronto (ca-tor)",
+                  "value": "ca-tor"
+                },
+                {
+                  "displayname": "Tokyo (jp-tok)",
+                  "value": "jp-tok"
+                },
+                {
+                  "displayname": "Washington (us-east)",
+                  "value": "us-east"
+                }
+              ]
+            },
+            {
+              "key": "pg_version",
+              "required": true,
+              "options": [
+                {
+                  "displayname": "12",
+                  "value": "12"
+                },
+                {
+                  "displayname": "13",
+                  "value": "13"
+                },
+                {
+                  "displayname": "14",
+                  "value": "14"
+                },
+                {
+                  "displayname": "15",
+                  "value": "15"
+                },
+                {
+                  "displayname": "16",
+                  "value": "16"
+                }
+              ]
+            },
+            {
+              "key": "members"
+            },
+            {
+              "key": "member_memory_mb"
+            },
+            {
+              "key": "member_cpu_count"
+            },
+            {
+              "key": "member_disk_mb"
+            },
+            {
+              "key": "member_host_flavor"
+            },
+            {
+              "key": "configuration"
+            },
+            {
+              "key": "service_credential_names"
+            },
+            {
+              "key": "admin_pass"
+            },
+            {
+              "key": "users"
+            },
+            {
+              "key": "resource_tags"
+            },
+            {
+              "key": "access_tags"
+            },
+            {
+              "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "existing_kms_instance_crn"
+            },
+            {
+              "key": "existing_kms_key_crn"
+            },
+            {
+              "key": "kms_endpoint_type",
+              "options": [
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "private",
+                  "value": "private"
+                }
+              ]
+            },
+            {
+              "key": "skip_iam_authorization_policy"
+            },
+            {
+              "key": "key_ring_name"
+            },
+            {
+              "key": "key_name"
+            },
+            {
+              "key": "auto_scaling"
+            }
+          ]
         }
       ]
     }
