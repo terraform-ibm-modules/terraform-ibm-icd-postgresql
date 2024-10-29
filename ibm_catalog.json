@@ -2,7 +2,7 @@
   "products": [
     {
       "name": "deploy-arch-ibm-icd-postgresql",
-      "label": "Databases for PostgreSQL",
+      "label": "Cloud automation for Databases for PostgreSQL",
       "product_kind": "solution",
       "tags": [
         "ibm_created",
