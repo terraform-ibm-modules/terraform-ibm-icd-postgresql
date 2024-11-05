@@ -195,6 +195,8 @@ resource "ibm_database" "postgresql_db" {
 
   timeouts {
     create = "120m" # Extending provisioning time to 120 minutes
+    update = "120m"
+    delete = "15m"
   }
 }
 
