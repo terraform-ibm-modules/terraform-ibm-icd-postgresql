@@ -162,7 +162,7 @@ The configuration object in the input contains the following options categorized
 **3. WAL Settings. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=cli#wal-settings).**
 
 - `archive_timeout`: Forces a switch to the next WAL file if no new file has been generated within the specified time. Useful for ensuring regular WAL archiving. (default: `1800`)
-- `wal_level`: Sets the level of information written to the WAL. Higher levels, like replica or logical, are required for replication and logical decoding. (default: `replica`)
+- `wal_level`: Sets the level of information written to the WAL. Higher levels, like hot_standby or logical, are required for replication and logical decoding. (default: `hot_standby`)
 - `max_replication_slots`: Specifies the maximum number of replication slots, which are used for streaming replication and logical decoding. (default: `10`)
 - `max_wal_senders`: Determines the maximum number of concurrent WAL sender processes for streaming replication. Increasing this allows more standby servers to connect. (default: `12`)
 
@@ -185,7 +185,7 @@ The following example shows values for the `configuration` input.
     "tcp_keepalives_interval": 15,
     "tcp_keepalives_count": 6,
     "archive_timeout": 1800,
-    "wal_level": "replica",
+    "wal_level": "hot_standby",
     "max_replication_slots": 10,
     "max_wal_senders": 12
 }

@@ -123,7 +123,7 @@ module "postgresql_db" {
     tcp_keepalives_interval    = 50
     tcp_keepalives_count       = 6
     archive_timeout            = 1000
-    wal_level                  = "replica"
+    wal_level                  = "hot_standby"
     max_replication_slots      = 10
     max_wal_senders            = 20
   }
