@@ -48,3 +48,8 @@ output "port" {
   description = "PostgreSQL instance port"
   value       = module.postgresql_db.port
 }
+
+output "test" {
+  value = nonsensitive(local.create_cross_account_auth_policy)
+  # sensitive = true
+}

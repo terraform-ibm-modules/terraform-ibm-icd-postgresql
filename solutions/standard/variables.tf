@@ -15,6 +15,13 @@ variable "ibmcloud_kms_api_key" {
   default     = null
 }
 
+variable "ibmcloud_backup_kms_api_key" {
+  type        = string
+  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
+  sensitive   = true
+  default     = null
+}
+
 variable "use_existing_resource_group" {
   type        = bool
   description = "Whether to use an existing resource group."
@@ -47,6 +54,12 @@ variable "region" {
 variable "pg_version" {
   description = "The version of the PostgreSQL instance. If no value is specified, the current preferred version of PostgreSQL is used."
   type        = string
+  default     = null
+}
+
+variable "backup_crn" {
+  type        = string
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
   default     = null
 }
 
@@ -235,5 +248,54 @@ variable "existing_kms_instance_crn" {
 variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Whether to create an IAM authorization policy that permits all PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
+  default     = false
+}
+
+##############################################################
+# Backup Encryption
+##############################################################
+variable "backup_key_name" {
+  type        = string
+  default     = "postgresql-backup-key"
+  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "backup_key_ring_name" {
+  type        = string
+  default     = "postgresql-backup-key-ring"
+  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+}
+
+variable "backup_kms_endpoint_type" {
+  type        = string
+  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
+  default     = "private"
+  validation {
+    condition     = can(regex("public|private", var.backup_kms_endpoint_type))
+    error_message = "The backup_kms_endpoint_type value must be 'public' or 'private'."
+  }
+}
+
+variable "existing_backup_kms_key_crn" {
+  type        = string
+  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. If not specified, a root key is created in the KMS instance."
+  default     = null
+}
+
+variable "existing_backup_kms_instance_crn" {
+  description = "The CRN of a Hyper Protect Crypto Services or Key Protect instance in the same account as the PostgreSQL instance. This value is used to create an authorization policy if `skip_iam_authorization_policy` is false. If not specified, a root key is created."
+  type        = string
+  default     = null
+}
+
+variable "skip_backup_kms_iam_authorization_policy" {
+  type        = bool
+  description = "Whether to create an IAM authorization policy that permits all PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
+  default     = false
+}
+
+variable "use_default_backup_encryption_key" {
+  type        = bool
+  description = "Set to true to use default ICD randomly generated keys."
   default     = false
 }
