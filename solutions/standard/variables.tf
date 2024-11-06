@@ -172,7 +172,7 @@ variable "configuration" {
     tcp_keepalives_interval    = 15
     tcp_keepalives_count       = 6
     archive_timeout            = 1800
-    wal_level                  = "replica"
+    wal_level                  = "logical"
     max_replication_slots      = 10
     max_wal_senders            = 12
   }
