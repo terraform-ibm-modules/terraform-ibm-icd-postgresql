@@ -98,17 +98,14 @@ locals {
   existing_backup_kms_instance_guid   = var.existing_backup_kms_instance_crn != null ? module.backup_kms_instance_crn_parser[0].service_instance : null
   existing_backup_kms_instance_region = var.existing_backup_kms_instance_crn != null ? module.backup_kms_instance_crn_parser[0].region : null
 
-  backup_key_name      = var.prefix != null ? "${var.prefix}-${var.key_name}" : var.backup_key_name
-  backup_key_ring_name = var.prefix != null ? "${var.prefix}-${var.key_ring_name}" : var.backup_key_ring_name
-
-  create_cross_account_backup_kms_auth_policy = !var.skip_backup_kms_iam_authorization_policy && var.ibmcloud_backup_kms_api_key != null
-  # create_cross_account_auth_policy            = !var.skip_iam_authorization_policy && var.ibmcloud_kms_api_key != null
+  backup_key_name         = var.prefix != null ? "${var.prefix}-${var.key_name}" : var.backup_key_name
+  backup_key_ring_name    = var.prefix != null ? "${var.prefix}-${var.key_ring_name}" : var.backup_key_ring_name
   backup_kms_key_crn      = var.use_default_backup_encryption_key ? null : var.existing_backup_kms_key_crn != null ? var.existing_backup_kms_key_crn : var.existing_backup_kms_instance_crn != null ? module.backup_kms[0].keys[format("%s.%s", local.key_ring_name, local.key_name)].crn : null
   backup_kms_service_name = var.existing_backup_kms_instance_crn != null ? module.backup_kms_instance_crn_parser[0].service_name : null
 }
 
 data "ibm_iam_account_settings" "backup_iam_account_settings" {
-  count = local.create_cross_account_backup_kms_auth_policy ? 1 : 0
+  count = var.ibmcloud_backup_kms_api_key != null ? 1 : 0
 }
 
 
@@ -121,15 +118,15 @@ module "backup_kms_instance_crn_parser" {
 }
 
 resource "ibm_iam_authorization_policy" "backup_kms_policy" {
-  count                       = local.create_cross_account_backup_kms_auth_policy ? 1 : 0
+  count                       = var.use_default_backup_encryption_key ? 0 : var.existing_backup_kms_key_crn != null ? 0 : var.existing_backup_kms_instance_crn != null ? !var.skip_backup_kms_iam_authorization_policy ? 1 : 0 : 0
   provider                    = ibm.backup-kms
-  source_service_account      = data.ibm_iam_account_settings.backup_iam_account_settings[0].account_id
+  source_service_account      = var.ibmcloud_backup_kms_api_key != null ? data.ibm_iam_account_settings.backup_iam_account_settings[0].account_id : null
   source_service_name         = "databases-for-postgresql"
   source_resource_group_id    = module.resource_group.resource_group_id
   target_service_name         = local.backup_kms_service_name
   target_resource_instance_id = local.existing_backup_kms_instance_guid
   roles                       = ["Reader"]
-  description                 = "Allow all Postgresql instances in the resource group ${module.resource_group.resource_group_id} in the account ${data.ibm_iam_account_settings.iam_account_settings[0].account_id} to read from the ${local.backup_kms_service_name} instance GUID ${local.existing_backup_kms_instance_guid}"
+  description                 = "Allow all Postgresql instances in the resource group ${module.resource_group.resource_group_id} to read from the ${local.backup_kms_service_name} instance GUID ${local.existing_backup_kms_instance_guid}"
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
@@ -142,7 +139,7 @@ module "backup_kms" {
   providers = {
     ibm = ibm.backup-kms
   }
-  count                       = var.existing_backup_kms_key_crn != null ? var.existing_backup_kms_instance_crn == null ? 0 : 1 : 0 # no need to create any KMS resources if passing an existing key
+  count                       = var.use_default_backup_encryption_key ? 0 : var.existing_backup_kms_key_crn != null ? 0 : var.existing_backup_kms_instance_crn != null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                     = "4.15.13"
   create_key_protect_instance = false
