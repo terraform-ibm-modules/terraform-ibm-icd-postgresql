@@ -109,12 +109,11 @@ func TestRunStandardSolution(t *testing.T) {
 	})
 
 	options.TerraformVars = map[string]interface{}{
-		"pg_version":                               "16", // Always lock this test into the latest supported PostgreSQL version
-		"existing_kms_instance_crn":                permanentResources["hpcs_south_crn"],
-		"kms_endpoint_type":                        "public",
-		"existing_backup_kms_key_crn":              permanentResources["hpcs_south_root_key_crn"],
-		"skip_backup_kms_iam_authorization_policy": true,
-		"resource_group_name":                      options.Prefix,
+		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version
+		"existing_kms_instance_crn":   permanentResources["hpcs_south_crn"],
+		"kms_endpoint_type":           "public",
+		"existing_backup_kms_key_crn": permanentResources["hpcs_south_root_key_crn"],
+		"resource_group_name":         options.Prefix,
 	}
 
 	output, err := options.RunTestConsistency()

@@ -15,13 +15,6 @@ variable "ibmcloud_kms_api_key" {
   default     = null
 }
 
-variable "ibmcloud_backup_kms_api_key" {
-  type        = string
-  description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
-  sensitive   = true
-  default     = null
-}
-
 variable "use_existing_resource_group" {
   type        = bool
   description = "Whether to use an existing resource group."
@@ -234,12 +227,12 @@ variable "kms_endpoint_type" {
 
 variable "existing_kms_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. If not specified, a root key is created in the KMS instance."
+  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. To create a key ring and key, pass a value for the `existing_kms_instance_crn` input variable."
   default     = null
 }
 
 variable "existing_kms_instance_crn" {
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect instance in the same account as the PostgreSQL instance. This value is used to create an authorization policy if `skip_iam_authorization_policy` is false. If not specified, a root key is created."
+  description = "The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance disks. If you are not using an existing KMS root key, you must specify this CRN. If you are using an existing KMS root key and auth policy is not set for PostgreSQL to KMS, you must specify this CRN."
   type        = string
   default     = null
 }
@@ -253,48 +246,14 @@ variable "skip_iam_authorization_policy" {
 ##############################################################
 # Backup Encryption
 ##############################################################
-variable "backup_key_name" {
-  type        = string
-  default     = "postgresql-backup-key"
-  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-
-variable "backup_key_ring_name" {
-  type        = string
-  default     = "postgresql-backup-key-ring"
-  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-
-variable "backup_kms_endpoint_type" {
-  type        = string
-  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
-  default     = "private"
-  validation {
-    condition     = can(regex("public|private", var.backup_kms_endpoint_type))
-    error_message = "The backup_kms_endpoint_type value must be 'public' or 'private'."
-  }
-}
-
 variable "existing_backup_kms_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. If not specified, a root key is created in the KMS instance."
+  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for backup encryption. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same key CRN specified in `existing_kms_key_crn`."
   default     = null
 }
 
 variable "existing_backup_kms_instance_crn" {
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect instance in the same account as the PostgreSQL instance. This value is used to create an authorization policy if `skip_iam_authorization_policy` is false. If not specified, a root key is created."
+  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance backup. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn`."
   type        = string
   default     = null
-}
-
-variable "skip_backup_kms_iam_authorization_policy" {
-  type        = bool
-  description = "Whether to create an IAM authorization policy that permits all PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
-  default     = false
-}
-
-variable "use_default_backup_encryption_key" {
-  type        = bool
-  description = "Set to true to use default ICD randomly generated keys."
-  default     = false
 }
