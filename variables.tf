@@ -202,10 +202,11 @@ variable "configuration" {
     error_message = "Value for `configuration[\"archive_timeout\"]` must be 300 or more, if specified."
   }
 
-  validation {
-    condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["hot_standby", "logical"], var.configuration["wal_level"]) : true) : true
-    error_message = "Value for `configuration[\"wal_level\"]` must be either `hot_standby` or `logical`, if specified."
-  }
+  # skip validation for issue #508 and #512
+  #validation {
+  #  condition     = var.configuration != null ? (var.configuration["wal_level"] != null ? contains(["replica", "logical"], var.configuration["wal_level"]) : true) : true
+  #  error_message = "Value for `configuration[\"wal_level\"]` must be either `replica` or `logical`, if specified."
+  #}
 
   validation {
     condition     = var.configuration != null ? (var.configuration["max_replication_slots"] != null ? var.configuration["max_replication_slots"] >= 10 : true) : true
