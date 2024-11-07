@@ -227,12 +227,12 @@ variable "kms_endpoint_type" {
 
 variable "existing_kms_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. To create a key ring and key, pass a value for the `existing_kms_instance_crn` input variable."
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect encryption key that you want to use to use for both disk and backup encryption. If no value is passed, a new key ring and key will be created in the instance provided in the `existing_kms_instance_crn` input. Backup encryption is only supported is some regions ([learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)), so if you need to use a key from a different region for backup encryption, use the `existing_backup_kms_key_crn` input."
   default     = null
 }
 
 variable "existing_kms_instance_crn" {
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance disks. If you are not using an existing KMS root key, you must specify this CRN. If you are using an existing KMS root key and auth policy is not set for PostgreSQL to KMS, you must specify this CRN."
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect instance that you want to use for both disk and backup encryption. Backup encryption is only supported is some regions ([learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)), so if you need to use a different instance for backup encryption from a supported region, use the `existing_backup_kms_instance_crn` input."
   type        = string
   default     = null
 }
@@ -248,12 +248,12 @@ variable "skip_iam_authorization_policy" {
 ##############################################################
 variable "existing_backup_kms_key_crn" {
   type        = string
-  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for backup encryption. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn` or the same key CRN specified in `existing_kms_key_crn`. BYOK for backups is available only in US regions `us-south` and `us-east`, and `eu-de`. [Learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)"
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect encryption key that you want to use to encrypt database backups. If no value is passed, the value of `existing_kms_key_crn` is used. If no value is passed for that, a new key will be created in the provided KMS instance and used for both disk encryption, and backup encryption."
   default     = null
 }
 
 variable "existing_backup_kms_instance_crn" {
-  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance backup. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn` or the same key CRN specified in `existing_kms_key_crn`. BYOK for backups is available only in US regions `us-south` and `us-east`, and `eu-de`. [Learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)"
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect instance that you want to use to encrypt database backups. If no value is passed, the value of the `existing_kms_instance_crn` input will be used, however backup encryption is only supported in certain regions so you need to ensure the KMS for backup is coming from one of the supported regions. [Learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)"
   type        = string
   default     = null
 }
