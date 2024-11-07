@@ -248,12 +248,12 @@ variable "skip_iam_authorization_policy" {
 ##############################################################
 variable "existing_backup_kms_key_crn" {
   type        = string
-  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for backup encryption. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same key CRN specified in `existing_kms_key_crn`."
+  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for backup encryption. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn` or the same key CRN specified in `existing_kms_key_crn`."
   default     = null
 }
 
 variable "existing_backup_kms_instance_crn" {
-  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance backup. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn`."
+  description = "Optional. The CRN of a Hyper Protect Crypto Services or Key Protect that is used to create keys for encrypting the PostgreSQL instance backup. If no value is set for `existing_backup_kms_instance_crn` and `existing_backup_kms_key_crn`, it will use the same instance specified in `existing_kms_instance_crn` or the same key CRN specified in `existing_kms_key_crn`."
   type        = string
   default     = null
 }
