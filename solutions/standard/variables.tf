@@ -50,6 +50,12 @@ variable "pg_version" {
   default     = null
 }
 
+variable "backup_crn" {
+  type        = string
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
+  default     = null
+}
+
 ##############################################################################
 # ICD hosting model properties
 ##############################################################################
@@ -221,12 +227,12 @@ variable "kms_endpoint_type" {
 
 variable "existing_kms_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect root key to use for disk encryption. If not specified, a root key is created in the KMS instance."
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect encryption key that you want to use to use for both disk and backup encryption. If no value is passed, a new key ring and key will be created in the instance provided in the `existing_kms_instance_crn` input. Backup encryption is only supported is some regions ([learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)), so if you need to use a key from a different region for backup encryption, use the `existing_backup_kms_key_crn` input."
   default     = null
 }
 
 variable "existing_kms_instance_crn" {
-  description = "The CRN of a Hyper Protect Crypto Services or Key Protect instance in the same account as the PostgreSQL instance. This value is used to create an authorization policy if `skip_iam_authorization_policy` is false. If not specified, a root key is created."
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect instance that you want to use for both disk and backup encryption. Backup encryption is only supported is some regions ([learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)), so if you need to use a different instance for backup encryption from a supported region, use the `existing_backup_kms_instance_crn` input."
   type        = string
   default     = null
 }
@@ -235,4 +241,19 @@ variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Whether to create an IAM authorization policy that permits all PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
   default     = false
+}
+
+##############################################################
+# Backup Encryption
+##############################################################
+variable "existing_backup_kms_key_crn" {
+  type        = string
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect encryption key that you want to use to encrypt database backups. If no value is passed, the value of `existing_kms_key_crn` is used. If no value is passed for that, a new key will be created in the provided KMS instance and used for both disk encryption, and backup encryption."
+  default     = null
+}
+
+variable "existing_backup_kms_instance_crn" {
+  description = "The CRN of an Hyper Protect Crypto Services or Key Protect instance that you want to use to encrypt database backups. If no value is passed, the value of the `existing_kms_instance_crn` input will be used, however backup encryption is only supported in certain regions so you need to ensure the KMS for backup is coming from one of the supported regions. [Learn more](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)"
+  type        = string
+  default     = null
 }

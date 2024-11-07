@@ -39,6 +39,10 @@
         {
           "title": "Supports autoscaling",
           "description": "Provides the autoscaling to allow the database to increase resources in response to usage."
+        },
+        {
+          "title": "Supports backup restoration",
+          "description": "Provides database restoration using a backup created by a deployment with the same service ID."
         }
       ],
       "flavors": [
@@ -259,6 +263,9 @@
             },
             {
               "key": "auto_scaling"
+            },
+            {
+              "key": "backup_crn"
             }
           ]
         }
