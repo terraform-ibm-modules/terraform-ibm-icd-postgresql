@@ -1,3 +1,10 @@
+locals {
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_inputs = !var.use_ibm_owned_encryption_key && (var.kms_key_crn == null || var.existing_kms_instance_guid == null) ? tobool("Values for 'kms_key_crn' and 'existing_kms_instance_guid' must be passed if 'use_ibm_owned_encryption_key' it set to false.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_inputs_2 = var.use_ibm_owned_encryption_key && (var.kms_key_crn != null || var.backup_encryption_key_crn != null || var.existing_kms_instance_guid != null) ? tobool("'use_ibm_owned_encryption_key' is set to true, but values have been passed for either 'kms_key_crn', 'backup_encryption_key_crn' and/or 'existing_kms_instance_guid'. To use BYOK or KYOK encryption, ensure to set 'use_ibm_owned_encryption_key' to false, and pass values for 'kms_key_crn', 'backup_encryption_key_crn' (optional) and 'existing_kms_instance_guid'. Alternatively do not pass any values for 'kms_key_crn', 'backup_encryption_key_crn' and 'existing_kms_instance_guid' to use the IBM owned encryption keys.") : true
+}
+
 module "postgresql_db" {
   source                        = "../../"
   resource_group_id             = var.resource_group_id
@@ -6,7 +13,7 @@ module "postgresql_db" {
   skip_iam_authorization_policy = var.skip_iam_authorization_policy
   service_endpoints             = "private"
   pg_version                    = var.pg_version
-  kms_encryption_enabled        = true
+  kms_encryption_enabled        = !var.use_ibm_owned_encryption_key
   existing_kms_instance_guid    = var.existing_kms_instance_guid
   kms_key_crn                   = var.kms_key_crn
   backup_encryption_key_crn     = var.backup_encryption_key_crn

@@ -288,7 +288,7 @@ variable "backup_encryption_key_crn" {
 
 variable "use_default_backup_encryption_key" {
   type        = bool
-  description = "Set to true to use default ICD randomly generated keys."
+  description = "Set to true to use default ICD randomly generated keys for backup encryption."
   default     = false
 }
 
