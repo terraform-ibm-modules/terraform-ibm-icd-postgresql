@@ -277,7 +277,7 @@ variable "kms_key_crn" {
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a KMS (Key Protect or Hyper Protect Crypto Services) key to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are limitation per region on the type of KMS service (Key Protect or Hyper Protect Crypto Services) and region for those services. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups"
+  description = "The Hyper Protect Crypto Services (HPCS) or Key Protect root key CRN to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are region limitations for backup encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups (HPCS) and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok (Key Protect)."
   default     = null
 
   validation {
@@ -288,7 +288,7 @@ variable "backup_encryption_key_crn" {
 
 variable "use_default_backup_encryption_key" {
   type        = bool
-  description = "Set to true to use default ICD randomly generated keys."
+  description = "Set to true to use default ICD randomly generated keys for backup encryption."
   default     = false
 }
 
