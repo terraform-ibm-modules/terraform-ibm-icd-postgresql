@@ -66,7 +66,7 @@ module "kms" {
   }
   count                       = var.existing_kms_key_crn != null ? 0 : 1 # no need to create any KMS resources if passing an existing key or using IBM owned keys
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "4.16.4"
+  version                     = "4.16.8"
   create_key_protect_instance = false
   region                      = local.existing_kms_instance_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -135,7 +135,7 @@ module "backup_kms" {
   }
   count                       = var.existing_backup_kms_key_crn != null ? 0 : var.existing_backup_kms_instance_crn != null ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "4.15.13"
+  version                     = "4.16.8"
   create_key_protect_instance = false
   region                      = local.existing_backup_kms_instance_region
   existing_kms_instance_crn   = var.existing_backup_kms_instance_crn
