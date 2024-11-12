@@ -9,9 +9,9 @@ locals {
   key_name      = var.prefix != null ? "${var.prefix}-${var.key_name}" : var.key_name
   key_ring_name = var.prefix != null ? "${var.prefix}-${var.key_ring_name}" : var.key_ring_name
 
-  kms_key_crn = var.existing_kms_key_crn != null ? var.existing_kms_key_crn : module.kms[0].keys[format("%s.%s", local.key_ring_name, local.key_name)].crn
+  kms_key_crn = !var.use_ibm_owned_encryption_key ? var.existing_kms_key_crn != null ? var.existing_kms_key_crn : module.kms[0].keys[format("%s.%s", local.key_ring_name, local.key_name)].crn : null
 
-  create_cross_account_auth_policy = !var.skip_iam_authorization_policy && var.ibmcloud_kms_api_key != null
+  create_cross_account_auth_policy = !var.skip_iam_authorization_policy && var.ibmcloud_kms_api_key != null && !var.use_ibm_owned_encryption_key
 
   kms_service_name = var.existing_kms_instance_crn != null ? module.kms_instance_crn_parser[0].service_name : null
 }
@@ -64,7 +64,7 @@ module "kms" {
   providers = {
     ibm = ibm.kms
   }
-  count                       = var.existing_kms_key_crn != null ? 0 : 1 # no need to create any KMS resources if passing an existing key
+  count                       = var.existing_kms_key_crn != null ? 0 : 1 # no need to create any KMS resources if passing an existing key or using IBM owned keys
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                     = "4.16.4"
   create_key_protect_instance = false
@@ -172,6 +172,7 @@ module "postgresql_db" {
   skip_iam_authorization_policy = local.create_cross_account_auth_policy ? true : var.skip_iam_authorization_policy
   pg_version                    = var.pg_version
   existing_kms_instance_guid    = local.existing_kms_instance_guid
+  use_ibm_owned_encryption_key  = var.use_ibm_owned_encryption_key
   kms_key_crn                   = local.kms_key_crn
   access_tags                   = var.access_tags
   resource_tags                 = var.resource_tags

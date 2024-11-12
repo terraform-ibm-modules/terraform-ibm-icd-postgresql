@@ -156,26 +156,34 @@ variable "auto_scaling" {
 # Encryption
 ##############################################################
 
+variable "use_ibm_owned_encryption_key" {
+  type        = string
+  description = "Set to true to use the default IBM Cloud® Databases randomly generated keys for disk and backups encryption. To control the encryption keys, use the `kms_key_crn` and `backup_encryption_key_crn` inputs."
+  default     = false
+}
+
 variable "kms_key_crn" {
   type        = string
-  description = "The root key CRN of the Hyper Protect Crypto Services (HPCS) to use for disk encryption."
+  description = "The Hyper Protect Crypto Services (HPCS) or Key Protect root key CRN to use for disk encryption."
+  default     = null
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are limitation per region on the Hyper Protect Crypto Services and region for those services. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups"
+  description = "The Hyper Protect Crypto Services (HPCS) or Key Protect root key CRN to use for encrypting the disk that holds deployment backups. There are region limitations for backup encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups (HPCS) and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok (Key Protect)."
   default     = null
 }
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance. The HPCS instance is passed in through the var.existing_kms_instance_guid variable."
+  description = "Set to true to skip the creation of an IAM authorization policy that permits all PostgreSQL database instances in the resource group to read the encryption key from the Hyper Protect Crypto Services or Key Protect instance. The instance is passed in through the var.existing_kms_instance_guid variable."
   default     = false
 }
 
 variable "existing_kms_instance_guid" {
   type        = string
-  description = "The GUID of the Hyper Protect Crypto Services instance."
+  description = "The GUID of the Hyper Protect Crypto Services (HPCS) or Key Protect instance."
+  default     = null
 }
 
 ##############################################################
