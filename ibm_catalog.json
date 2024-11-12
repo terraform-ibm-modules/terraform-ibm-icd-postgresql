@@ -105,6 +105,23 @@
               "key": "ibmcloud_api_key"
             },
             {
+              "key": "provider_visibility",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
+            },
+            {
               "key": "use_existing_resource_group"
             },
             {
@@ -229,6 +246,9 @@
             },
             {
               "key": "access_tags"
+            },
+            {
+              "key": "use_ibm_owned_encryption_key"
             },
             {
               "key": "ibmcloud_kms_api_key"
