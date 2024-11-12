@@ -15,6 +15,17 @@ variable "ibmcloud_kms_api_key" {
   default     = null
 }
 
+variable "provider_visibility" {
+  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  type        = string
+  default     = "private"
+
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
+    error_message = "Invalid visibility option. Allowed values are 'public', 'private', or 'public-and-private'."
+  }
+}
+
 variable "use_existing_resource_group" {
   type        = bool
   description = "Whether to use an existing resource group."
@@ -203,16 +214,23 @@ variable "auto_scaling" {
 ##############################################################
 # Encryption
 ##############################################################
+
+variable "use_ibm_owned_encryption_key" {
+  type        = string
+  description = "Set to true to use the default IBM Cloud® Databases randomly generated keys for disk and backups encryption."
+  default     = false
+}
+
 variable "key_name" {
   type        = string
   default     = "postgresql-key"
-  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key or using IBM owned keys. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "key_ring_name" {
   type        = string
   default     = "postgresql-key-ring"
-  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key or using IBM owned keys. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "kms_endpoint_type" {
