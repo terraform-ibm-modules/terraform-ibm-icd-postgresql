@@ -53,8 +53,3 @@ variable "members" {
   description = "Allocated number of members. Members must be same or higher than the source deployment PostgreSQL instance."
   default     = 2
 }
-
-variable "member_cpu_count" {
-  type        = number
-  description = "Allocated dedicated CPU per member. For shared CPU, set to 0. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
-}

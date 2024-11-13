@@ -55,7 +55,7 @@ module "read_only_replica_postgresql_db" {
   pg_version         = var.pg_version
   remote_leader_crn  = module.postgresql_db.crn
   member_host_flavor = "multitenant"
-  member_memory_mb   = 4096  # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
-  member_disk_mb     = 15360 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 15.36 GB of disk
+  member_memory_mb   = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
+  member_disk_mb     = 5120 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
   depends_on         = [time_sleep.wait_time]
 }
