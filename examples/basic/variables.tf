@@ -56,9 +56,3 @@ variable "member_host_flavor" {
   description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
   default     = null
 }
-
-variable "member_memory_mb" {
-  type        = number
-  description = "Allocated memory per-member. See the following doc for supported values: https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling"
-  default     = 4096
-}

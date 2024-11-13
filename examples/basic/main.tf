@@ -23,7 +23,6 @@ module "postgresql_db" {
   resource_tags      = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = var.member_host_flavor
-  member_memory_mb   = var.member_memory_mb
 }
 
 # On destroy, we are seeing that even though the replica has been returned as
