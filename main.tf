@@ -26,48 +26,65 @@ locals {
   host_flavor_set = var.member_host_flavor != null ? true : false
 
   # Determine if restore, from backup or point in time recovery
-  recovery_mode = var.backup_crn != null || var.pitr_id != null
+  recovery_mode                     = var.backup_crn != null || var.pitr_id != null
+  parsed_kms_key_crn                = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
+  parsed_kms_backup_key_crn         = var.backup_encryption_key_crn != null ? split(":", var.backup_encryption_key_crn) : []
+  existing_backup_kms_instance_guid = var.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
+  kms_keys = {
+    "key1" = {
 
-
-  parsed_kms_key_crn = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
-  kms_service        = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null
-  kms_scope          = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null
-  kms_account_id     = length(local.parsed_kms_key_crn) > 0 ? split("/", local.kms_scope)[1] : null
-  kms_key_id         = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null
+      kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
+      kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
+      kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
+      kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
+      instance       = var.existing_kms_instance_guid,
+      resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null
+    },
+    "key2" = {
+      kms_service    = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[4] : null,
+      kms_scope      = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[6] : null,
+      kms_account_id = length(local.parsed_kms_backup_key_crn) > 0 ? split("/", local.parsed_kms_backup_key_crn[6])[1] : null,
+      kms_key_id     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[9] : null,
+      instance       = var.existing_backup_kms_instance_guid != null ? var.existing_backup_kms_instance_guid : var.existing_kms_instance_guid
+      resource_type  = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[8] : null
+    },
+  }
+  keys = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? {} : tomap({
+  for i, key in local.kms_keys : i => key })
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                    = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
+  for_each                 = local.keys
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
   roles                    = ["Reader"]
-  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${var.existing_kms_instance_guid}"
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${each.value.kms_service} instance GUID ${each.value.instance}"
 
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
-    value    = local.kms_service
+    value    = each.value.kms_service
   }
   resource_attributes {
     name     = "accountId"
     operator = "stringEquals"
-    value    = local.kms_account_id
+    value    = each.value.kms_account_id
   }
   resource_attributes {
     name     = "serviceInstance"
     operator = "stringEquals"
-    value    = var.existing_kms_instance_guid
+    value    = each.value.instance
   }
   resource_attributes {
     name     = "resourceType"
     operator = "stringEquals"
-    value    = "key"
+    value    = each.value.resource_type
   }
   resource_attributes {
     name     = "resource"
     operator = "stringEquals"
-    value    = local.kms_key_id
+    value    = each.value.kms_key_id
   }
   # Scope of policy now includes the key, so ensure to create new policy before
   # destroying old one to prevent any disruption to every day services.
