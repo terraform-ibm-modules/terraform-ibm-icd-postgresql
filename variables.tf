@@ -278,7 +278,7 @@ variable "kms_key_crn" {
 variable "backup_encryption_key_crn" {
   type        = string
   description = "The Hyper Protect Crypto Services (HPCS) or Key Protect root key CRN to use for encrypting the disk that holds deployment backups. Only used if var.kms_encryption_enabled is set to true. There are region limitations for backup encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups (HPCS) and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok (Key Protect)."
-  default     = "null"
+  default     = null
 
   validation {
     condition     = var.backup_encryption_key_crn == null ? true : length(regexall("^crn:v1:bluemix:public:kms:(us-south|us-east|eu-de):a/[[:xdigit:]]{32}:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}:key:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$|^crn:v1:bluemix:public:hs-crypto:[a-z-]+:a/[[:xdigit:]]{32}:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}:key:[[:xdigit:]]{8}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{4}-[[:xdigit:]]{12}$", var.backup_encryption_key_crn)) > 0

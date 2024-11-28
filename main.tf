@@ -26,9 +26,11 @@ locals {
   host_flavor_set = var.member_host_flavor != null ? true : false
 
   # Determine if restore, from backup or point in time recovery
-  recovery_mode                     = var.backup_crn != null || var.pitr_id != null
-  parsed_kms_key_crn                = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
-  parsed_kms_backup_key_crn         = var.backup_encryption_key_crn != null ? split(":", var.backup_encryption_key_crn) : []
+  recovery_mode             = var.backup_crn != null || var.pitr_id != null
+  parsed_kms_key_crn        = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
+  parsed_kms_backup_key_crn = var.backup_encryption_key_crn != null ? split(":", var.backup_encryption_key_crn) : []
+
+  # tflint-ignore: terraform_unused_declarations
   existing_backup_kms_instance_guid = var.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
   kms_keys = {
     "key1" = {
