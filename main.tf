@@ -61,7 +61,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
   roles                    = ["Reader"]
-  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${each.value.kms_service} instance GUID ${each.value.instance}"
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the kms_service instance GUID ${each.value.instance}"
 
   resource_attributes {
     name     = "serviceName"
