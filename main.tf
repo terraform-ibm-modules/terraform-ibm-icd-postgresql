@@ -67,7 +67,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
     name     = "serviceName"
     operator = "stringEquals"
     value    = each.value.kms_service
-  } 
+  }
   resource_attributes {
     name     = "accountId"
     operator = "stringEquals"
