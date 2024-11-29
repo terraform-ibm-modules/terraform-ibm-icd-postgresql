@@ -28,10 +28,10 @@ locals {
   # Determine if restore, from backup or point in time recovery
   recovery_mode             = var.backup_crn != null || var.pitr_id != null
   parsed_kms_key_crn        = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
-  parsed_kms_backup_key_crn = var.backup_encryption_key_crn != null ? split(":", var.backup_encryption_key_crn) : []
+  parsed_kms_backup_key_crn = local.backup_encryption_key_crn != null ? split(":", local.backup_encryption_key_crn) : []
 
   # tflint-ignore: terraform_unused_declarations
-  existing_backup_kms_instance_guid = var.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
+  existing_backup_kms_instance_guid = local.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
   kms_keys = {
     "key1" = {
 
@@ -67,7 +67,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
     name     = "serviceName"
     operator = "stringEquals"
     value    = each.value.kms_service
-  }
+  } 
   resource_attributes {
     name     = "accountId"
     operator = "stringEquals"
