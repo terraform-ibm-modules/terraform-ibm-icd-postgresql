@@ -47,7 +47,7 @@ locals {
       kms_scope      = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[6] : null,
       kms_account_id = length(local.parsed_kms_backup_key_crn) > 0 ? split("/", local.parsed_kms_backup_key_crn[6])[1] : null,
       kms_key_id     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[9] : null,
-      instance       = var.existing_backup_kms_instance_guid != null ? var.existing_backup_kms_instance_guid : var.existing_kms_instance_guid
+      instance       = local.existing_backup_kms_instance_guid != null ? local.existing_backup_kms_instance_guid : var.existing_kms_instance_guid
       resource_type  = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[8] : null
     },
   }
