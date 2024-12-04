@@ -27,66 +27,107 @@ locals {
 
   # Determine if restore, from backup or point in time recovery
   recovery_mode             = var.backup_crn != null || var.pitr_id != null
+  
   parsed_kms_key_crn        = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
   parsed_kms_backup_key_crn = local.backup_encryption_key_crn != null ? split(":", local.backup_encryption_key_crn) : []
 
   # tflint-ignore: terraform_unused_declarations
   existing_backup_kms_instance_guid = local.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
-  kms_keys = {
-    "key1" = {
 
-      kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
-      kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
-      kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
-      kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
-      instance       = var.existing_kms_instance_guid,
-      resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null
-    },
-    "key2" = {
-      kms_service    = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[4] : null,
-      kms_scope      = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[6] : null,
-      kms_account_id = length(local.parsed_kms_backup_key_crn) > 0 ? split("/", local.parsed_kms_backup_key_crn[6])[1] : null,
-      kms_key_id     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[9] : null,
-      instance       = local.existing_backup_kms_instance_guid != null ? local.existing_backup_kms_instance_guid : var.existing_kms_instance_guid
-      resource_type  = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[8] : null
-    },
-  }
-  keys = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? {} : tomap({
-  for i, key in local.kms_keys : i => key })
+  kms_region     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[5] : null
+  backup_kms_region     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[5] : null
+
+  validate_backup_kms_key = var.use_default_backup_encryption_key != true ? (local.backup_encryption_key_crn == var.kms_key_crn )? true : false : false
+    #&& can(regex("us-south|eu-de|jp-tok", local.kms_region))
+
+  
+  
+  kms_key = var.kms_key_crn !=null? {
+    kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
+    #kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
+    kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
+    kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
+    instance       = var.existing_kms_instance_guid,
+    resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null,
+  }:null
+
+  backup_encryption_key = var.backup_encryption_key_crn !=null? {
+    kms_service    = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[4] : null,
+    #kms_scope      = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[6] : null,
+    kms_account_id = length(local.parsed_kms_backup_key_crn) > 0 ? split("/", local.parsed_kms_backup_key_crn[6])[1] : null,
+    kms_key_id     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[9] : null,
+    instance       = local.existing_backup_kms_instance_guid != null ? local.existing_backup_kms_instance_guid : var.existing_kms_instance_guid,
+    resource_type  = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[8] : null,
+  }:null
+
+    
+  keys = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? [] : (
+    local.validate_backup_kms_key ? 
+    [local.kms_key] # Only use `kms_key` if the condition is true
+   : [local.kms_key,local.backup_encryption_key]
+   )
+  #tomap({
+  #for i, key in local.kms_keys : i => key }) # Add `backup_encryption_key` if the condition is false
+  test = {"a"={
+    kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
+    #kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
+    kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
+    kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
+    instance       = var.existing_kms_instance_guid,
+    resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null,
+  }}
+
+}
+
+output "kms_keys_debug" {
+  value = local.keys
+}
+output "validate_backup_kms_key" {
+  value = local.validate_backup_kms_key
+}
+
+output "kms_key" {
+  value = local.kms_key
+}
+output "backup_encryption_key" {
+  value = local.backup_encryption_key
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  for_each                 = local.keys
+  count = length(local.keys)
+  #for_each  = local.test
+  #for_each = {
+  #for i,key in local.keys :i => key}
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
   roles                    = ["Reader"]
-  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${each.value.kms_service} instance GUID ${each.value.instance}"
-
+  #description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${each.value.kms_service} instance GUID ${each.value.instance}"
+  
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
-    value    = each.value.kms_service
+    value    = local.keys[count.index].kms_service
   }
   resource_attributes {
     name     = "accountId"
     operator = "stringEquals"
-    value    = each.value.kms_account_id
+    value    = local.keys[count.index].kms_account_id
   }
   resource_attributes {
     name     = "serviceInstance"
     operator = "stringEquals"
-    value    = each.value.instance
+    value    = local.keys[count.index].instance
   }
   resource_attributes {
     name     = "resourceType"
     operator = "stringEquals"
-    value    = each.value.resource_type
+    value    = local.keys[count.index].resource_type
   }
   resource_attributes {
     name     = "resource"
     operator = "stringEquals"
-    value    = each.value.kms_key_id
+    value    = local.keys[count.index].kms_key_id
   }
   # Scope of policy now includes the key, so ensure to create new policy before
   # destroying old one to prevent any disruption to every day services.
