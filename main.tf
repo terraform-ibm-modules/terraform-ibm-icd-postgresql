@@ -27,107 +27,67 @@ locals {
 
   # Determine if restore, from backup or point in time recovery
   recovery_mode             = var.backup_crn != null || var.pitr_id != null
-  
-  parsed_kms_key_crn        = var.kms_key_crn != null ? split(":", var.kms_key_crn) : []
-  parsed_kms_backup_key_crn = local.backup_encryption_key_crn != null ? split(":", local.backup_encryption_key_crn) : []
 
-  # tflint-ignore: terraform_unused_declarations
-  existing_backup_kms_instance_guid = local.backup_encryption_key_crn != null ? local.parsed_kms_backup_key_crn[7] : null
-
-  kms_region     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[5] : null
-  backup_kms_region     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[5] : null
-
-  validate_backup_kms_key = var.use_default_backup_encryption_key != true ? (local.backup_encryption_key_crn == var.kms_key_crn )? true : false : false
-    #&& can(regex("us-south|eu-de|jp-tok", local.kms_region))
-
+  #validation for creating KMS and backup KMS policy
+  create_backup_auth_policy = local.backup_encryption_key_crn != null && var.backup_encryption_key_crn != null ? 1 : 0
+  create_kms_auth_policy = var.kms_encryption_enabled == true && !var.skip_iam_authorization_policy ? 1 : 0
   
   
-  kms_key = var.kms_key_crn !=null? {
-    kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
-    #kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
-    kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
-    kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
-    instance       = var.existing_kms_instance_guid,
-    resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null,
-  }:null
+  
+  #KMS Encryption key details
+  kms_service = var.kms_key_crn != null ? module.kms_crn_parser[0].service_name : null
+  kms_account_id = var.kms_key_crn != null ? module.kms_crn_parser[0].account_id : null
+  kms_key_id     = var.kms_key_crn != null ? module.kms_crn_parser[0].resource : null
+  instance       = var.kms_key_crn != null ? module.kms_crn_parser[0].service_instance : null
 
-  backup_encryption_key = var.backup_encryption_key_crn !=null? {
-    kms_service    = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[4] : null,
-    #kms_scope      = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[6] : null,
-    kms_account_id = length(local.parsed_kms_backup_key_crn) > 0 ? split("/", local.parsed_kms_backup_key_crn[6])[1] : null,
-    kms_key_id     = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[9] : null,
-    instance       = local.existing_backup_kms_instance_guid != null ? local.existing_backup_kms_instance_guid : var.existing_kms_instance_guid,
-    resource_type  = length(local.parsed_kms_backup_key_crn) > 0 ? local.parsed_kms_backup_key_crn[8] : null,
-  }:null
-
-    
-  keys = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? [] : (
-    local.validate_backup_kms_key ? 
-    [local.kms_key] # Only use `kms_key` if the condition is true
-   : [local.kms_key,local.backup_encryption_key]
-   )
-  #tomap({
-  #for i, key in local.kms_keys : i => key }) # Add `backup_encryption_key` if the condition is false
-  test = {"a"={
-    kms_service    = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[4] : null,
-    #kms_scope      = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[6] : null,
-    kms_account_id = length(local.parsed_kms_key_crn) > 0 ? split("/", local.parsed_kms_key_crn[6])[1] : null,
-    kms_key_id     = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[9] : null,
-    instance       = var.existing_kms_instance_guid,
-    resource_type  = length(local.parsed_kms_key_crn) > 0 ? local.parsed_kms_key_crn[8] : null,
-  }}
+  #Backup encryption key details
+  backup_kms_service = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].service_name : null
+  backup_kms_account_id = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].account_id : null
+  backup_kms_key_id = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].resource : null
+  backup_instance = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].service_instance : null
 
 }
 
-output "kms_keys_debug" {
-  value = local.keys
+# Module to parse the KMS CRN and extract kms key details.
+# The module is only created if the 'create_kms_auth_policy' local variable is true .
+module "kms_crn_parser" {
+  count   = local.create_kms_auth_policy
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.kms_key_crn
 }
-output "validate_backup_kms_key" {
-  value = local.validate_backup_kms_key
-}
-
-output "kms_key" {
-  value = local.kms_key
-}
-output "backup_encryption_key" {
-  value = local.backup_encryption_key
-}
-
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count = length(local.keys)
-  #for_each  = local.test
-  #for_each = {
-  #for i,key in local.keys :i => key}
+  count                    = local.create_kms_auth_policy
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
   roles                    = ["Reader"]
-  #description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${each.value.kms_service} instance GUID ${each.value.instance}"
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${local.instance}"
   
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
-    value    = local.keys[count.index].kms_service
+    value    = local.kms_service
   }
   resource_attributes {
     name     = "accountId"
     operator = "stringEquals"
-    value    = local.keys[count.index].kms_account_id
+    value    = local.kms_account_id
   }
   resource_attributes {
     name     = "serviceInstance"
     operator = "stringEquals"
-    value    = local.keys[count.index].instance
+    value    = local.instance
   }
   resource_attributes {
     name     = "resourceType"
     operator = "stringEquals"
-    value    = local.keys[count.index].resource_type
+    value    = "key"
   }
   resource_attributes {
     name     = "resource"
     operator = "stringEquals"
-    value    = local.keys[count.index].kms_key_id
+    value    = local.kms_key_id
   }
   # Scope of policy now includes the key, so ensure to create new policy before
   # destroying old one to prevent any disruption to every day services.
@@ -138,7 +98,63 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
 resource "time_sleep" "wait_for_authorization_policy" {
+  count = local.create_kms_auth_policy
   depends_on = [ibm_iam_authorization_policy.kms_policy]
+
+  create_duration = "30s"
+}
+
+# Module to parse the backup encryption key crn  and extract key details.
+# The module is only created if the 'create_backup_auth_policy' local variable is true 
+module "backup_kms_crn_parser" {
+  count   = local.create_backup_auth_policy
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = local.backup_encryption_key_crn
+}
+
+resource "ibm_iam_authorization_policy" "backup_kms_policy" {
+  count                    = local.create_backup_auth_policy
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Reader"]
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.backup_kms_service} instance GUID ${local.backup_instance}"
+  
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.backup_kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.backup_kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.backup_instance
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.backup_kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
+  count      = local.create_backup_auth_policy
+  depends_on = [ibm_iam_authorization_policy.backup_kms_policy]
 
   create_duration = "30s"
 }
