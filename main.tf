@@ -28,28 +28,129 @@ locals {
   # Determine if restore, from backup or point in time recovery
   recovery_mode = var.backup_crn != null || var.pitr_id != null
 
-  # Determine what KMS service is being used for database encryption
-  kms_service = var.kms_key_crn != null ? (
-    can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
-      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
-    )
-  ) : null
+  #validation for creating KMS and backup KMS policy
+  create_backup_auth_policy = local.backup_encryption_key_crn != null && var.backup_encryption_key_crn != null ? 1 : 0
+  create_kms_auth_policy    = var.kms_encryption_enabled == true && !var.skip_iam_authorization_policy ? 1 : 0
+
+  #KMS Encryption key details
+  kms_service    = var.kms_key_crn != null ? module.kms_crn_parser[0].service_name : null
+  kms_account_id = var.kms_key_crn != null ? module.kms_crn_parser[0].account_id : null
+  kms_key_id     = var.kms_key_crn != null ? module.kms_crn_parser[0].resource : null
+  instance       = var.kms_key_crn != null ? module.kms_crn_parser[0].service_instance : null
+
+  #Backup encryption key details
+  backup_kms_service    = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].service_name : null
+  backup_kms_account_id = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].account_id : null
+  backup_kms_key_id     = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].resource : null
+  backup_instance       = local.backup_encryption_key_crn != null && length(module.backup_kms_crn_parser) > 0 ? module.backup_kms_crn_parser[0].service_instance : null
+}
+
+# Module to parse the KMS CRN and extract kms key details.
+# The module is only created if the 'create_kms_auth_policy' local variable is true .
+module "kms_crn_parser" {
+  count   = local.create_kms_auth_policy
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.kms_key_crn
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "databases-for-postgresql"
-  source_resource_group_id    = var.resource_group_id
-  target_service_name         = local.kms_service
-  target_resource_instance_id = var.existing_kms_instance_guid
-  roles                       = ["Reader"]
-  description                 = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${var.existing_kms_instance_guid}"
+  count                    = local.create_kms_auth_policy
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Reader"]
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${local.instance}."
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.instance
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
 resource "time_sleep" "wait_for_authorization_policy" {
+  count      = local.create_kms_auth_policy
   depends_on = [ibm_iam_authorization_policy.kms_policy]
+
+  create_duration = "30s"
+}
+
+# Module to parse the backup encryption key crn  and extract key details.
+# The module is only created if the 'create_backup_auth_policy' local variable is true
+module "backup_kms_crn_parser" {
+  count   = local.create_backup_auth_policy
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = local.backup_encryption_key_crn
+}
+
+resource "ibm_iam_authorization_policy" "backup_kms_policy" {
+  count                    = local.create_backup_auth_policy
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Reader"]
+  description              = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.backup_kms_service} instance GUID ${local.backup_instance}."
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.backup_kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.backup_kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.backup_instance
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.backup_kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
+  count      = local.create_backup_auth_policy
+  depends_on = [ibm_iam_authorization_policy.backup_kms_policy]
 
   create_duration = "30s"
 }
