@@ -29,7 +29,7 @@ locals {
   recovery_mode = var.backup_crn != null || var.pitr_id != null
 
   #validation for creating KMS and backup KMS policy
-  create_backup_auth_policy = local.backup_encryption_key_crn != null && var.backup_encryption_key_crn != null ? 1 : 0
+  create_backup_auth_policy = var.use_default_backup_encryption_key != true  && var.backup_encryption_key_crn != null ? 1 : 0
   create_kms_auth_policy    = var.kms_encryption_enabled == true && !var.skip_iam_authorization_policy ? 1 : 0
 
   #KMS Encryption key details
