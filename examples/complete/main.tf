@@ -63,7 +63,7 @@ module "vpc" {
   region            = var.region
   prefix            = var.prefix
   name              = "vpc"
-  tags              = []
+  tags              = var.resource_tags
 }
 
 ##############################################################################
@@ -160,7 +160,7 @@ module "postgresql_db" {
       }]
     }
   ]
-  backup_encryption_key_crn = module.key_protect_all_inclusive.keys["icd.${local.data_key_name}"].crn
+  backup_encryption_key_crn = module.key_protect_all_inclusive.keys["icd-pg.${local.data_key_name}"].crn
 }
 
 # VPE provisioning should wait for the database provisioning
