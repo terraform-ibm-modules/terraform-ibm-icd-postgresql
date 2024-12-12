@@ -54,20 +54,32 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                     = "../../modules/fscloud"
-  resource_group_id          = module.resource_group.resource_group_id
-  name                       = "${var.prefix}-postgres"
-  region                     = var.region
-  pg_version                 = var.pg_version
-  kms_key_crn                = var.kms_key_crn
-  backup_encryption_key_crn  = var.backup_encryption_key_crn
-  backup_crn                 = var.backup_crn
-  existing_kms_instance_guid = var.existing_kms_instance_guid
-  resource_tags              = var.resource_tags
-  service_credential_names   = var.service_credential_names
-  access_tags                = var.access_tags
-  auto_scaling               = var.auto_scaling
-  member_host_flavor         = "b3c.4x16.encrypted"
+  source                    = "../../modules/fscloud"
+  resource_group_id         = module.resource_group.resource_group_id
+  name                      = "${var.prefix}-postgres"
+  region                    = var.region
+  pg_version                = var.pg_version
+  kms_key_crn               = var.kms_key_crn
+  backup_encryption_key_crn = var.backup_encryption_key_crn
+  backup_crn                = var.backup_crn
+  resource_tags             = var.resource_tags
+  service_credential_names = {
+    "postgressql_admin" : "Administrator",
+    "postgressql_operator" : "Operator",
+    "postgressql_viewer" : "Viewer",
+    "postgressql_editor" : "Editor",
+  }
+  access_tags = var.access_tags
+  auto_scaling = {
+    disk = {
+      capacity_enabled : true,
+      io_enabled : true
+    }
+    memory = {
+      io_enabled : true,
+    }
+  }
+  member_host_flavor = "b3c.4x16.encrypted"
   cbr_rules = [
     {
       description      = "${var.prefix}-postgres access only from vpc"

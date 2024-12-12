@@ -56,14 +56,3 @@ variable "users" {
   sensitive   = true
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters."
 }
-
-variable "service_credential_names" {
-  description = "Map of name, role for service credentials that you want to create for the database"
-  type        = map(string)
-  default = {
-    "postgressql_admin" : "Administrator",
-    "postgressql_operator" : "Operator",
-    "postgressql_viewer" : "Viewer",
-    "postgressql_editor" : "Editor",
-  }
-}

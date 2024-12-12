@@ -1,23 +1,30 @@
 ##############################################################################
 # ICD PostgreSQL module
-##############################################################################
+
+# Input variable validation
+# (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
+#
+# TODO: Replace with terraform cross variable validation: https://github.ibm.com/GoldenEye/issues/issues/10836
+########################################################################################################################
 
 locals {
   # Validation (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
   # tflint-ignore: terraform_unused_declarations
-  validate_kms_values = !var.kms_encryption_enabled && (var.kms_key_crn != null || var.backup_encryption_key_crn != null) ? tobool("When passing values for var.backup_encryption_key_crn or var.kms_key_crn, you must set var.kms_encryption_enabled to true. Otherwise unset them to use default encryption") : true
+  validate_kms_values = var.use_ibm_owned_encryption_key && (var.kms_key_crn != null || var.backup_encryption_key_crn != null) ? tobool("When passing values for 'kms_key_crn' or 'backup_encryption_key_crn', you must set 'use_ibm_owned_encryption_key' to false. Otherwise unset them to use default encryption.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_kms_vars = !var.use_ibm_owned_encryption_key && var.kms_key_crn == null ? tobool("When setting 'use_ibm_owned_encryption_key' to false, a value must be passed for 'kms_key_crn'.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_backup_key = !var.use_ibm_owned_encryption_key && var.backup_encryption_key_crn != null && (var.use_default_backup_encryption_key || var.use_same_kms_key_for_backups) ? tobool("When passing a value for 'backup_encryption_key_crn' you cannot set 'use_default_backup_encryption_key' to true or 'use_ibm_owned_encryption_key' to false.") : true
+  # tflint-ignore: terraform_unused_declarations
+  validate_backup_key_2 = !var.use_ibm_owned_encryption_key && var.backup_encryption_key_crn == null && !var.use_same_kms_key_for_backups ? tobool("When 'use_same_kms_key_for_backups' is set to false, a value needs to be passed for 'backup_encryption_key_crn'.") : true
   # tflint-ignore: terraform_unused_declarations
   validate_pitr_vars = (var.pitr_id != null && var.pitr_time == null) || (var.pitr_time != null && var.pitr_id == null) ? tobool("To use Point-In-Time Recovery (PITR), values for both var.pitr_id and var.pitr_time need to be set. Otherwise, unset both of these.") : true
   # tflint-ignore: terraform_unused_declarations
-  validate_kms_vars = var.kms_encryption_enabled && var.kms_key_crn == null && var.backup_encryption_key_crn == null ? tobool("When setting var.kms_encryption_enabled to true, a value must be passed for var.kms_key_crn and/or var.backup_encryption_key_crn") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_auth_policy = var.kms_encryption_enabled && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_backup_key = var.backup_encryption_key_crn != null && var.use_default_backup_encryption_key == true ? tobool("When passing a value for 'backup_encryption_key_crn' you cannot set 'use_default_backup_encryption_key' to 'true'") : true
+  validate_auth_policy = var.use_ibm_owned_encryption_key && var.skip_iam_authorization_policy == false && var.existing_kms_instance_guid == null ? tobool("When var.skip_iam_authorization_policy is set to false, and var.kms_encryption_enabled to true, a value must be passed for var.existing_kms_instance_guid in order to create the auth policy.") : true
 
-  # If no value passed for 'backup_encryption_key_crn' use the value of 'kms_key_crn' and perform validation of 'kms_key_crn' to check if region is supported by backup encryption key.
-  # For more info, see https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok and https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups"
-  backup_encryption_key_crn = var.use_default_backup_encryption_key == true ? null : (var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.kms_key_crn)
+  # If 'use_ibm_owned_encryption_key' is true or 'use_default_backup_encryption_key' is true, default to null.
+  # If no value is passed for 'backup_encryption_key_crn', then default to use 'kms_key_crn'.
+  backup_encryption_key_crn = var.use_ibm_owned_encryption_key || var.use_default_backup_encryption_key ? null : (var.backup_encryption_key_crn != null ? var.backup_encryption_key_crn : var.kms_key_crn)
 
   # Determine if auto scaling is enabled
   auto_scaling_enabled = var.auto_scaling == null ? [] : [1]
@@ -27,32 +34,144 @@ locals {
 
   # Determine if restore, from backup or point in time recovery
   recovery_mode = var.backup_crn != null || var.pitr_id != null
+}
 
-  # Determine what KMS service is being used for database encryption
-  kms_service = var.kms_key_crn != null ? (
-    can(regex(".*kms.*", var.kms_key_crn)) ? "kms" : (
-      can(regex(".*hs-crypto.*", var.kms_key_crn)) ? "hs-crypto" : null
-    )
-  ) : null
+########################################################################################################################
+# Parse info from KMS key CRNs
+########################################################################################################################
+
+module "kms_key_crn_parser" {
+  count   = var.use_ibm_owned_encryption_key ? 0 : 1
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = var.kms_key_crn
+}
+
+module "backup_key_crn_parser" {
+  count   = var.use_ibm_owned_encryption_key ? 0 : 1
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.1.0"
+  crn     = local.backup_encryption_key_crn
+}
+
+# Put parsed values into locals
+locals {
+  kms_service                  = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].service_name : null
+  kms_account_id               = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].account_id : null
+  kms_key_id                   = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].resource : null
+  kms_key_instance_guid        = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].service_instance : null
+  backup_kms_service           = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].service_name : null
+  backup_kms_account_id        = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].account_id : null
+  backup_kms_key_id            = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].resource : null
+  backup_kms_key_instance_guid = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].service_instance : null
+}
+
+########################################################################################################################
+# KMS IAM Authorization Policies
+########################################################################################################################
+
+locals {
+  # only create auth policy if 'use_ibm_owned_encryption_key' is false, and 'skip_iam_authorization_policy' is false
+  create_kms_auth_policy = !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy ? 1 : 0
+  # only create backup auth policy if 'use_ibm_owned_encryption_key' is false, 'skip_iam_authorization_policy' is false and 'use_same_kms_key_for_backups' is false
+  create_backup_kms_auth_policy = !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy && !var.use_same_kms_key_for_backups ? 1 : 0
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
 resource "ibm_iam_authorization_policy" "kms_policy" {
-  count                       = var.kms_encryption_enabled == false || var.skip_iam_authorization_policy ? 0 : 1
-  source_service_name         = "databases-for-postgresql"
-  source_resource_group_id    = var.resource_group_id
-  target_service_name         = local.kms_service
-  target_resource_instance_id = var.existing_kms_instance_guid
-  roles                       = ["Reader"]
-  description                 = "Allow all ICD Postgres instances in the resource group ${var.resource_group_id} to read from the ${local.kms_service} instance GUID ${var.existing_kms_instance_guid}"
+  count                    = local.create_kms_auth_policy
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Reader"]
+  description              = "Allow all PostgreSQL instances in the resource group ${var.resource_group_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_key_instance_guid}"
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.kms_key_instance_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
 }
 
 # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
 resource "time_sleep" "wait_for_authorization_policy" {
+  count      = local.create_kms_auth_policy
   depends_on = [ibm_iam_authorization_policy.kms_policy]
 
   create_duration = "30s"
 }
+
+resource "ibm_iam_authorization_policy" "backup_kms_policy" {
+  count                    = local.create_backup_kms_auth_policy
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Reader"]
+  description              = "Allow all PostgreSQL instances in the Resource Group ${var.resource_group_id} to read the ${local.backup_kms_service} key ${local.backup_kms_key_id} from the instance GUID ${local.backup_kms_key_instance_guid}"
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.backup_kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.backup_kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.backup_kms_key_instance_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.backup_kms_key_id
+  }
+  # Scope of policy now includes the key, so ensure to create new policy before
+  # destroying old one to prevent any disruption to every day services.
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
+  count           = local.create_backup_kms_auth_policy
+  depends_on      = [ibm_iam_authorization_policy.backup_kms_policy]
+  create_duration = "30s"
+}
+
+########################################################################################################################
+# Postgresql instance
+########################################################################################################################
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
