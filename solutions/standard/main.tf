@@ -89,7 +89,7 @@ module "kms_backup_key_crn_parser" {
 
 #######################################################################################################################
 # KMS IAM Authorization Policies
-#   - only created if user passes a value for 'ibmcloud_kms_api_key' (used when KMS is in different account to Elasticsearch)
+#   - only created if user passes a value for 'ibmcloud_kms_api_key' (used when KMS is in different account to PostgreSQL)
 #   - if no value passed for 'ibmcloud_kms_api_key', the auth policy is created by the PostgreSQL module
 #######################################################################################################################
 
@@ -126,10 +126,10 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   count                    = local.create_cross_account_kms_auth_policy ? 1 : 0
   provider                 = ibm.kms
   source_service_account   = local.account_id
-  source_service_name      = "databases-for-elasticsearch"
+  source_service_name      = "databases-for-postgresql"
   source_resource_group_id = module.resource_group.resource_group_id
   roles                    = ["Reader"]
-  description              = "Allow all Elastic Search instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_instance_guid}"
+  description              = "Allow all PostgreSQL instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_instance_guid}"
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
@@ -174,10 +174,10 @@ resource "ibm_iam_authorization_policy" "backup_kms_policy" {
   count                    = local.create_cross_account_backup_kms_auth_policy ? 1 : 0
   provider                 = ibm.kms
   source_service_account   = local.account_id
-  source_service_name      = "databases-for-elasticsearch"
+  source_service_name      = "databases-for-postgresql"
   source_resource_group_id = module.resource_group.resource_group_id
   roles                    = ["Reader"]
-  description              = "Allow all Elastic Search instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.backup_kms_service} key ${local.backup_kms_key_id} from the instance GUID ${local.backup_kms_instance_guid}"
+  description              = "Allow all PostgreSQL instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.backup_kms_service} key ${local.backup_kms_key_id} from the instance GUID ${local.backup_kms_instance_guid}"
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
