@@ -114,7 +114,6 @@ module "postgresql_db" {
   use_same_kms_key_for_backups = false
   kms_key_crn                  = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
   backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd-pg.${local.data_key_name}"].crn
-  existing_kms_instance_guid   = module.key_protect_all_inclusive.kms_guid
   resource_tags                = var.resource_tags
   service_credential_names = {
     "postgressql_admin" : "Administrator",
