@@ -30,7 +30,7 @@ locals {
 #######################################################################################################################
 
 locals {
-  create_new_kms_key     = !var.use_ibm_owned_encryption_key && var.existing_kms_key_crn == null ? 1 : 0 # no need to create any KMS resources if passing an existing key, or using IBM owned keys
+  create_new_kms_key     = !var.use_ibm_owned_encryption_key && var.existing_kms_key_crn == null ? true : false # no need to create any KMS resources if passing an existing key, or using IBM owned keys
   postgres_key_name      = var.prefix != null ? "${var.prefix}-${var.key_name}" : var.key_name
   postgres_key_ring_name = var.prefix != null ? "${var.prefix}-${var.key_ring_name}" : var.key_ring_name
 }
@@ -39,7 +39,7 @@ module "kms" {
   providers = {
     ibm = ibm.kms
   }
-  count                       = local.create_new_kms_key
+  count                       = local.create_new_kms_key ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
   version                     = "4.18.1"
   create_key_protect_instance = false
