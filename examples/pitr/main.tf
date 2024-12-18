@@ -26,5 +26,4 @@ module "postgresql_db_pitr" {
   pg_version         = var.pg_version
   pitr_id            = var.pitr_id
   pitr_time          = var.pitr_time
-
 }
