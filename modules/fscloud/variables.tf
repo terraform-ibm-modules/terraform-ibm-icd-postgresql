@@ -189,8 +189,8 @@ variable "backup_encryption_key_crn" {
   validation {
     condition = anytrue([
       var.backup_encryption_key_crn == null,
-      can(regex(".*kms.*", var.kms_key_crn)),
-      can(regex(".*hs-crypto.*", var.kms_key_crn)),
+      can(regex(".*kms.*", var.backup_encryption_key_crn)),
+      can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)),
     ])
     error_message = "Value must be the KMS key CRN from a Key Protect or Hyper Protect Crypto Services instance in one of the supported backup regions."
   }
