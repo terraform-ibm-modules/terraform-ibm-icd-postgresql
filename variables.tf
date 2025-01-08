@@ -20,11 +20,11 @@ variable "pg_version" {
   validation {
     condition = anytrue([
       var.pg_version == null,
+      var.pg_version == "17",
       var.pg_version == "16",
       var.pg_version == "15",
       var.pg_version == "14",
       var.pg_version == "13",
-      var.pg_version == "12"
     ])
     error_message = "Version must be 12, 13, 14, 15 or 16. If no value passed, the current ICD preferred version is used."
   }
