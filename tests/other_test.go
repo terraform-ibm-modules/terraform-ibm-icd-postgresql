@@ -62,7 +62,7 @@ func TestRunBasicExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "12",
+			"pg_version": "13",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
@@ -108,7 +108,7 @@ func TestRunCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "12",
+			"pg_version": "13",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
