@@ -5,7 +5,7 @@
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
   version                      = "1.1.6"
-  resource_group_name          = var.use_existing_resource_group == false ? (var.prefix != null ? "${var.prefix}-${var.resource_group_name}" : var.resource_group_name) : null
+  resource_group_name          = var.use_existing_resource_group == false ? ((var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.resource_group_name}" : var.resource_group_name) : null
   existing_resource_group_name = var.use_existing_resource_group == true ? var.resource_group_name : null
 }
 
@@ -29,8 +29,8 @@ locals {
 
 locals {
   create_new_kms_key     = !var.use_ibm_owned_encryption_key && var.existing_kms_key_crn == null ? true : false # no need to create any KMS resources if passing an existing key, or using IBM owned keys
-  postgres_key_name      = var.prefix != null ? "${var.prefix}-${var.key_name}" : var.key_name
-  postgres_key_ring_name = var.prefix != null ? "${var.prefix}-${var.key_ring_name}" : var.key_ring_name
+  postgres_key_name      = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.key_name}" : var.key_name
+  postgres_key_ring_name = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.key_ring_name}" : var.key_ring_name
 }
 
 module "kms" {
@@ -249,7 +249,7 @@ module "postgresql_db" {
   source                            = "../../modules/fscloud"
   depends_on                        = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_backup_kms_authorization_policy]
   resource_group_id                 = module.resource_group.resource_group_id
-  name                              = var.prefix != null ? "${var.prefix}-${var.name}" : var.name
+  name                              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.name}" : var.name
   region                            = var.region
   skip_iam_authorization_policy     = var.skip_pg_kms_auth_policy
   pg_version                        = var.pg_version
