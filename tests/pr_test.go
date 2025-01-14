@@ -41,6 +41,27 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
+func TestRunBasicExample(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "pg",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{
+			"db_version":         "13",
+			"member_host_flavor": "multitenant",
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 func TestRunFSCloudExample(t *testing.T) {
 	t.Parallel()
 
@@ -74,26 +95,6 @@ func TestRunFSCloudExample(t *testing.T) {
 	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
 	assert.NoErrorf(t, outputErr, "Some outputs not found or nil")
 	options.TestTearDown()
-}
-
-func TestRunBasicExampleWithFlavor(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "examples/basic",
-		Prefix:             "postgres-flvr",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"member_host_flavor": "b3c.4x16.encrypted",
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunStandardSolution(t *testing.T) {

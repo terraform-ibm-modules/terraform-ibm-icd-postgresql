@@ -52,26 +52,6 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunBasicExample(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "examples/basic",
-		Prefix:             "postgres",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"pg_version": "13",
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 func testPlanICDVersions(t *testing.T, version string) {
 	t.Parallel()
 
@@ -109,26 +89,6 @@ func TestRunCompleteExample(t *testing.T) {
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
 			"pg_version": "13",
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestRunBasicExampleWithFlavorMultitenant(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "examples/basic",
-		Prefix:             "pg-flvr-multitenant",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"member_host_flavor": "multitenant",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})

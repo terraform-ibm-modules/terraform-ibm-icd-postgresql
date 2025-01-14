@@ -11,50 +11,16 @@ module "resource_group" {
 }
 
 ##############################################################################
-# ICD postgresql database
+# ICD database
 ##############################################################################
 
-module "postgresql_db" {
+module "database" {
   source             = "../.."
   resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-postgres"
-  pg_version         = var.pg_version
+  name               = "${var.prefix}-data-store"
+  pg_version         = var.db_version
   region             = var.region
   resource_tags      = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = var.member_host_flavor
-}
-
-# On destroy, we are seeing that even though the replica has been returned as
-# destroyed by terraform, the leader instance destroy can fail with: "You
-# must delete all replicas before disabling the leader. Try again with valid
-# values or contact support if the issue persists."
-# The ICD team have recommended to wait for a period of time after the replica
-# destroy completes before attempting to destroy the leader instance, so hence
-# adding a time sleep here.
-
-resource "time_sleep" "wait_time" {
-  depends_on = [module.postgresql_db]
-
-  destroy_duration = "5m"
-}
-
-##############################################################################
-# ICD postgresql read-only-replica
-##############################################################################
-
-module "read_only_replica_postgresql_db" {
-  count              = var.read_only_replicas_count
-  source             = "../.."
-  resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-read-only-replica-${count.index}"
-  region             = var.region
-  resource_tags      = var.resource_tags
-  access_tags        = var.access_tags
-  pg_version         = var.pg_version
-  remote_leader_crn  = module.postgresql_db.crn
-  member_host_flavor = "multitenant"
-  member_memory_mb   = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
-  member_disk_mb     = 5120 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
-  depends_on         = [time_sleep.wait_time]
 }

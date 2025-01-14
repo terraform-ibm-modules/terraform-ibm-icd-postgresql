@@ -2,32 +2,32 @@
 # Outputs
 ##############################################################################
 output "id" {
-  description = "Postgresql instance id"
-  value       = module.postgresql_db.id
+  description = "Database instance id"
+  value       = module.database.id
 }
 
 output "version" {
-  description = "Postgresql instance version"
-  value       = module.postgresql_db.version
+  description = "Database instance version"
+  value       = module.database.version
 }
 
 output "adminuser" {
   description = "Database admin user name"
-  value       = module.postgresql_db.adminuser
+  value       = module.database.adminuser
 }
 
 output "hostname" {
   description = "Database connection hostname"
-  value       = module.postgresql_db.hostname
+  value       = module.database.hostname
 }
 
 output "port" {
   description = "Database connection port"
-  value       = module.postgresql_db.port
+  value       = module.database.port
 }
 
 output "certificate_base64" {
   description = "Database connection certificate"
-  value       = module.postgresql_db.certificate_base64
+  value       = module.database.certificate_base64
   sensitive   = true
 }
