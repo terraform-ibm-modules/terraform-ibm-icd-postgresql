@@ -151,7 +151,7 @@ func TestRunStandardSolutionIBMKeys(t *testing.T) {
 func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
-	// Generate a 15 char long random string for the admin_pass
+	// Generate a 15 char long random string for the admin_pass.
 	randomBytes := make([]byte, 13)
 	_, randErr := rand.Read(randomBytes)
 	require.Nil(t, randErr) // do not proceed if we can't gen a random password
