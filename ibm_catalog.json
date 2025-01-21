@@ -128,7 +128,8 @@
               "key": "resource_group_name"
             },
             {
-              "key": "prefix"
+              "key": "prefix",
+              "required": true
             },
             {
               "key": "name"
