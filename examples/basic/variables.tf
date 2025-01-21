@@ -14,8 +14,8 @@ variable "prefix" {
   description = "Prefix to append to all resources created by this example"
 }
 
-variable "pg_version" {
-  description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
+variable "db_version" {
+  description = "Version of the ICD instance. If no value passed, the current ICD preferred version is used."
   type        = string
   default     = null
 }
@@ -34,25 +34,12 @@ variable "resource_tags" {
 
 variable "access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the PostgreSQL instance created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details"
+  description = "A list of access tags to apply to the ICD instance created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details"
   default     = []
-}
-
-variable "read_only_replicas_count" {
-  type        = number
-  description = "Number of read-only replicas per leader"
-  default     = 1
-  validation {
-    condition = alltrue([
-      var.read_only_replicas_count >= 1,
-      var.read_only_replicas_count <= 5
-    ])
-    error_message = "There is a limit of five read-only replicas per leader"
-  }
 }
 
 variable "member_host_flavor" {
   type        = string
   description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
-  default     = null
+  default     = "multitenant"
 }
