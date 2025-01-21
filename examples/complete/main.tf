@@ -112,8 +112,8 @@ module "postgresql_db" {
   # Example of how to use different KMS keys for data and backups
   use_ibm_owned_encryption_key = false
   use_same_kms_key_for_backups = false
-  kms_key_crn                  = module.key_protect_all_inclusive.keys["icd-pg.${var.prefix}-pg"].crn
-  backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd-pg.${local.data_key_name}"].crn
+  kms_key_crn                  = module.key_protect_all_inclusive.keys["icd-pg.${local.data_key_name}"].crn
+  backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd-pg.${local.backups_key_name}"].crn
   resource_tags                = var.resource_tags
   service_credential_names = {
     "postgressql_admin" : "Administrator",
