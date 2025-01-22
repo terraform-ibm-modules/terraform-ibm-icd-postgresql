@@ -167,11 +167,13 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 	})
 
 	options.TerraformVars = map[string]interface{}{
-		"existing_kms_instance_crn": permanentResources["hpcs_south_crn"],
-		"kms_endpoint_type":         "public",
-		"provider_visibility":       "public",
-		"resource_group_name":       options.Prefix,
-		"admin_pass":                randomPass,
+		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
+		"kms_endpoint_type":                 "public",
+		"provider_visibility":               "public",
+		"resource_group_name":               options.Prefix,
+		"admin_pass":                        randomPass,
+		"use_default_backup_encryption_key": true,
+		"use_ibm_owned_encryption_key":      false,
 	}
 
 	output, err := options.RunTestUpgrade()

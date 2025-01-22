@@ -38,15 +38,20 @@ locals {
 # Parse info from KMS key CRNs
 ########################################################################################################################
 
+locals {
+  parse_kms_key        = !var.use_ibm_owned_encryption_key
+  parse_backup_kms_key = !var.use_ibm_owned_encryption_key && !var.use_default_backup_encryption_key
+}
+
 module "kms_key_crn_parser" {
-  count   = var.use_ibm_owned_encryption_key ? 0 : 1
+  count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
   version = "1.1.0"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
-  count   = var.use_ibm_owned_encryption_key ? 0 : 1
+  count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
   version = "1.1.0"
   crn     = local.backup_encryption_key_crn
@@ -54,14 +59,14 @@ module "backup_key_crn_parser" {
 
 # Put parsed values into locals
 locals {
-  kms_service                  = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].service_name : null
-  kms_account_id               = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].account_id : null
-  kms_key_id                   = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].resource : null
-  kms_key_instance_guid        = !var.use_ibm_owned_encryption_key ? module.kms_key_crn_parser[0].service_instance : null
-  backup_kms_service           = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].service_name : null
-  backup_kms_account_id        = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].account_id : null
-  backup_kms_key_id            = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].resource : null
-  backup_kms_key_instance_guid = !var.use_ibm_owned_encryption_key ? module.backup_key_crn_parser[0].service_instance : null
+  kms_service                  = local.parse_kms_key ? module.kms_key_crn_parser[0].service_name : null
+  kms_account_id               = local.parse_kms_key ? module.kms_key_crn_parser[0].account_id : null
+  kms_key_id                   = local.parse_kms_key ? module.kms_key_crn_parser[0].resource : null
+  kms_key_instance_guid        = local.parse_kms_key ? module.kms_key_crn_parser[0].service_instance : null
+  backup_kms_service           = local.parse_backup_kms_key ? module.backup_key_crn_parser[0].service_name : null
+  backup_kms_account_id        = local.parse_backup_kms_key ? module.backup_key_crn_parser[0].account_id : null
+  backup_kms_key_id            = local.parse_backup_kms_key ? module.backup_key_crn_parser[0].resource : null
+  backup_kms_key_instance_guid = local.parse_backup_kms_key ? module.backup_key_crn_parser[0].service_instance : null
 }
 
 ########################################################################################################################
