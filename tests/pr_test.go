@@ -111,7 +111,7 @@ func TestRunStandardSolution(t *testing.T) {
 	})
 
 	options.TerraformVars = map[string]interface{}{
-		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version
+		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version.
 		"existing_kms_instance_crn":   permanentResources["hpcs_south_crn"],
 		"kms_endpoint_type":           "public",
 		"provider_visibility":         "public",
