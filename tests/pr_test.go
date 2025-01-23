@@ -170,19 +170,34 @@ func TestPlanValidation(t *testing.T) {
 	assert.Nil(t, initErr, "This should not have errored")
 
 	// Test the DA when using IBM owned encryption keys
-	options.Vars["use_default_backup_encryption_key"] = false
-	options.Vars["use_ibm_owned_encryption_key"] = true
-	output, err := terraform.PlanE(t, options)
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	var ibmOwnedEncrytionKeyTFVars = map[string]interface{}{
+		"use_default_backup_encryption_key": false,
+		"use_ibm_owned_encryption_key":      true,
+	}
 
 	// Test the DA when using Default Backup Encryption Key and not IBM owned encryption keys
-	options.Vars["existing_kms_instance_crn"] = permanentResources["hpcs_south_crn"]
-	options.Vars["use_default_backup_encryption_key"] = true
-	options.Vars["use_ibm_owned_encryption_key"] = false
-	output, err = terraform.PlanE(t, options)
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	var notIbmOwnedEncrytionKeyTFVars = map[string]interface{}{
+		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
+		"use_default_backup_encryption_key": true,
+		"use_ibm_owned_encryption_key":      false,
+	}
+
+	// Create a list (slice) of the maps
+	tfVarsList := []map[string]interface{}{
+		ibmOwnedEncrytionKeyTFVars,
+		notIbmOwnedEncrytionKeyTFVars,
+	}
+
+	// Iterate over the slice of maps
+	for _, tfVars := range tfVarsList {
+		// Iterate over the keys and values in each map
+		for key, value := range tfVars {
+			options.Vars[key] = value
+		}
+		output, err := terraform.PlanE(t, options)
+		assert.Nil(t, err, "This should not have errored")
+		assert.NotNil(t, output, "Expected some output")
+	}
 }
 
 func GetRandomAdminPassword(t *testing.T) string {
