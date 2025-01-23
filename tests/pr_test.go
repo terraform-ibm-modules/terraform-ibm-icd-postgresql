@@ -124,30 +124,6 @@ func TestRunStandardSolution(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-// Test the DA when using IBM owned encryption keys
-func TestRunStandardSolutionIBMKeys(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardSolutionTerraformDir,
-		Region:        "us-south",
-		Prefix:        "postgres-icd-key",
-		ResourceGroup: resourceGroup,
-	})
-
-	options.TerraformVars = map[string]interface{}{
-		"pg_version":                   "16",
-		"provider_visibility":          "public",
-		"resource_group_name":          options.Prefix,
-		"use_ibm_owned_encryption_key": true,
-	}
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
@@ -180,21 +156,31 @@ func TestPlanValidation(t *testing.T) {
 	options := &terraform.Options{
 		TerraformDir: "../" + standardSolutionTerraformDir,
 		Vars: map[string]interface{}{
-			"prefix":                            "validate-plan",
-			"region":                            "us-south",
-			"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
-			"kms_endpoint_type":                 "public",
-			"provider_visibility":               "public",
-			"resource_group_name":               "validate-plan",
-			"admin_pass":                        GetRandomAdminPassword(t),
-			"use_default_backup_encryption_key": true,
-			"use_ibm_owned_encryption_key":      false,
+			"prefix":              "validate-plan",
+			"region":              "us-south",
+			"kms_endpoint_type":   "public",
+			"provider_visibility": "public",
+			"resource_group_name": "validate-plan",
+			"admin_pass":          GetRandomAdminPassword(t),
 		},
 		Upgrade: true,
 	}
 
-	output, err := terraform.InitAndPlanE(t, options)
+	_, initErr := terraform.InitE(t, options)
+	assert.Nil(t, initErr, "This should not have errored")
 
+	// Test the DA when using IBM owned encryption keys
+	options.Vars["use_default_backup_encryption_key"] = false
+	options.Vars["use_ibm_owned_encryption_key"] = true
+	output, err := terraform.PlanE(t, options)
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+
+	// Test the DA when using Default Backup Encryption Key and not IBM owned encryption keys
+	options.Vars["existing_kms_instance_crn"] = permanentResources["hpcs_south_crn"]
+	options.Vars["use_default_backup_encryption_key"] = true
+	options.Vars["use_ibm_owned_encryption_key"] = false
+	output, err = terraform.PlanE(t, options)
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
