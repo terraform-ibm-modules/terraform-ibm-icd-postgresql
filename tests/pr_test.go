@@ -124,39 +124,8 @@ func TestRunStandardSolution(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-// Test the DA when using IBM owned encryption keys
-func TestRunStandardSolutionIBMKeys(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardSolutionTerraformDir,
-		Region:        "us-south",
-		Prefix:        "postgres-icd-key",
-		ResourceGroup: resourceGroup,
-	})
-
-	options.TerraformVars = map[string]interface{}{
-		"pg_version":                   "16",
-		"provider_visibility":          "public",
-		"resource_group_name":          options.Prefix,
-		"use_ibm_owned_encryption_key": true,
-	}
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
 func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
-
-	// Generate a 15 char long random string for the admin_pass.
-	randomBytes := make([]byte, 13)
-	_, randErr := rand.Read(randomBytes)
-	require.Nil(t, randErr) // do not proceed if we can't gen a random password
-
-	randomPass := "A1" + base64.URLEncoding.EncodeToString(randomBytes)[:13]
 
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
 		Testing:       t,
@@ -171,7 +140,7 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 		"kms_endpoint_type":         "public",
 		"provider_visibility":       "public",
 		"resource_group_name":       options.Prefix,
-		"admin_pass":                randomPass,
+		"admin_pass":                GetRandomAdminPassword(t),
 	}
 
 	output, err := options.RunTestUpgrade()
@@ -179,4 +148,65 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
+}
+
+func TestPlanValidation(t *testing.T) {
+	t.Parallel()
+
+	options := &terraform.Options{
+		TerraformDir: "../" + standardSolutionTerraformDir,
+		Vars: map[string]interface{}{
+			"prefix":              "validate-plan",
+			"region":              "us-south",
+			"kms_endpoint_type":   "public",
+			"provider_visibility": "public",
+			"resource_group_name": "validate-plan",
+			"admin_pass":          GetRandomAdminPassword(t),
+		},
+		Upgrade: true,
+	}
+
+	_, initErr := terraform.InitE(t, options)
+	assert.Nil(t, initErr, "This should not have errored")
+
+	// Test the DA when using IBM owned encryption keys
+	var ibmOwnedEncrytionKeyTFVars = map[string]interface{}{
+		"use_default_backup_encryption_key": false,
+		"use_ibm_owned_encryption_key":      true,
+	}
+
+	// Test the DA when using Default Backup Encryption Key and not IBM owned encryption keys
+	var notIbmOwnedEncrytionKeyTFVars = map[string]interface{}{
+		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
+		"use_default_backup_encryption_key": true,
+		"use_ibm_owned_encryption_key":      false,
+	}
+
+	// Create a list (slice) of the maps
+	tfVarsList := []map[string]interface{}{
+		ibmOwnedEncrytionKeyTFVars,
+		notIbmOwnedEncrytionKeyTFVars,
+	}
+
+	// Iterate over the slice of maps
+	for _, tfVars := range tfVarsList {
+		// Iterate over the keys and values in each map
+		for key, value := range tfVars {
+			options.Vars[key] = value
+		}
+		output, err := terraform.PlanE(t, options)
+		assert.Nil(t, err, "This should not have errored")
+		assert.NotNil(t, output, "Expected some output")
+	}
+}
+
+func GetRandomAdminPassword(t *testing.T) string {
+	// Generate a 15 char long random string for the admin_pass
+	randomBytes := make([]byte, 13)
+	_, randErr := rand.Read(randomBytes)
+	require.Nil(t, randErr) // do not proceed if we can't gen a random password
+
+	randomPass := "A1" + base64.URLEncoding.EncodeToString(randomBytes)[:13]
+
+	return randomPass
 }
