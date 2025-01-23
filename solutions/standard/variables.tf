@@ -60,6 +60,12 @@ variable "backup_crn" {
   default     = null
 }
 
+variable "remote_leader_crn" {
+  type        = string
+  description = "A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas"
+  default     = null
+}
+
 ##############################################################################
 # ICD hosting model properties
 ##############################################################################

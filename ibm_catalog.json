@@ -287,6 +287,9 @@
             },
             {
               "key": "backup_crn"
+            },
+            {
+              "key": "remote_leader_crn"
             }
           ]
         }
