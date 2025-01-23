@@ -27,7 +27,7 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-const standardSolutionTerraformDir = "solutions/standard"
+const standardSolutionTerraformDir = "../solutions/standard"
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 
@@ -151,7 +151,7 @@ func TestRunStandardSolutionIBMKeys(t *testing.T) {
 func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
-	// Generate a 15 char long random string for the admin_pass.
+	// Generate a 15 char long random string for the admin_pass
 	randomBytes := make([]byte, 13)
 	_, randErr := rand.Read(randomBytes)
 	require.Nil(t, randErr) // do not proceed if we can't gen a random password
@@ -167,13 +167,11 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 	})
 
 	options.TerraformVars = map[string]interface{}{
-		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
-		"kms_endpoint_type":                 "public",
-		"provider_visibility":               "public",
-		"resource_group_name":               options.Prefix,
-		"admin_pass":                        randomPass,
-		"use_default_backup_encryption_key": true,
-		"use_ibm_owned_encryption_key":      false,
+		"existing_kms_instance_crn": permanentResources["hpcs_south_crn"],
+		"kms_endpoint_type":         "public",
+		"provider_visibility":       "public",
+		"resource_group_name":       options.Prefix,
+		"admin_pass":                randomPass,
 	}
 
 	output, err := options.RunTestUpgrade()
@@ -181,4 +179,40 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 		assert.Nil(t, err, "This should not have errored")
 		assert.NotNil(t, output, "Expected some output")
 	}
+}
+
+func TestPlanValidation(t *testing.T) {
+	t.Parallel()
+
+	// Generate a 15 char long random string for the admin_pass
+	randomBytes := make([]byte, 13)
+	_, randErr := rand.Read(randomBytes)
+	require.Nil(t, randErr) // do not proceed if we can't gen a random password
+
+	randomPass := "A1" + base64.URLEncoding.EncodeToString(randomBytes)[:13]
+
+	options := &terraform.Options{
+		TerraformDir: standardSolutionTerraformDir,
+		Vars: map[string]interface{}{
+			"prefix":                            "validate-plan",
+			"region":                            "us-south",
+			"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
+			"kms_endpoint_type":                 "public",
+			"provider_visibility":               "public",
+			"resource_group_name":               "validate-plan",
+			"admin_pass":                        randomPass,
+			"use_default_backup_encryption_key": true,
+			"use_ibm_owned_encryption_key":      false,
+		},
+		Upgrade: true,
+	}
+
+	_, initErr := terraform.InitE(t, options)
+
+	assert.Nil(t, initErr, "This should not have errored")
+
+	output, err := terraform.PlanE(t, options)
+
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
