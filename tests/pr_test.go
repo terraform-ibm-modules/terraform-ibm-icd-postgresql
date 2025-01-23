@@ -27,7 +27,7 @@ const yamlLocation = "../common-dev-assets/common-go-assets/common-permanent-res
 
 var permanentResources map[string]interface{}
 
-const standardSolutionTerraformDir = "../solutions/standard"
+const standardSolutionTerraformDir = "solutions/standard"
 
 var sharedInfoSvc *cloudinfo.CloudInfoService
 
@@ -111,7 +111,7 @@ func TestRunStandardSolution(t *testing.T) {
 	})
 
 	options.TerraformVars = map[string]interface{}{
-		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version.
+		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version
 		"existing_kms_instance_crn":   permanentResources["hpcs_south_crn"],
 		"kms_endpoint_type":           "public",
 		"provider_visibility":         "public",
@@ -151,7 +151,7 @@ func TestRunStandardSolutionIBMKeys(t *testing.T) {
 func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
-	// Generate a 15 char long random string for the admin_pass
+	// Generate a 15 char long random string for the admin_pass.
 	randomBytes := make([]byte, 13)
 	_, randErr := rand.Read(randomBytes)
 	require.Nil(t, randErr) // do not proceed if we can't gen a random password
