@@ -248,6 +248,7 @@ module "postgresql_db" {
   resource_group_id                 = module.resource_group.resource_group_id
   name                              = (var.prefix != null && var.prefix != "") ? "${var.prefix}-${var.name}" : var.name
   region                            = var.region
+  remote_leader_crn                 = var.remote_leader_crn
   skip_iam_authorization_policy     = var.skip_pg_kms_auth_policy
   pg_version                        = var.pg_version
   use_ibm_owned_encryption_key      = var.use_ibm_owned_encryption_key

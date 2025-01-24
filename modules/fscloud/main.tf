@@ -3,6 +3,7 @@ module "postgresql_db" {
   resource_group_id                 = var.resource_group_id
   name                              = var.name
   region                            = var.region
+  remote_leader_crn                 = var.remote_leader_crn
   skip_iam_authorization_policy     = var.skip_iam_authorization_policy
   service_endpoints                 = "private"
   pg_version                        = var.pg_version
