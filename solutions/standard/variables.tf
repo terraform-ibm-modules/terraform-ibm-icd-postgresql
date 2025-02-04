@@ -33,7 +33,7 @@ variable "resource_group_name" {
 variable "prefix" {
   type        = string
   description = "Prefix to add to all resources created by this solution. To not use any prefix value, you can set this value to `null` or an empty string."
-  default     = "postgresql"
+  default     = "dev"
 }
 
 variable "name" {
