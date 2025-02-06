@@ -152,8 +152,6 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 }
 
 func TestPlanValidation(t *testing.T) {
-	t.Parallel()
-
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
 		Testing:       t,
 		TerraformDir:  standardSolutionTerraformDir,
