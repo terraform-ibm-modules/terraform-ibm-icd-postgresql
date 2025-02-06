@@ -184,17 +184,17 @@ func TestPlanValidation(t *testing.T) {
 		"use_ibm_owned_encryption_key":      false,
 	}
 
-	// Create a list (slice) of the maps
-	tfVarsList := []map[string]interface{}{
-		ibmOwnedEncrytionKeyTFVars,
-		notIbmOwnedEncrytionKeyTFVars,
+	// Create a map of the variables
+	tfVarsMap := map[string]map[string]interface{}{
+		"ibmOwnedEncrytionKeyTFVars":    ibmOwnedEncrytionKeyTFVars,
+		"notIbmOwnedEncrytionKeyTFVars": notIbmOwnedEncrytionKeyTFVars,
 	}
 
-	i, initErr := terraform.InitE(t, options.TerraformOptions)
+	_, initErr := terraform.InitE(t, options.TerraformOptions)
 	if assert.Nil(t, initErr, "This should not have errored") {
 		// Iterate over the slice of maps
-		for _, tfVars := range tfVarsList {
-			t.Run(i, func(t *testing.T) {
+		for name, tfVars := range tfVarsMap {
+			t.Run(name, func(t *testing.T) {
 				// Iterate over the keys and values in each map
 				for key, value := range tfVars {
 					options.TerraformOptions.Vars[key] = value
