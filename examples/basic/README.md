@@ -4,4 +4,4 @@ An end-to-end example that uses the module's default variable values. This examp
 
 - Create a new resource group if one is not passed in.
 - Create a new ICD Postgresql database instance.
-- Create a read-only replica of the leader Postgresql database instance. For more info on Read-only Replicas, see [Configuring Read-only Replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)
+- Create a read-only replica of the leader database instance. For more info on Read-only Replicas, see [Configuring Read-only Replicas](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)
