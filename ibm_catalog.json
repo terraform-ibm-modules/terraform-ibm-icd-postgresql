@@ -192,8 +192,13 @@
             },
             {
               "key": "pg_version",
-              "required": true,
+              "required": false,
+              "default_value": "__NULL__",
               "options": [
+                {
+                  "displayname": "preferred",
+                  "value": "__NULL__"
+                 },
                 {
                   "displayname": "13",
                   "value": "13"
