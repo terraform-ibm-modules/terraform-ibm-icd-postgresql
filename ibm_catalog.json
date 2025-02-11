@@ -192,8 +192,13 @@
             },
             {
               "key": "pg_version",
-              "required": true,
+              "required": false,
+              "default_value": "__NULL__",
               "options": [
+                {
+                  "displayname": "preferred",
+                  "value": "__NULL__"
+                 },
                 {
                   "displayname": "13",
                   "value": "13"
@@ -276,7 +281,7 @@
               ]
             },
             {
-              "key": "skip_iam_authorization_policy"
+              "key": "skip_pg_kms_auth_policy"
             },
             {
               "key": "key_ring_name"
@@ -289,6 +294,12 @@
             },
             {
               "key": "backup_crn"
+            },
+            {
+              "key": "existing_backup_kms_key_crn"
+            },
+            {
+              "key": "use_default_backup_encryption_key"
             },
             {
               "key": "remote_leader_crn"
