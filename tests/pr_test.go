@@ -132,9 +132,11 @@ func TestRunStandardSolutionSchematics(t *testing.T) {
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
 		{Name: "pg_version", Value: "16", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 		{Name: "resource_group_name", Value: options.Prefix, DataType: "string"},
+		{Name: "admin_pass", Value: GetRandomAdminPassword(t), DataType: "string"},
 	}
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
@@ -156,7 +158,6 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 		"kms_endpoint_type":         "public",
 		"provider_visibility":       "public",
 		"resource_group_name":       options.Prefix,
-		"admin_pass":                GetRandomAdminPassword(t),
 	}
 
 	output, err := options.RunTestUpgrade()
