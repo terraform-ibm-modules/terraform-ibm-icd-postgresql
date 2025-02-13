@@ -8,6 +8,7 @@ import (
 	"os"
 	"testing"
 
+	"github.com/gruntwork-io/terratest/modules/logger"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -151,23 +152,23 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 }
 
 func TestPlanValidation(t *testing.T) {
-	t.Parallel()
-
-	options := &terraform.Options{
-		TerraformDir: "../" + standardSolutionTerraformDir,
-		Vars: map[string]interface{}{
-			"prefix":              "validate-plan",
-			"region":              "us-south",
-			"kms_endpoint_type":   "public",
-			"provider_visibility": "public",
-			"resource_group_name": "validate-plan",
-			"admin_pass":          GetRandomAdminPassword(t),
-		},
-		Upgrade: true,
+	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
+		Testing:       t,
+		TerraformDir:  standardSolutionTerraformDir,
+		Prefix:        "validate-plan",
+		ResourceGroup: resourceGroup,
+		Region:        "us-south", // skip VPC region picker
+	})
+	options.TestSetup()
+	options.TerraformOptions.NoColor = true
+	options.TerraformOptions.Logger = logger.Discard
+	options.TerraformOptions.Vars = map[string]interface{}{
+		"prefix":              options.Prefix,
+		"region":              "us-south",
+		"kms_endpoint_type":   "public",
+		"provider_visibility": "public",
+		"resource_group_name": "validate-plan",
 	}
-
-	_, initErr := terraform.InitE(t, options)
-	assert.Nil(t, initErr, "This should not have errored")
 
 	// Test the DA when using IBM owned encryption keys
 	var ibmOwnedEncrytionKeyTFVars = map[string]interface{}{
@@ -182,21 +183,26 @@ func TestPlanValidation(t *testing.T) {
 		"use_ibm_owned_encryption_key":      false,
 	}
 
-	// Create a list (slice) of the maps
-	tfVarsList := []map[string]interface{}{
-		ibmOwnedEncrytionKeyTFVars,
-		notIbmOwnedEncrytionKeyTFVars,
+	// Create a map of the variables
+	tfVarsMap := map[string]map[string]interface{}{
+		"ibmOwnedEncrytionKeyTFVars":    ibmOwnedEncrytionKeyTFVars,
+		"notIbmOwnedEncrytionKeyTFVars": notIbmOwnedEncrytionKeyTFVars,
 	}
 
-	// Iterate over the slice of maps
-	for _, tfVars := range tfVarsList {
-		// Iterate over the keys and values in each map
-		for key, value := range tfVars {
-			options.Vars[key] = value
+	_, initErr := terraform.InitE(t, options.TerraformOptions)
+	if assert.Nil(t, initErr, "This should not have errored") {
+		// Iterate over the slice of maps
+		for name, tfVars := range tfVarsMap {
+			t.Run(name, func(t *testing.T) {
+				// Iterate over the keys and values in each map
+				for key, value := range tfVars {
+					options.TerraformOptions.Vars[key] = value
+				}
+				output, err := terraform.PlanE(t, options.TerraformOptions)
+				assert.Nil(t, err, "This should not have errored")
+				assert.NotNil(t, output, "Expected some output")
+			})
 		}
-		output, err := terraform.PlanE(t, options)
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
 	}
 }
 
