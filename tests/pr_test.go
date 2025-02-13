@@ -168,7 +168,6 @@ func TestPlanValidation(t *testing.T) {
 		"kms_endpoint_type":   "public",
 		"provider_visibility": "public",
 		"resource_group_name": "validate-plan",
-		"admin_pass":          GetRandomAdminPassword(t),
 	}
 
 	// Test the DA when using IBM owned encryption keys
