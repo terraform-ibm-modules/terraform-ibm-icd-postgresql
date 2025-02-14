@@ -4,8 +4,12 @@ package test
 import (
 	"crypto/rand"
 	"encoding/base64"
+	"fmt"
+	"io/fs"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 	"testing"
 
 	"github.com/gruntwork-io/terratest/modules/logger"
@@ -15,6 +19,7 @@ import (
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/cloudinfo"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/common"
 	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testhelper"
+	"github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper/testschematic"
 )
 
 // Use existing resource group
@@ -45,84 +50,97 @@ func TestMain(m *testing.M) {
 	os.Exit(m.Run())
 }
 
-func TestRunFSCloudExample(t *testing.T) {
-	t.Parallel()
+type tarIncludePatterns struct {
+	excludeDirs []string
 
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: "examples/fscloud",
-		Prefix:       "postgres-fscloud",
-		Region:       "us-south", // For FSCloud locking into us-south since that is where the HPCS permanent instance is
-		/*
-		 Comment out the 'ResourceGroup' input to force this tests to create a unique resource group to ensure tests do
-		 not clash. This is due to the fact that an auth policy may already exist in this resource group since we are
-		 re-using a permanent HPCS instance. By using a new resource group, the auth policy will not already exist
-		 since this module scopes auth policies by resource group.
-		*/
-		//ResourceGroup: resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"access_tags": permanentResources["accessTags"],
-			"kms_key_crn": permanentResources["hpcs_south_root_key_crn"],
-			"pg_version":  "16", // Always lock this test into the latest supported Postgres version
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-	options.SkipTestTearDown = true
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	includeFiletypes []string
 
-	// check if outputs exist
-	outputs := terraform.OutputAll(options.Testing, options.TerraformOptions)
-	expectedOutputs := []string{"port", "hostname"}
-	_, outputErr := testhelper.ValidateTerraformOutputs(outputs, expectedOutputs...)
-	assert.NoErrorf(t, outputErr, "Some outputs not found or nil")
-	options.TestTearDown()
+	includeDirs []string
 }
 
-func TestRunBasicExampleWithFlavor(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:            t,
-		TerraformDir:       "examples/basic",
-		Prefix:             "postgres-flvr",
-		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"member_host_flavor": "b3c.4x16.encrypted",
-		},
-		CloudInfoService: sharedInfoSvc,
+func getTarIncludePatternsRecursively(dir string, dirsToExclude []string, fileTypesToInclude []string) ([]string, error) {
+	r := tarIncludePatterns{dirsToExclude, fileTypesToInclude, nil}
+	err := filepath.WalkDir(dir, func(path string, entry fs.DirEntry, err error) error {
+		return walk(&r, path, entry, err)
 	})
-
-	output, err := options.RunTestConsistency()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
+	if err != nil {
+		fmt.Println("error")
+		return r.includeDirs, err
+	}
+	return r.includeDirs, nil
 }
 
-func TestRunStandardSolution(t *testing.T) {
+func walk(r *tarIncludePatterns, s string, d fs.DirEntry, err error) error {
+	if err != nil {
+		return err
+	}
+	if d.IsDir() {
+		for _, excludeDir := range r.excludeDirs {
+			if strings.Contains(s, excludeDir) {
+				return nil
+			}
+		}
+		if s == ".." {
+			r.includeDirs = append(r.includeDirs, "*.tf")
+			return nil
+		}
+		for _, includeFiletype := range r.includeFiletypes {
+			r.includeDirs = append(r.includeDirs, strings.ReplaceAll(s+"/*"+includeFiletype, "../", ""))
+		}
+	}
+	return nil
+}
+
+func TestRunStandardSolutionSchematics(t *testing.T) {
 	t.Parallel()
 
-	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardSolutionTerraformDir,
-		Region:        "us-south",
-		Prefix:        "postgres-st-da",
-		ResourceGroup: resourceGroup,
-	})
-
-	options.TerraformVars = map[string]interface{}{
-		"pg_version":                  "16", // Always lock this test into the latest supported PostgreSQL version
-		"existing_kms_instance_crn":   permanentResources["hpcs_south_crn"],
-		"kms_endpoint_type":           "public",
-		"provider_visibility":         "public",
-		"existing_backup_kms_key_crn": permanentResources["hpcs_south_root_key_crn"],
-		"resource_group_name":         options.Prefix,
+	excludeDirs := []string{
+		".terraform",
+		".docs",
+		".github",
+		".git",
+		".idea",
+		"common-dev-assets",
+		"examples",
+		"tests",
+		"reference-architectures",
+	}
+	includeFiletypes := []string{
+		".tf",
+		".yaml",
+		".py",
+		".tpl",
+		".sh",
 	}
 
-	output, err := options.RunTestConsistency()
+	tarIncludePatterns, recurseErr := getTarIncludePatternsRecursively("..", excludeDirs, includeFiletypes)
+
+	// if error producing tar patterns (very unexpected) fail test immediately
+	require.NoError(t, recurseErr, "Schematic Test had unexpected error traversing directory tree")
+	prefix := "postgres-st-da"
+	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
+		Testing:                t,
+		TarIncludePatterns:     tarIncludePatterns,
+		TemplateFolder:         standardSolutionTerraformDir,
+		BestRegionYAMLPath:     regionSelectionPath,
+		Prefix:                 prefix,
+		ResourceGroup:          resourceGroup,
+		DeleteWorkspaceOnFail:  false,
+		WaitJobCompleteMinutes: 60,
+	})
+
+	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
+		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
+		{Name: "pg_version", Value: "16", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "resource_group_name", Value: options.Prefix, DataType: "string"},
+		{Name: "admin_pass", Value: GetRandomAdminPassword(t), DataType: "string"},
+	}
+	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
 }
 
 func TestRunStandardUpgradeSolution(t *testing.T) {
@@ -141,7 +159,6 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 		"kms_endpoint_type":         "public",
 		"provider_visibility":       "public",
 		"resource_group_name":       options.Prefix,
-		"admin_pass":                GetRandomAdminPassword(t),
 	}
 
 	output, err := options.RunTestUpgrade()
