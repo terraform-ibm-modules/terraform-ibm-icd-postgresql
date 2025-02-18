@@ -218,6 +218,10 @@ func TestPlanValidation(t *testing.T) {
 				output, err := terraform.PlanE(t, options.TerraformOptions)
 				assert.Nil(t, err, "This should not have errored")
 				assert.NotNil(t, output, "Expected some output")
+				// Delete the keys from the map
+				for key := range tfVars {
+					delete(options.TerraformOptions.Vars, key)
+				}
 			})
 		}
 	}
