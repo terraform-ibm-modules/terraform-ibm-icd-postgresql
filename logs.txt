@@ -1,0 +1,3 @@
+./ci/install-deps.sh
+
+-- Installing pre-commit v4.1.0...

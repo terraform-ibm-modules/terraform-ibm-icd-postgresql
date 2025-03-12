@@ -4,47 +4,42 @@
 
 output "id" {
   description = "PostgreSQL instance id"
-  value       = module.postgresql_db.id
+  value       = local.postgresql_id
 }
 
 output "guid" {
   description = "PostgreSQL instance guid"
-  value       = module.postgresql_db.guid
+  value       = local.postgresql_guid
 }
 
 output "version" {
   description = "PostgreSQL instance version"
-  value       = module.postgresql_db.version
+  value       = local.postgresql_version
 }
 
 output "crn" {
   description = "PostgreSQL instance crn"
-  value       = module.postgresql_db.crn
-}
-
-output "cbr_rule_ids" {
-  description = "CBR rule ids created to restrict PostgreSQL"
-  value       = module.postgresql_db.cbr_rule_ids
+  value       = local.postgresql_crn
 }
 
 output "service_credentials_json" {
   description = "Service credentials json map"
-  value       = module.postgresql_db.service_credentials_json
+  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql[0].service_credentials_json
   sensitive   = true
 }
 
 output "service_credentials_object" {
   description = "Service credentials object"
-  value       = module.postgresql_db.service_credentials_object
+  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql[0].service_credentials_json
   sensitive   = true
 }
 
 output "hostname" {
   description = "PostgreSQL instance hostname"
-  value       = module.postgresql_db.hostname
+  value       = local.postgresql_hostname
 }
 
 output "port" {
   description = "PostgreSQL instance port"
-  value       = module.postgresql_db.port
+  value       = local.postgresql_port
 }

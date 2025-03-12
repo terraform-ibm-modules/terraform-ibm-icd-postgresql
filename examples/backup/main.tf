@@ -17,7 +17,7 @@ module "postgresql_db" {
   name               = "${var.prefix}-postgres"
   pg_version         = var.pg_version
   region             = var.region
-  resource_tags      = var.resource_tags
+  tags      = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = "multitenant"
 }
@@ -28,13 +28,13 @@ data "ibm_database_backups" "backup_database" {
 }
 
 # New postgresql instance pointing to the backup instance
-module "restored_postgresql_db" {
+module "restored_icd_postgresql" {
   source             = "../.."
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres-restored"
   pg_version         = var.pg_version
   region             = var.region
-  resource_tags      = var.resource_tags
+  tags      = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = "multitenant"
   backup_crn         = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn

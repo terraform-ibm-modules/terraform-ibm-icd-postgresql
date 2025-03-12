@@ -1,17 +1,12 @@
 ##############################################################################
 # Outputs
 ##############################################################################
-output "id" {
-  description = "Postgresql instance id"
-  value       = var.postgresql_db_backup_crn == null ? module.postgresql_db[0].id : null
-}
-
-output "restored_postgresql_db_id" {
+output "restored_icd_postgresql_id" {
   description = "Restored Postgresql instance id"
-  value       = module.restored_postgresql_db.id
+  value       = module.restored_icd_postgresql.id
 }
 
-output "restored_postgresql_db_version" {
+output "restored_icd_postgresql_version" {
   description = "Restored Postgresql instance version"
-  value       = module.restored_postgresql_db.version
+  value       = module.restored_icd_postgresql.version
 }

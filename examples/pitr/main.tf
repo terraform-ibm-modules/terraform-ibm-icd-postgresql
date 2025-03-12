@@ -16,7 +16,7 @@ module "postgresql_db_pitr" {
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres-pitr"
   region             = var.region
-  resource_tags      = var.resource_tags
+  tags      = var.resource_tags
   access_tags        = var.access_tags
   member_memory_mb   = 4096
   member_disk_mb     = 5120

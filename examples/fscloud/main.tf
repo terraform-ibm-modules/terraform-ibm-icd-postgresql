@@ -53,7 +53,7 @@ module "cbr_zone" {
 # Postgres Instance
 ##############################################################################
 
-module "postgresql_db" {
+module "postgresql" {
   source                    = "../../modules/fscloud"
   resource_group_id         = module.resource_group.resource_group_id
   name                      = "${var.prefix}-postgres"

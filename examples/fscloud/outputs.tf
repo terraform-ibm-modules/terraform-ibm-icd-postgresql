@@ -3,25 +3,25 @@
 ##############################################################################
 output "id" {
   description = "Postgresql instance id"
-  value       = module.postgresql_db.id
+  value       = module.postgresql.id
 }
 
 output "guid" {
   description = "Postgresql instance guid"
-  value       = module.postgresql_db.guid
+  value       = module.postgresql.guid
 }
 
 output "version" {
   description = "Postgresql instance version"
-  value       = module.postgresql_db.version
+  value       = module.postgresql.version
 }
 
 output "hostname" {
   description = "Postgresql instance hostname"
-  value       = module.postgresql_db.hostname
+  value       = module.postgresql.hostname
 }
 
 output "port" {
   description = "Postgresql instance port"
-  value       = module.postgresql_db.port
+  value       = module.postgresql.port
 }
