@@ -2,10 +2,11 @@
 package test
 
 import (
+	"crypto/rand"
 	"encoding/base64"
 	"fmt"
 	"log"
-	"math/rand"
+	"math/big"
 	"os"
 	"strings"
 	"testing"
@@ -193,7 +194,12 @@ func TestRunExistingInstance(t *testing.T) {
 	prefix := fmt.Sprintf("postgresql-t-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := ".."
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
-	region := validICDRegions[rand.Intn(len(validICDRegions))]
+	rand, err := rand.Int(rand.Reader, big.NewInt(int64(len(validICDRegions))))
+	if err != nil {
+		fmt.Println("Error generating random number:", err)
+		return
+	}
+	region := validICDRegions[rand.Int64()]
 
 	// Verify ibmcloud_api_key variable is set
 	checkVariable := "TF_VAR_ibmcloud_api_key"

@@ -249,7 +249,7 @@
               "key": "users"
             },
             {
-              "key": "tags"
+              "key": "resource_tags"
             },
             {
               "key": "access_tags"
