@@ -285,7 +285,7 @@ data "ibm_database_connection" "existing_connection" {
 }
 
 # Create new instance
-module "postgresql" {
+module "postgresql_db" {
   count                             = var.existing_postgresql_instance_crn != null ? 0 : 1
   source                            = "../../modules/fscloud"
   depends_on                        = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_backup_kms_authorization_policy]
@@ -316,10 +316,10 @@ module "postgresql" {
 }
 
 locals {
-  postgresql_guid     = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].guid : module.postgresql[0].guid
-  postgresql_id       = var.existing_postgresql_instance_crn  != null ? data.ibm_database.existing_db_instance[0].id : module.postgresql[0].id
-  postgresql_version  = var.existing_postgresql_instance_crn  != null ? data.ibm_database.existing_db_instance[0].version : module.postgresql[0].version
-  postgresql_crn      = var.existing_postgresql_instance_crn  != null ? var.existing_postgresql_instance_crn : module.postgresql[0].crn
-  postgresql_hostname = var.existing_postgresql_instance_crn  != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].hostname : module.postgresql[0].hostname
-  postgresql_port     = var.existing_postgresql_instance_crn  != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].port : module.postgresql[0].port
+  postgresql_guid     = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].guid : module.postgresql_db[0].guid
+  postgresql_id       = var.existing_postgresql_instance_crn  != null ? data.ibm_database.existing_db_instance[0].id : module.postgresql_db[0].id
+  postgresql_version  = var.existing_postgresql_instance_crn  != null ? data.ibm_database.existing_db_instance[0].version : module.postgresql_db[0].version
+  postgresql_crn      = var.existing_postgresql_instance_crn  != null ? var.existing_postgresql_instance_crn : module.postgresql_db[0].crn
+  postgresql_hostname = var.existing_postgresql_instance_crn  != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].hostname : module.postgresql_db[0].hostname
+  postgresql_port     = var.existing_postgresql_instance_crn  != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].port : module.postgresql_db[0].port
 }

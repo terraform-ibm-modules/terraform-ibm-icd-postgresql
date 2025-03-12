@@ -53,7 +53,7 @@ module "cbr_zone" {
 # Postgres Instance
 ##############################################################################
 
-module "postgresql" {
+module "postgresql_db" {
   source                    = "../../modules/fscloud"
   resource_group_id         = module.resource_group.resource_group_id
   name                      = "${var.prefix}-postgres"
@@ -62,7 +62,7 @@ module "postgresql" {
   kms_key_crn               = var.kms_key_crn
   backup_encryption_key_crn = var.backup_encryption_key_crn
   backup_crn                = var.backup_crn
-  resource_tags             = var.resource_tags
+  tags             = var.resource_tags
   service_credential_names = {
     "postgressql_admin" : "Administrator",
     "postgressql_operator" : "Operator",

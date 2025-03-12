@@ -1,4 +1,4 @@
 moved {
-  from = module.rabbitmq
-  to   = module.rabbitmq[0]
+  from = module.postgresql_db
+  to   = module.postgresql_db[0]
 }

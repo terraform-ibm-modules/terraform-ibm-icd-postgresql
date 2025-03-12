@@ -24,13 +24,13 @@ output "crn" {
 
 output "service_credentials_json" {
   description = "Service credentials json map"
-  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql[0].service_credentials_json
+  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].service_credentials_json
   sensitive   = true
 }
 
 output "service_credentials_object" {
   description = "Service credentials object"
-  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql[0].service_credentials_json
+  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].service_credentials_json
   sensitive   = true
 }
 
