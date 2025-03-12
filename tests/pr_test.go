@@ -2,18 +2,17 @@
 package test
 
 import (
-	
 	"encoding/base64"
 	"fmt"
 	"log"
+	"math/rand"
 	"os"
 	"strings"
 	"testing"
-	"math/rand"
 
 	"github.com/gruntwork-io/terratest/modules/files"
-	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/logger"
+	"github.com/gruntwork-io/terratest/modules/random"
 	"github.com/gruntwork-io/terratest/modules/terraform"
 	"github.com/stretchr/testify/assert"
 	"github.com/stretchr/testify/require"
@@ -26,6 +25,7 @@ import (
 const standardSolutionTerraformDir = "solutions/standard"
 const fscloudExampleTerraformDir = "examples/fscloud"
 const latestVersion = "16"
+
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
 
@@ -94,11 +94,11 @@ func TestRunStandardUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  standardSolutionTerraformDir,
-		Region:        "us-south",
-		Prefix:        "postgres-st-da-upg",
-		ResourceGroup: resourceGroup,
+		Testing:                    t,
+		TerraformDir:               standardSolutionTerraformDir,
+		Region:                     "us-south",
+		Prefix:                     "postgres-st-da-upg",
+		ResourceGroup:              resourceGroup,
 		CheckApplyResultForUpgrade: true,
 	})
 
@@ -132,7 +132,7 @@ func TestPlanValidation(t *testing.T) {
 		"prefix":              options.Prefix,
 		"region":              "us-south",
 		"kms_endpoint_type":   "public",
-		"pg_version":    "16",
+		"pg_version":          "16",
 		"provider_visibility": "public",
 		"resource_group_name": "validate-plan",
 	}
@@ -207,7 +207,7 @@ func TestRunExistingInstance(t *testing.T) {
 		Vars: map[string]interface{}{
 			"prefix":            prefix,
 			"region":            region,
-			"pg_version":     latestVersion,
+			"pg_version":        latestVersion,
 			"service_endpoints": "public-and-private",
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.

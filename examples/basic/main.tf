@@ -20,7 +20,7 @@ module "database" {
   name               = "${var.prefix}-data-store"
   pg_version         = var.pg_version
   region             = var.region
-  tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
   service_endpoints  = var.service_endpoints
   member_host_flavor = var.member_host_flavor
@@ -56,7 +56,7 @@ module "read_only_replica_postgresql_db" {
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-read-only-replica-${count.index}"
   region             = var.region
-  tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
   pg_version         = var.pg_version
   remote_leader_crn  = module.database.crn

@@ -135,7 +135,7 @@ variable "service_credential_names" {
   default     = {}
 }
 
-variable "tags" {
+variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to the PostgreSQL instance."
   default     = []

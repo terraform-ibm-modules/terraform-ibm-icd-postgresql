@@ -17,7 +17,7 @@ module "postgresql_db" {
   name               = "${var.prefix}-postgres"
   pg_version         = var.pg_version
   region             = var.region
-  tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = "multitenant"
 }
@@ -34,7 +34,7 @@ module "restored_icd_postgresql" {
   name               = "${var.prefix}-postgres-restored"
   pg_version         = var.pg_version
   region             = var.region
-  tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
   member_host_flavor = "multitenant"
   backup_crn         = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn

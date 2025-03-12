@@ -117,5 +117,3 @@ func TestRunBasicExampleWithFlavorMultitenant(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 	assert.NotNil(t, output, "Expected some output")
 }
-
-

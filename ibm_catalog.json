@@ -249,7 +249,7 @@
               "key": "users"
             },
             {
-              "key": "resource_tags"
+              "key": "tags"
             },
             {
               "key": "access_tags"
@@ -303,6 +303,9 @@
             },
             {
               "key": "remote_leader_crn"
+            },
+            {
+              "key": "existing_postgresql_instance_crn"
             }
           ]
         }
