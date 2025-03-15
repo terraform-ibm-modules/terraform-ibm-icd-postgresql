@@ -11,18 +11,25 @@ module "resource_group" {
 }
 
 ##############################################################################
-# ICD postgresql database
+# Postgresql
 ##############################################################################
 
-module "postgresql_db" {
+module "database" {
   source             = "../.."
   resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-postgres"
+  name               = "${var.prefix}-data-store"
   pg_version         = var.pg_version
   region             = var.region
-  resource_tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
+  service_endpoints  = var.service_endpoints
   member_host_flavor = var.member_host_flavor
+  service_credential_names = {
+    "postgresql_admin" : "Administrator",
+    "postgresql_operator" : "Operator",
+    "postgresql_viewer" : "Viewer",
+    "postgresql_editor" : "Editor",
+  }
 }
 
 # On destroy, we are seeing that even though the replica has been returned as
@@ -34,7 +41,7 @@ module "postgresql_db" {
 # adding a time sleep here.
 
 resource "time_sleep" "wait_time" {
-  depends_on = [module.postgresql_db]
+  depends_on = [module.database]
 
   destroy_duration = "5m"
 }
@@ -49,10 +56,10 @@ module "read_only_replica_postgresql_db" {
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-read-only-replica-${count.index}"
   region             = var.region
-  resource_tags      = var.resource_tags
+  tags               = var.resource_tags
   access_tags        = var.access_tags
   pg_version         = var.pg_version
-  remote_leader_crn  = module.postgresql_db.crn
+  remote_leader_crn  = module.database.crn
   member_host_flavor = "multitenant"
   member_memory_mb   = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
   member_disk_mb     = 5120 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
