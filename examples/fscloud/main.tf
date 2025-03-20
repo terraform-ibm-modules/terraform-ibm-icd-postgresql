@@ -62,7 +62,7 @@ module "postgresql_db" {
   kms_key_crn               = var.kms_key_crn
   backup_encryption_key_crn = var.backup_encryption_key_crn
   backup_crn                = var.backup_crn
-  resource_tags             = var.resource_tags
+  tags                      = var.resource_tags
   service_credential_names = {
     "postgressql_admin" : "Administrator",
     "postgressql_operator" : "Operator",

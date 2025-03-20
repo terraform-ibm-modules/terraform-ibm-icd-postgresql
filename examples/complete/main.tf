@@ -30,7 +30,7 @@ module "key_protect_all_inclusive" {
   resource_tags             = var.resource_tags
   keys = [
     {
-      key_ring_name = "icd-pg"
+      key_ring_name = "icd"
       keys = [
         {
           key_name     = local.data_key_name
@@ -101,7 +101,7 @@ module "cbr_zone" {
 # Postgres Instance
 ##############################################################################
 
-module "postgresql_db" {
+module "icd_postgresql" {
   source            = "../../"
   resource_group_id = module.resource_group.resource_group_id
   name              = "${var.prefix}-postgres"
@@ -112,9 +112,9 @@ module "postgresql_db" {
   # Example of how to use different KMS keys for data and backups
   use_ibm_owned_encryption_key = false
   use_same_kms_key_for_backups = false
-  kms_key_crn                  = module.key_protect_all_inclusive.keys["icd-pg.${local.data_key_name}"].crn
-  backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd-pg.${local.backups_key_name}"].crn
-  resource_tags                = var.resource_tags
+  kms_key_crn                  = module.key_protect_all_inclusive.keys["icd.${local.data_key_name}"].crn
+  backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd.${local.backups_key_name}"].crn
+  tags                         = var.resource_tags
   service_credential_names = {
     "postgressql_admin" : "Administrator",
     "postgressql_operator" : "Operator",
@@ -164,7 +164,7 @@ module "postgresql_db" {
 
 # VPE provisioning should wait for the database provisioning
 resource "time_sleep" "wait_120_seconds" {
-  depends_on      = [module.postgresql_db]
+  depends_on      = [module.icd_postgresql]
   create_duration = "120s"
 }
 
@@ -179,7 +179,7 @@ module "vpe" {
   cloud_service_by_crn = [
     {
       service_name = "${var.prefix}-postgres"
-      crn          = module.postgresql_db.crn
+      crn          = module.icd_postgresql.crn
     },
   ]
   vpc_id             = module.vpc.vpc_id

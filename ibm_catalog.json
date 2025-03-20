@@ -303,6 +303,9 @@
             },
             {
               "key": "remote_leader_crn"
+            },
+            {
+              "key": "existing_postgresql_instance_crn"
             }
           ]
         }
