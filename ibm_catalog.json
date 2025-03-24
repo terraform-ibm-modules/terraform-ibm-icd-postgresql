@@ -246,7 +246,15 @@
               "key": "admin_pass"
             },
             {
-              "key": "users"
+              "key": "users",
+              "custom_config": {
+                  "type": "multiline_secure_value",
+                  "grouping": "deployment",
+                  "original_grouping": "deployment",
+                  "config_constraints": {
+                      "type": "mixed"
+                  }
+              }
             },
             {
               "key": "resource_tags"
