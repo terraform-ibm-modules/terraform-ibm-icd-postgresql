@@ -197,7 +197,7 @@
                 {
                   "displayname": "preferred",
                   "value": "__NULL__"
-                 },
+                },
                 {
                   "displayname": "13",
                   "value": "13"
@@ -233,7 +233,38 @@
               "key": "member_disk_mb"
             },
             {
-              "key": "member_host_flavor"
+              "key": "member_host_flavor",
+              "default_value": "multitenant",
+              "options": [
+                {
+                  "displayname": "multitenant (Shared)",
+                  "value": "multitenant"
+                },
+                {
+                  "displayname": "XS 4x16",
+                  "value": "b3c.4x16.encrypted"
+                },
+                {
+                  "displayname": "S 8x32",
+                  "value": "b3c.8x32.encrypted"
+                },
+                {
+                  "displayname": "S+ 16x64",
+                  "value": "m3c.8x64.encrypted"
+                },
+                {
+                  "displayname": "M 16x64",
+                  "value": "b3c.16x64.encrypted"
+                },
+                {
+                  "displayname": "L 32x128",
+                  "value": "b3c.32x128.encrypted"
+                },
+                {
+                  "displayname": "XL 30x240",
+                  "value": "m3c.30x240.encrypted"
+                }
+              ]
             },
             {
               "key": "configuration"
