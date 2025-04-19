@@ -302,17 +302,18 @@ module "postgresql_db" {
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
   access_tags                       = var.access_tags
   tags                              = var.resource_tags
-  admin_pass                        = local.admin_pass
-  users                             = var.users
-  members                           = var.members
-  member_host_flavor                = var.member_host_flavor
-  member_memory_mb                  = var.member_memory_mb
-  member_disk_mb                    = var.member_disk_mb
-  member_cpu_count                  = var.member_cpu_count
-  auto_scaling                      = var.auto_scaling
-  configuration                     = var.configuration
-  service_credential_names          = var.service_credential_names
-  backup_crn                        = var.backup_crn
+  # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6141
+  admin_pass               = var.remote_leader_crn == null ? local.admin_pass : null
+  users                    = var.users
+  members                  = var.members
+  member_host_flavor       = var.member_host_flavor
+  member_memory_mb         = var.member_memory_mb
+  member_disk_mb           = var.member_disk_mb
+  member_cpu_count         = var.member_cpu_count
+  auto_scaling             = var.auto_scaling
+  configuration            = var.configuration
+  service_credential_names = var.service_credential_names
+  backup_crn               = var.backup_crn
 }
 
 locals {
