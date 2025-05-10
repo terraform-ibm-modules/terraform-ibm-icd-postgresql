@@ -46,6 +46,11 @@ variable "region" {
   description = "The region where you want to deploy your instance."
   type        = string
   default     = "us-south"
+
+  validation {
+    condition     = var.existing_postgresql_instance_crn != null && var.region != local.existing_postgresql_region ? false : true
+    error_message = "The region detected in the 'existing_postgresql_instance_crn' value must match the value of the 'region' input variable when passing an existing instance."
+  }
 }
 
 variable "pg_version" {
@@ -58,6 +63,14 @@ variable "backup_crn" {
   type        = string
   description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.backup_crn == null,
+      can(regex("^crn:.*:backup:", var.backup_crn))
+    ])
+    error_message = "backup_crn must be null OR starts with 'crn:' and contains ':backup:'"
+  }
 }
 
 variable "remote_leader_crn" {
@@ -224,6 +237,30 @@ variable "use_ibm_owned_encryption_key" {
   type        = bool
   description = "IBM Cloud Databases will secure your deployment's data at rest automatically with an encryption key that IBM hold. Alternatively, you may select your own Key Management System instance and encryption key (Key Protect or Hyper Protect Crypto Services) by setting this to false. If setting to false, a value must be passed for `existing_kms_instance_crn` to create a new key, or `existing_kms_key_crn` and/or `existing_backup_kms_key_crn` to use an existing key."
   default     = false
+
+  # this validation ensures IBM-owned key is not used when KMS details are provided
+  validation {
+    condition = (
+      var.existing_postgresql_instance_crn != null ||
+      !(var.use_ibm_owned_encryption_key && (
+        var.existing_kms_instance_crn != null ||
+        var.existing_kms_key_crn != null ||
+        var.existing_backup_kms_key_crn != null
+      ))
+    )
+    error_message = "When setting values for 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn', the 'use_ibm_owned_encryption_key' input must be set to false."
+  }
+
+  # this validation ensures key info is provided when IBM-owned key is disabled and no Postgresql instance is given
+  validation {
+    condition = !(
+      var.existing_postgresql_instance_crn == null &&
+      var.use_ibm_owned_encryption_key == false &&
+      var.existing_kms_instance_crn == null &&
+      var.existing_kms_key_crn == null
+    )
+    error_message = "When 'use_ibm_owned_encryption_key' is false, you must provide either 'existing_kms_instance_crn' (to create a new key) or 'existing_kms_key_crn' (to use an existing key)."
+  }
 }
 
 variable "existing_kms_instance_crn" {
