@@ -30,7 +30,7 @@ output "service_credentials_json" {
 
 output "service_credentials_object" {
   description = "Service credentials object"
-  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].service_credentials_json
+  value       = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].service_credentials_object
   sensitive   = true
 }
 

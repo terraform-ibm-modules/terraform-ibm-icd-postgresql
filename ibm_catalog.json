@@ -23,7 +23,7 @@
         "relational"
       ],
       "short_description": "Creates and configures an instance of IBM Cloud Databases for PostgreSQL.",
-      "long_description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL with KMS encryption.",
+      "long_description": "This architecture supports creating and configuring an instance of [Databases for PostgreSQL](https://www.ibm.com/products/databases-for-postgresql), with optional KMS encryption. This Terraform-based automation is part of a broader suite of IBM-maintained Infrastructure as Code (IaC) asset collection, each following the naming pattern \"Cloud automation for *servicename*\" and focusing on single IBM Cloud service. These single-service deployable architectures can be used on their own to streamline and automate service deployments through an [IaC approach](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-understanding-projects), or assembled together into a broader [automated IaC stack](https://cloud.ibm.com/docs/secure-enterprise?topic=secure-enterprise-config-stack) to automate the deployment of an end-to-end solution architecture.",
       "offering_docs_url": "https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/README.md",
       "offering_icon_url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/images/postgresql.svg",
       "provider_name": "IBM",
@@ -48,10 +48,10 @@
       ],
       "flavors": [
         {
-          "label": "Standard",
-          "name": "standard",
+          "label": "Fully configurable",
+          "name": "fully-configurable",
           "install_type": "fullstack",
-          "working_directory": "solutions/standard",
+          "working_directory": "solutions/fully-configurable",
           "compliance": {
             "authority": "scc-v3",
             "profiles": [
@@ -122,17 +122,20 @@
               ]
             },
             {
-              "key": "use_existing_resource_group"
-            },
-            {
-              "key": "resource_group_name"
+              "key": "existing_resource_group_name",
+              "required": true,
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
             },
             {
               "key": "prefix",
               "required": true
-            },
-            {
-              "key": "name"
             },
             {
               "key": "region",
@@ -190,7 +193,10 @@
               ]
             },
             {
-              "key": "pg_version",
+              "key": "postgresql_name"
+            },
+            {
+              "key": "postgresql_version",
               "required": false,
               "default_value": "__NULL__",
               "options": [
@@ -248,10 +254,13 @@
               "key": "users"
             },
             {
-              "key": "resource_tags"
+              "key": "postgresql_resource_tags"
             },
             {
-              "key": "access_tags"
+              "key": "postgresql_access_tags"
+            },
+            {
+              "key": "kms_encryption_enabled"
             },
             {
               "key": "use_ibm_owned_encryption_key"
@@ -260,8 +269,7 @@
               "key": "ibmcloud_kms_api_key"
             },
             {
-              "key": "existing_kms_instance_crn",
-              "required": true
+              "key": "existing_kms_instance_crn"
             },
             {
               "key": "existing_kms_key_crn"
@@ -280,7 +288,7 @@
               ]
             },
             {
-              "key": "skip_pg_kms_auth_policy"
+              "key": "skip_postgresql_kms_auth_policy"
             },
             {
               "key": "key_ring_name"
@@ -305,6 +313,9 @@
             },
             {
               "key": "existing_postgresql_instance_crn"
+            },
+            {
+              "key": "service_endpoints"
             }
           ]
         }

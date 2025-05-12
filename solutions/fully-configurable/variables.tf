@@ -8,6 +8,13 @@ variable "ibmcloud_api_key" {
   sensitive   = true
 }
 
+variable "existing_resource_group_name" {
+  type        = string
+  description = "The name of an existing resource group to provision the Databases for PostgreSQL in."
+  default     = "Default"
+  nullable    = false
+}
+
 variable "provider_visibility" {
   description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
   type        = string
@@ -19,24 +26,22 @@ variable "provider_visibility" {
   }
 }
 
-variable "use_existing_resource_group" {
-  type        = bool
-  description = "Whether to use an existing resource group."
-  default     = false
-}
-
-variable "resource_group_name" {
-  type        = string
-  description = "The name of a new or an existing resource group to provision the Databases for PostgreSQL in. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
-}
-
 variable "prefix" {
   type        = string
-  description = "Prefix to add to all resources created by this solution. To not use any prefix value, you can set this value to `null` or an empty string."
-  default     = "dev"
+  description = "The prefix to add to all resources that this solution creates (e.g `prod`, `test`, `dev`). To not use any prefix value, you can set this value to `null` or an empty string."
+  nullable    = true
+  validation {
+    condition = (var.prefix == null ? true :
+      alltrue([
+        can(regex("^[a-z]{0,1}[-a-z0-9]{0,14}[a-z0-9]{0,1}$", var.prefix)),
+        length(regexall("^.*--.*", var.prefix)) == 0
+      ])
+    )
+    error_message = "Prefix must begin with a lowercase letter, contain only lowercase letters, numbers, and - characters. Prefixes must end with a lowercase letter or number and be 16 or fewer characters."
+  }
 }
 
-variable "name" {
+variable "postgresql_name" {
   type        = string
   description = "The name of the PostgreSQL instance. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
   default     = "postgresql"
@@ -53,7 +58,7 @@ variable "region" {
   }
 }
 
-variable "pg_version" {
+variable "postgresql_version" {
   description = "The version of the PostgreSQL instance. If no value is specified, the current preferred version of PostgreSQL is used."
   type        = string
   default     = null
@@ -139,29 +144,29 @@ variable "users" {
   }))
   default     = []
   sensitive   = true
-  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)."
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)."
 }
 
 variable "service_credential_names" {
-  description = "The map of name and role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)."
+  description = "The map of name and role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)."
   type        = map(string)
   default     = {}
 }
 
-variable "resource_tags" {
+variable "postgresql_resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to the PostgreSQL instance."
   default     = []
 }
 
-variable "access_tags" {
+variable "postgresql_access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
   default     = []
 }
 
 variable "configuration" {
-  description = "Database Configuration for PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)"
+  description = "Database Configuration for PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)"
   type = object({
     shared_buffers             = optional(number)
     max_connections            = optional(number)
@@ -225,13 +230,34 @@ variable "auto_scaling" {
       rate_units               = optional(string, "mb")
     })
   })
-  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/standard/DA-types.md)"
+  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)"
   default     = null
 }
 
 ##############################################################
 # Encryption
 ##############################################################
+
+variable "kms_encryption_enabled" {
+  type        = bool
+  description = "Set to true to enable KMS Encryption using customer managed keys. When set to true, a value must be passed for either 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn'."
+  default     = false
+
+  validation {
+    condition     = var.existing_postgresql_instance_crn != null ? var.kms_encryption_enabled == false : true
+    error_message = "When using an existing postgresql instance 'kms_encryption_enabled' should not be enabled"
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled == true ? (var.existing_kms_instance_crn != null || var.existing_kms_key_crn != null || var.existing_backup_kms_key_crn != null) : true
+    error_message = "You must provide at least one of 'existing_kms_instance_crn', 'existing_kms_root_key_crn' or 'existing_backup_kms_key_crn' inputs if 'kms_encryption_enabled' is set to true."
+  }
+
+  validation {
+    condition     = var.kms_encryption_enabled == false ? (var.existing_kms_key_crn == null && var.existing_kms_instance_crn == null && var.existing_backup_kms_key_crn == null) : true
+    error_message = "If 'kms_encryption_enabled' is set to false, you should not pass values for 'existing_kms_instance_crn', 'existing_kms_root_key_crn' or 'existing_backup_kms_key_crn'. inputs"
+  }
+}
 
 variable "use_ibm_owned_encryption_key" {
   type        = bool
@@ -309,7 +335,7 @@ variable "kms_endpoint_type" {
   }
 }
 
-variable "skip_pg_kms_auth_policy" {
+variable "skip_postgresql_kms_auth_policy" {
   type        = bool
   description = "Set to true to skip the creation of IAM authorization policies that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect or Hyper Protect Crypto Services key. This policy is required in order to enable KMS encryption, so only skip creation if there is one already present in your account. No policy is created if `use_ibm_owned_encryption_key` is true."
   default     = false
@@ -320,4 +346,15 @@ variable "ibmcloud_kms_api_key" {
   description = "The IBM Cloud API key that can create a root key and key ring in the key management service (KMS) instance. If not specified, the 'ibmcloud_api_key' variable is used. Specify this key if the instance in `existing_kms_instance_crn` is in an account that's different from the PostgreSQL instance. Leave this input empty if the same account owns both instances."
   sensitive   = true
   default     = null
+}
+
+variable "service_endpoints" {
+  type        = string
+  description = "Specify whether you want to enable the public, private, or both service endpoints. Supported values are 'public', 'private', or 'public-and-private'."
+  default     = "private"
+
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.service_endpoints)
+    error_message = "Valid values for service_endpoints are 'public', 'public-and-private', and 'private'"
+  }
 }
