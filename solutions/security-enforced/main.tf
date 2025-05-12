@@ -1,0 +1,37 @@
+module "postgresql_db" {
+  prefix                           = var.prefix
+  source                           = "../fully-configurable"
+  ibmcloud_api_key                 = var.ibmcloud_api_key
+  existing_resource_group_name     = var.existing_resource_group_name
+  postgresql_name                  = var.postgresql_name
+  region                           = var.region
+  postgresql_version               = var.postgresql_version
+  backup_crn                       = var.backup_crn
+  remote_leader_crn                = var.remote_leader_crn
+  existing_postgresql_instance_crn = var.existing_postgresql_instance_crn
+  # ICD hosting model properties
+  members                           = var.members
+  member_cpu_count                  = var.member_cpu_count
+  member_disk_mb                    = var.member_disk_mb
+  member_host_flavor                = var.member_host_flavor
+  member_memory_mb                  = var.member_memory_mb
+  admin_pass                        = var.admin_pass
+  users                             = var.users
+  service_credential_names          = var.service_credential_names
+  postgresql_resource_tags          = var.postgresql_resource_tags
+  postgresql_access_tags            = var.postgresql_access_tags
+  configuration                     = var.configuration
+  auto_scaling                      = var.auto_scaling
+  kms_encryption_enabled            = true
+  use_ibm_owned_encryption_key      = false
+  existing_kms_instance_crn         = var.existing_kms_instance_crn
+  existing_kms_key_crn              = var.existing_kms_key_crn
+  existing_backup_kms_key_crn       = var.existing_backup_kms_key_crn
+  key_name                          = var.key_name
+  key_ring_name                     = var.key_ring_name
+  use_default_backup_encryption_key = false
+  kms_endpoint_type                 = "private"
+  skip_postgresql_kms_auth_policy   = var.skip_postgresql_kms_auth_policy
+  ibmcloud_kms_api_key              = var.ibmcloud_kms_api_key
+  service_endpoints                 = "private"
+}
