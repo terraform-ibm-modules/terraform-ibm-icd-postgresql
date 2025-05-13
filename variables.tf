@@ -390,13 +390,11 @@ variable "pitr_id" {
   validation {
     condition     = var.pitr_id != null ? true : var.pitr_time == null
     error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_id needs to be set when var.pitr_time is specified. Otherwise, unset var.pitr_time."
-
   }
 
   validation {
     condition     = var.pitr_id == null ? true : var.pitr_time != null
     error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_time needs to be set when var.pitr_id is specified. Otherwise, unset var.pitr_id."
-
   }
 }
 
