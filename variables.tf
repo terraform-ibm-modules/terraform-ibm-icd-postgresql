@@ -386,6 +386,16 @@ variable "pitr_id" {
   type        = string
   description = "(Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
   default     = null
+
+  validation {
+    condition     = var.pitr_id != null ? var.pitr_time != null : true
+    error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_time needs to be set when var.pitr_id is specified. Otherwise, unset var.pitr_id."
+  }
+
+  validation {
+    condition     = var.pitr_id == null ? var.pitr_time == null : true
+    error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_id needs to be set when var.pitr_time is specified. Otherwise, unset var.pitr_time."
+  }
 }
 
 variable "pitr_time" {
