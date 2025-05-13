@@ -82,7 +82,6 @@
             }
           ],
           "architecture": {
-            "descriptions": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL instance with KMS encryption. Supports autoscaling.",
             "features": [
               {
                 "title": " Creates an instance of Databases for PostgreSQL",
@@ -197,7 +196,7 @@
                 {
                   "displayname": "preferred",
                   "value": "__NULL__"
-                 },
+                },
                 {
                   "displayname": "13",
                   "value": "13"
