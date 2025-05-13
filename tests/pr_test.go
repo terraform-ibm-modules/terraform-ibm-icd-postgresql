@@ -282,10 +282,10 @@ func TestRunExistingInstance(t *testing.T) {
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir + "/examples/basic",
 		Vars: map[string]interface{}{
-			"prefix":             prefix,
-			"region":             region,
-			"postgresql_version": latestVersion,
-			"service_endpoints":  "public-and-private",
+			"prefix":            prefix,
+			"region":            region,
+			"pg_version":        latestVersion,
+			"service_endpoints": "public-and-private",
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
