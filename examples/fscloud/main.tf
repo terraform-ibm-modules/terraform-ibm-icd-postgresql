@@ -54,7 +54,7 @@ module "cbr_zone" {
 ##############################################################################
 
 module "postgresql_db" {
-  source                    = "../../modules/fscloud"
+  source = "../../modules/fscloud"
   # remove the above line and uncomment the below 2 lines to consume the module from the registry
   # source            = "terraform-ibm-modules/icd-postgresql/ibm//modules/fscloud"
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
