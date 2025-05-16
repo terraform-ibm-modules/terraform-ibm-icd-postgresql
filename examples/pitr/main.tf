@@ -12,7 +12,10 @@ module "resource_group" {
 
 # New ICD postgresql database instance pointing to a PITR time
 module "postgresql_db_pitr" {
-  source             = "../.."
+  source = "../.."
+  # remove the above line and uncomment the below 2 lines to consume the module from the registry
+  # source            = "terraform-ibm-modules/icd-postgresql/ibm"
+  # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres-pitr"
   region             = var.region
