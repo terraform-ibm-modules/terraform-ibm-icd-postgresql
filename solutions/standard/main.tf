@@ -16,13 +16,6 @@ module "resource_group" {
 # TODO: Replace with terraform cross variable validation: https://github.ibm.com/GoldenEye/issues/issues/10836
 #######################################################################################################################
 
-locals {
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_1 = var.existing_postgresql_instance_crn != null ? true : var.use_ibm_owned_encryption_key && (var.existing_kms_instance_crn != null || var.existing_kms_key_crn != null || var.existing_backup_kms_key_crn != null) ? tobool("When setting values for 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn', the 'use_ibm_owned_encryption_key' input must be set to false.") : true
-  # tflint-ignore: terraform_unused_declarations
-  validate_kms_2 = var.existing_postgresql_instance_crn != null ? true : !var.use_ibm_owned_encryption_key && (var.existing_kms_instance_crn == null && var.existing_kms_key_crn == null) ? tobool("When 'use_ibm_owned_encryption_key' is false, a value is required for either 'existing_kms_instance_crn' (to create a new key), or 'existing_kms_key_crn' to use an existing key.") : true
-}
-
 #######################################################################################################################
 # KMS encryption key
 #######################################################################################################################
@@ -254,10 +247,6 @@ module "postgresql_instance_crn_parser" {
 locals {
   existing_postgresql_guid   = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].service_instance : null
   existing_postgresql_region = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].region : null
-
-  # Validate the region input matches region detected in existing instance CRN (approach based on https://github.com/hashicorp/terraform/issues/25609#issuecomment-1057614400)
-  # tflint-ignore: terraform_unused_declarations
-  validate_existing_instance_region = var.existing_postgresql_instance_crn != null && var.region != local.existing_postgresql_region ? tobool("The region detected in the 'existing_postgresql_instance_crn' value must match the value of the 'region' input variable when passing an existing instance.") : true
 }
 
 # Do a data lookup on the resource GUID to get more info that is needed for the 'ibm_database' data lookup below

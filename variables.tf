@@ -258,6 +258,34 @@ variable "use_ibm_owned_encryption_key" {
   type        = bool
   description = "IBM Cloud Databases will secure your deployment's data at rest automatically with an encryption key that IBM hold. Alternatively, you may select your own Key Management System instance and encryption key (Key Protect or Hyper Protect Crypto Services) by setting this to false. If setting to false, a value must be passed for the `kms_key_crn` input."
   default     = true
+
+  validation {
+    condition     = var.use_ibm_owned_encryption_key && (var.kms_key_crn != null || var.backup_encryption_key_crn != null) ? false : true
+    error_message = "When 'use_ibm_owned_encryption_key' is true, 'kms_key_crn' and 'backup_encryption_key_crn' must both be null."
+  }
+
+  validation {
+    condition     = var.use_ibm_owned_encryption_key || var.kms_key_crn != null
+    error_message = "When setting 'use_ibm_owned_encryption_key' to false, a value must be passed for 'kms_key_crn'."
+  }
+
+  validation {
+    condition = (
+      var.use_ibm_owned_encryption_key ||
+      var.backup_encryption_key_crn == null ||
+      (!var.use_default_backup_encryption_key && !var.use_same_kms_key_for_backups)
+    )
+    error_message = "When passing a value for backup_encryption_key_crn, you should set use_same_kms_key_for_backups to false, use_default_backup_encryption_key to false and use_ibm_owned_encryption_key to false."
+  }
+
+  validation {
+    condition = (
+      var.use_ibm_owned_encryption_key ||
+      var.backup_encryption_key_crn != null ||
+      var.use_same_kms_key_for_backups
+    )
+    error_message = "When 'use_same_kms_key_for_backups' is set to false, a value needs to be passed for 'backup_encryption_key_crn'."
+  }
 }
 
 variable "kms_key_crn" {
@@ -358,6 +386,16 @@ variable "pitr_id" {
   type        = string
   description = "(Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
   default     = null
+
+  validation {
+    condition     = var.pitr_id != null ? true : var.pitr_time == null
+    error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_id needs to be set when var.pitr_time is specified. Otherwise, unset var.pitr_time."
+  }
+
+  validation {
+    condition     = var.pitr_id == null ? true : var.pitr_time != null
+    error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_time needs to be set when var.pitr_id is specified. Otherwise, unset var.pitr_id."
+  }
 }
 
 variable "pitr_time" {
