@@ -49,7 +49,7 @@ variable "member_disk_mb" {
 variable "member_host_flavor" {
   type        = string
   description = "Allocated host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)"
-  default     = null
+  default     = "multitenant"
 }
 
 variable "member_memory_mb" {
