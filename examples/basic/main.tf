@@ -26,7 +26,7 @@ module "database" {
   tags               = var.resource_tags
   access_tags        = var.access_tags
   service_endpoints  = var.service_endpoints
-  member_host_flavor = var.member_host_flavor
+  member_host_flavor = "multitenant"
   service_credential_names = {
     "postgresql_admin" : "Administrator",
     "postgresql_operator" : "Operator",
