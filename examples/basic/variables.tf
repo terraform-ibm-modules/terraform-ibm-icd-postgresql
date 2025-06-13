@@ -51,12 +51,6 @@ variable "read_only_replicas_count" {
   }
 }
 
-variable "member_host_flavor" {
-  type        = string
-  description = "Allocated host flavor per member. For more information, see https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor"
-  default     = null
-}
-
 variable "service_endpoints" {
   type        = string
   description = "The type of endpoint of the database instance. Possible values: `public`, `private`, `public-and-private`."
