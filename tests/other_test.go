@@ -98,19 +98,16 @@ func TestRunCompleteExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func TestRunBasicExampleWithFlavorMultitenant(t *testing.T) {
+func TestRunBasicExample(t *testing.T) {
 	t.Parallel()
 
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
-		Prefix:             "pg-flvr-multitenant",
+		Prefix:             "pg-basic",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"member_host_flavor": "multitenant",
-		},
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
 
 	output, err := options.RunTestConsistency()
