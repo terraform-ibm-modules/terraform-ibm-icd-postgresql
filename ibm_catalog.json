@@ -9,6 +9,7 @@
         "target_terraform",
         "terraform",
         "data_management",
+        "database",
         "solution"
       ],
       "keywords": [
@@ -30,26 +31,27 @@
       "support_details": "This product is in the community registry, as such support is handled through the originated repo. If you experience issues please open an issue in the repository [https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/issues](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/issues). Please note this product is not supported via the IBM Cloud Support Center.",
       "features": [
         {
-          "title": "Creates an instance of Databases for PostgreSQL",
-          "description": "Creates and configures an IBM Cloud Databases for PostgreSQL instance."
+          "title": "KMS encryption",
+          "description": "Provides [KMS encryption](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-key-protect&interface=ui) for the data that you store in the database, enhancing data security."
         },
         {
-          "title": "Supports KMS encryption",
-          "description": "Provides KMS encryption for the data that you store in the database."
+          "title": "Autoscaling",
+          "description": "Provides the [autoscaling](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-autoscaling&interface=ui) to allow the database to increase resources in response to usage."
         },
         {
-          "title": "Supports autoscaling",
-          "description": "Provides the autoscaling to allow the database to increase resources in response to usage."
+          "title": "Access tags",
+          "description": "Attaches access tags to the PostgreSQL instance."
         },
         {
-          "title": "Supports backup restoration",
-          "description": "Provides database restoration using a backup created by a deployment with the same service ID."
+          "title": "Backup restoration",
+          "description": "Provides [database restoration](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-dashboard-backups&interface=ui) using a backup created by a deployment with the same service ID."
         }
       ],
       "flavors": [
         {
           "label": "Fully configurable",
           "name": "fully-configurable",
+          "index": 1,
           "install_type": "fullstack",
           "working_directory": "solutions/fully-configurable",
           "compliance": {
@@ -79,14 +81,22 @@
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "kms"
+              "service_name": "kms",
+              "notes": "[Optional] Editor access is required to create keys. It is required only if KMS encryption is enabled."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "hs-crypto",
+              "notes": "[Optional] Editor access is required to create keys in HPCS. It is required only if KMS encryption is enabled."
             }
           ],
           "architecture": {
             "features": [
               {
-                "title": " Creates an instance of Databases for PostgreSQL",
-                "description": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL with KMS encryption. It accepts or creates a resource group, and provides autoscaling rules."
+                "title": " ",
+                "description": "Configured to use IBM secure by default standards, but can be edited to fit your use case."
               }
             ],
             "diagrams": [
@@ -106,6 +116,7 @@
             },
             {
               "key": "provider_visibility",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "private",
@@ -140,7 +151,6 @@
             {
               "key": "region",
               "required": true,
-              "default_value": "us-south",
               "options": [
                 {
                   "displayname": "Chennai (che01)",
@@ -193,9 +203,6 @@
               ]
             },
             {
-              "key": "postgresql_name"
-            },
-            {
               "key": "postgresql_version",
               "required": false,
               "default_value": "__NULL__",
@@ -227,6 +234,31 @@
               ]
             },
             {
+              "key": "name"
+            },
+            {
+              "key": "postgresql_resource_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "postgresql_access_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
               "key": "members"
             },
             {
@@ -242,7 +274,27 @@
               "key": "member_host_flavor"
             },
             {
+              "key": "auto_scaling"
+            },
+            {
               "key": "configuration"
+            },
+            {
+              "key": "service_endpoints",
+              "options": [
+                {
+                  "displayname": "private",
+                  "value": "private"
+                },
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "public-and-private",
+                  "value": "public-and-private"
+                }
+              ]
             },
             {
               "key": "service_credential_names"
@@ -251,22 +303,19 @@
               "key": "admin_pass"
             },
             {
-              "key": "users"
-            },
-            {
-              "key": "postgresql_resource_tags"
-            },
-            {
-              "key": "postgresql_access_tags"
-            },
-            {
-              "key": "kms_encryption_enabled"
-            },
-            {
-              "key": "use_ibm_owned_encryption_key"
+              "key": "users",
+              "type": "array",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "kms_encryption_enabled"
             },
             {
               "key": "existing_kms_instance_crn"
@@ -276,6 +325,7 @@
             },
             {
               "key": "kms_endpoint_type",
+              "hidden": true,
               "options": [
                 {
                   "displayname": "public",
@@ -288,16 +338,10 @@
               ]
             },
             {
-              "key": "skip_postgresql_kms_auth_policy"
-            },
-            {
               "key": "key_ring_name"
             },
             {
               "key": "key_name"
-            },
-            {
-              "key": "auto_scaling"
             },
             {
               "key": "backup_crn"
@@ -309,19 +353,20 @@
               "key": "use_default_backup_encryption_key"
             },
             {
-              "key": "remote_leader_crn"
+              "key": "skip_postgresql_kms_auth_policy"
             },
             {
               "key": "existing_postgresql_instance_crn"
             },
             {
-              "key": "service_endpoints"
+              "key": "remote_leader_crn"
             }
           ]
         },
         {
           "label": "Security enforced",
           "name": "security-enforced",
+          "index": 2,
           "install_type": "fullstack",
           "working_directory": "solutions/security-enforced",
           "compliance": {
@@ -396,7 +441,6 @@
             {
               "key": "region",
               "required": true,
-              "default_value": "us-south",
               "options": [
                 {
                   "displayname": "Chennai (che01)",
@@ -449,9 +493,6 @@
               ]
             },
             {
-              "key": "postgresql_name"
-            },
-            {
               "key": "postgresql_version",
               "required": false,
               "default_value": "__NULL__",
@@ -483,6 +524,31 @@
               ]
             },
             {
+              "key": "name"
+            },
+            {
+              "key": "postgresql_resource_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "postgresql_access_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
               "key": "members"
             },
             {
@@ -498,6 +564,9 @@
               "key": "member_host_flavor"
             },
             {
+              "key": "auto_scaling"
+            },
+            {
               "key": "configuration"
             },
             {
@@ -506,14 +575,17 @@
             {
               "key": "admin_pass"
             },
-            {
-              "key": "users"
+{
+              "key": "skip_postgresql_kms_auth_policy"
             },
             {
-              "key": "postgresql_resource_tags"
-            },
-            {
-              "key": "postgresql_access_tags"
+              "key": "users",
+              "type": "array",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
             },
             {
               "key": "ibmcloud_kms_api_key"
@@ -525,16 +597,10 @@
               "key": "existing_kms_key_crn"
             },
             {
-              "key": "skip_postgresql_kms_auth_policy"
-            },
-            {
               "key": "key_ring_name"
             },
             {
               "key": "key_name"
-            },
-            {
-              "key": "auto_scaling"
             },
             {
               "key": "backup_crn"

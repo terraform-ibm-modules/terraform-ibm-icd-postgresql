@@ -81,10 +81,8 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "postgresql_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "use_ibm_owned_encryption_key", Value: false, DataType: "bool"},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
@@ -94,36 +92,6 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	}
 	err := options.RunSchematicTest()
 	assert.Nil(t, err, "This should not have errored")
-}
-
-func TestRunFullyConfigurableUpgradeSolution(t *testing.T) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:                    t,
-		TerraformDir:               fullyConfigurableSolutionTerraformDir,
-		Region:                     "us-south",
-		Prefix:                     "pg-fc-upg",
-		ResourceGroup:              resourceGroup,
-		CheckApplyResultForUpgrade: true,
-	})
-
-	options.TerraformVars = map[string]interface{}{
-		"prefix":                       options.Prefix,
-		"postgresql_access_tags":       permanentResources["accessTags"],
-		"kms_encryption_enabled":       true,
-		"use_ibm_owned_encryption_key": false,
-		"existing_kms_instance_crn":    permanentResources["hpcs_south_crn"],
-		"kms_endpoint_type":            "public",
-		"provider_visibility":          "public",
-		"existing_resource_group_name": resourceGroup,
-	}
-
-	output, err := options.RunTestUpgrade()
-	if !options.UpgradeTestSkipped {
-		assert.Nil(t, err, "This should not have errored")
-		assert.NotNil(t, output, "Expected some output")
-	}
 }
 
 func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
@@ -176,7 +144,6 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 	options.TerraformVars = map[string]interface{}{
 		"prefix":                       options.Prefix,
 		"postgresql_access_tags":       permanentResources["accessTags"],
-		"kms_encryption_enabled":       true,
 		"existing_kms_instance_crn":    permanentResources["hpcs_south_crn"],
 		"existing_resource_group_name": resourceGroup,
 	}
@@ -209,23 +176,22 @@ func TestPlanValidation(t *testing.T) {
 	}
 
 	// Test the DA when using IBM owned encryption keys
-	var ibmOwnedEncrytionKeyTFVars = map[string]interface{}{
+	var ibmOwnedEncryptionKeyTFVars = map[string]interface{}{
 		"use_default_backup_encryption_key": false,
-		"use_ibm_owned_encryption_key":      true,
+		"kms_encryption_enabled":            false,
 	}
 
 	// Test the DA when using Default Backup Encryption Key and not IBM owned encryption keys
-	var notIbmOwnedEncrytionKeyTFVars = map[string]interface{}{
+	var notIbmOwnedEncryptionKeyTFVars = map[string]interface{}{
 		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
 		"use_default_backup_encryption_key": true,
-		"use_ibm_owned_encryption_key":      false,
 		"kms_encryption_enabled":            true,
 	}
 
 	// Create a map of the variables
 	tfVarsMap := map[string]map[string]interface{}{
-		"ibmOwnedEncrytionKeyTFVars":    ibmOwnedEncrytionKeyTFVars,
-		"notIbmOwnedEncrytionKeyTFVars": notIbmOwnedEncrytionKeyTFVars,
+		"ibmOwnedEncryptionKeyTFVars":    ibmOwnedEncryptionKeyTFVars,
+		"notIbmOwnedEncryptionKeyTFVars": notIbmOwnedEncryptionKeyTFVars,
 	}
 
 	_, initErr := terraform.InitE(t, options.TerraformOptions)
@@ -282,10 +248,10 @@ func TestRunExistingInstance(t *testing.T) {
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir + "/examples/basic",
 		Vars: map[string]interface{}{
-			"prefix":             prefix,
-			"region":             region,
-			"postgresql_version": latestVersion,
-			"service_endpoints":  "public-and-private",
+			"prefix":            prefix,
+			"region":            region,
+			"pg_version":        latestVersion,
+			"service_endpoints": "public-and-private",
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
