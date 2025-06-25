@@ -66,9 +66,10 @@
           "iam_permissions": [
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
-              "service_name": "all-account-management-services"
+              "service_name": "Resource group only",
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
@@ -78,7 +79,6 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "kms",
@@ -134,7 +134,7 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required": true,
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -145,8 +145,7 @@
               }
             },
             {
-              "key": "prefix",
-              "required": true
+              "key": "prefix"
             },
             {
               "key": "region",
@@ -381,9 +380,10 @@
           "iam_permissions": [
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::role:Administrator"
+                "crn:v1:bluemix:public:iam::::role:Viewer"
               ],
-              "service_name": "all-account-management-services"
+              "service_name": "Resource group only",
+              "notes": "Viewer access is required in the resource group you want to provision in."
             },
             {
               "role_crns": [
@@ -391,19 +391,25 @@
               ],
               "service_name": "databases-for-postgresql"
             },
-            {
+           {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
-              "service_name": "kms"
+              "service_name": "kms",
+              "notes": "[Optional] Editor access is required to create keys. It is required only if KMS encryption is enabled."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "hs-crypto",
+              "notes": "[Optional] Editor access is required to create keys in HPCS. It is only required when using HPCS for encryption."
             }
           ],
           "architecture": {
-            "descriptions": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL instance with KMS encryption. Supports autoscaling.",
             "features": [
               {
-                "title": " Creates an instance of Databases for PostgreSQL",
+                "title": " ",
                 "description": "This architecture creates an instance of IBM Cloud Databases for PostgreSQL with KMS encryption. It accepts or creates a resource group, and provides autoscaling rules."
               }
             ],
@@ -424,7 +430,7 @@
             },
             {
               "key": "existing_resource_group_name",
-              "required": true,
+              "display_name": "resource_group",
               "custom_config": {
                 "type": "resource_group",
                 "grouping": "deployment",
@@ -435,8 +441,7 @@
               }
             },
             {
-              "key": "prefix",
-              "required": true
+              "key": "prefix"
             },
             {
               "key": "region",
@@ -591,7 +596,8 @@
               "key": "ibmcloud_kms_api_key"
             },
             {
-              "key": "existing_kms_instance_crn"
+              "key": "existing_kms_instance_crn",
+              "required": true
             },
             {
               "key": "existing_kms_key_crn"

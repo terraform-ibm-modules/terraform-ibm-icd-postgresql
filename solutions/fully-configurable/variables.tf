@@ -198,27 +198,22 @@ variable "postgresql_access_tags" {
 
 variable "kms_encryption_enabled" {
   type        = bool
-  description = "Set to true to enable KMS Encryption using customer managed keys. When set to true, a value must be passed for either 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn'."
+  description = "Set to true to enable KMS encryption using customer-managed keys. When enabled, you must provide a value for at least one of the following: existing_kms_instance_crn, existing_kms_key_crn, or existing_backup_kms_key_crn. If set to false, IBM-owned encryption is used (i.e., encryption keys managed and held by IBM)."
   default     = false
 
   validation {
-    condition = (
-      !var.kms_encryption_enabled ||
+    condition = (!var.kms_encryption_enabled ||
       var.existing_postgresql_instance_crn != null ||
-      (
-        var.existing_kms_instance_crn != null ||
-        var.existing_kms_key_crn != null ||
-        var.existing_backup_kms_key_crn != null
-      )
+      var.existing_kms_instance_crn != null ||
+      var.existing_kms_key_crn != null ||
+      var.existing_backup_kms_key_crn != null
     )
-    error_message = "When 'kms_encryption_enabled' is true and setting values for 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn'."
+    error_message = "When 'kms_encryption_enabled' is true, you must provide either 'existing_backup_kms_key_crn', 'existing_kms_instance_crn' (to create a new key) or 'existing_kms_key_crn' (to use an existing key)."
   }
 
   validation {
-    condition = (
-      !var.kms_encryption_enabled ? length(compact([var.existing_kms_instance_crn, var.existing_kms_key_crn, var.existing_backup_kms_key_crn])) == 0 : true
-    )
-    error_message = "When using ibm owned encryption keys by setting input 'kms_encryption_enabled' to false, 'existing_kms_instance_crn', 'existing_kms_key_crn' and 'existing_backup_kms_key_crn' should not be set."
+    condition     = (var.existing_kms_instance_crn == null && var.existing_kms_key_crn == null && var.existing_backup_kms_key_crn == null) || var.kms_encryption_enabled
+    error_message = "When either 'existing_kms_instance_crn', 'existing_kms_key_crn' or 'existing_backup_kms_key_crn' is set then 'kms_encryption_enabled' must be set to true."
   }
 }
 
@@ -230,13 +225,13 @@ variable "existing_kms_instance_crn" {
 
 variable "existing_kms_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. Applies only if `kms_encryption_enabled` is true. By default this key is used for both deployment data and backups, but this behaviour can be altered using the optional `existing_backup_kms_key_crn` input. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
+  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. By default this key is used for both deployment data and backups, but this behaviour can be altered using the optional `existing_backup_kms_key_crn` input. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
   default     = null
 }
 
 variable "kms_endpoint_type" {
   type        = string
-  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`."
+  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`. Applies only if `existing_kms_key_crn` is not specified."
   default     = "private"
   validation {
     condition     = can(regex("public|private", var.kms_endpoint_type))
