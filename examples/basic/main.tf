@@ -21,7 +21,7 @@ module "database" {
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-data-store"
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   region             = var.region
   tags               = var.resource_tags
   access_tags        = var.access_tags
@@ -61,7 +61,7 @@ module "read_only_replica_postgresql_db" {
   region             = var.region
   tags               = var.resource_tags
   access_tags        = var.access_tags
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   remote_leader_crn  = module.database.crn
   member_host_flavor = "multitenant"
   memory_mb          = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
