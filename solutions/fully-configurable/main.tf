@@ -1,6 +1,9 @@
 #######################################################################################################################
 # Resource Group
 #######################################################################################################################
+locals {
+  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+}
 
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
@@ -13,7 +16,7 @@ module "resource_group" {
 #######################################################################################################################
 
 locals {
-  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+  use_ibm_owned_encryption_key = !var.kms_encryption_enabled
   create_new_kms_key = (
     var.kms_encryption_enabled &&
     var.existing_postgresql_instance_crn == null &&
@@ -105,7 +108,7 @@ locals {
   backup_kms_service       = local.create_cross_account_backup_kms_auth_policy ? module.kms_backup_key_crn_parser[0].service_name : local.kms_service
   backup_kms_instance_guid = local.create_cross_account_backup_kms_auth_policy ? module.kms_backup_key_crn_parser[0].service_instance : local.kms_instance_guid
   backup_kms_key_id        = local.create_cross_account_backup_kms_auth_policy ? module.kms_backup_key_crn_parser[0].resource : local.kms_key_id
-  backup_kms_key_crn       = var.existing_postgresql_instance_crn != null || !var.kms_encryption_enabled ? null : var.existing_backup_kms_key_crn
+  backup_kms_key_crn       = var.existing_postgresql_instance_crn != null || local.use_ibm_owned_encryption_key ? null : var.existing_backup_kms_key_crn
   # Always use same key for backups unless user explicially passed a value for 'existing_backup_kms_key_crn'
   use_same_kms_key_for_backups = var.existing_backup_kms_key_crn == null ? true : false
 }
@@ -223,8 +226,9 @@ locals {
   # if - replace first char with J
   # elseif _ replace first char with K
   # else use asis
+  generated_admin_password = (length(random_password.admin_password) > 0 ? (startswith(random_password.admin_password[0].result, "-") ? "J${substr(random_password.admin_password[0].result, 1, -1)}" : startswith(random_password.admin_password[0].result, "_") ? "K${substr(random_password.admin_password[0].result, 1, -1)}" : random_password.admin_password[0].result) : null)
   # admin password to use
-  admin_pass = var.admin_pass == null ? (startswith(random_password.admin_password[0].result, "-") ? "J${substr(random_password.admin_password[0].result, 1, -1)}" : startswith(random_password.admin_password[0].result, "_") ? "K${substr(random_password.admin_password[0].result, 1, -1)}" : random_password.admin_password[0].result) : var.admin_pass
+  admin_pass = var.admin_pass == null ? local.generated_admin_password : var.admin_pass
 }
 
 #######################################################################################################################
@@ -272,29 +276,29 @@ data "ibm_database_connection" "existing_connection" {
 # Create new instance
 module "postgresql_db" {
   count                             = var.existing_postgresql_instance_crn != null ? 0 : 1
-  source                            = "../../"
+  source                            = "../.."
   depends_on                        = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_backup_kms_authorization_policy]
   resource_group_id                 = module.resource_group.resource_group_id
   name                              = "${local.prefix}${var.name}"
   region                            = var.region
   remote_leader_crn                 = var.remote_leader_crn
-  pg_version                        = var.postgresql_version
+  postgresql_version                = var.postgresql_version
   skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
-  use_ibm_owned_encryption_key      = !var.kms_encryption_enabled
+  use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
   kms_key_crn                       = local.kms_key_crn
   backup_encryption_key_crn         = local.backup_kms_key_crn
   use_same_kms_key_for_backups      = local.use_same_kms_key_for_backups
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
-  access_tags                       = var.postgresql_access_tags
-  tags                              = var.postgresql_resource_tags
+  access_tags                       = var.access_tags
+  tags                              = var.resource_tags
   # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6141
   admin_pass               = var.remote_leader_crn == null ? local.admin_pass : null
   users                    = var.users
   members                  = var.members
   member_host_flavor       = var.member_host_flavor
-  member_memory_mb         = var.member_memory_mb
-  member_disk_mb           = var.member_disk_mb
-  member_cpu_count         = var.member_cpu_count
+  memory_mb                = var.member_memory_mb
+  disk_mb                  = var.member_disk_mb
+  cpu_count                = var.member_cpu_count
   auto_scaling             = var.auto_scaling
   configuration            = var.configuration
   service_credential_names = var.service_credential_names

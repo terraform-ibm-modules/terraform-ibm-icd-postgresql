@@ -10,7 +10,7 @@ variable "ibmcloud_api_key" {
 
 variable "existing_resource_group_name" {
   type        = string
-  description = "The name of an existing resource group to provision resources in."
+  description = "The name of an existing resource group to provision resource in."
   default     = "Default"
   nullable    = false
 }
@@ -21,19 +21,30 @@ variable "prefix" {
   description = "The prefix to be added to all resources created by this solution. To skip using a prefix, set this value to null or an empty string. The prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It should not exceed 16 characters, must not end with a hyphen('-'), and can not contain consecutive hyphens ('--'). Example: prod-0205-cos. [Learn more](https://terraform-ibm-modules.github.io/documentation/#/prefix.md)."
 
   validation {
-    condition = (var.prefix == null ? true :
+    # - null and empty string is allowed
+    # - Must not contain consecutive hyphens (--): length(regexall("--", var.prefix)) == 0
+    # - Starts with a lowercase letter: [a-z]
+    # - Contains only lowercase letters (a–z), digits (0–9), and hyphens (-)
+    # - Must not end with a hyphen (-): [a-z0-9]
+    condition = (var.prefix == null || var.prefix == "" ? true :
       alltrue([
-        can(regex("^[a-z]{0,1}[-a-z0-9]{0,14}[a-z0-9]{0,1}$", var.prefix)),
-        length(regexall("^.*--.*", var.prefix)) == 0
+        can(regex("^[a-z][-a-z0-9]*[a-z0-9]$", var.prefix)),
+        length(regexall("--", var.prefix)) == 0
       ])
     )
-    error_message = "Prefix must begin with a lowercase letter, contain only lowercase letters, numbers, and - characters. Prefixes must end with a lowercase letter or number and be 16 or fewer characters."
+    error_message = "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen('-'), and cannot contain consecutive hyphens ('--')."
+  }
+
+  validation {
+    # must not exceed 16 characters in length
+    condition     = length(var.prefix) <= 16
+    error_message = "Prefix must not exceed 16 characters."
   }
 }
 
 variable "name" {
   type        = string
-  description = "The name of the PostgreSQL instance. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name of the Databases for PostgreSQL instance. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
   default     = "postgresql"
 }
 
@@ -139,7 +150,7 @@ variable "configuration" {
 }
 
 variable "service_credential_names" {
-  description = "The map of name and role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)."
+  description = "Map of name, role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#svc-credential-name)"
   type        = map(string)
   default     = {}
 }
@@ -163,15 +174,15 @@ variable "users" {
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)."
 }
 
-variable "postgresql_resource_tags" {
+variable "resource_tags" {
   type        = list(string)
-  description = "Optional list of tags to be added to the PostgreSQL instance."
+  description = "The list of resource tags to be added to the Databases for PostgreSQL instance."
   default     = []
 }
 
-variable "postgresql_access_tags" {
+variable "access_tags" {
   type        = list(string)
-  description = "A list of access tags to apply to the PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
+  description = "A list of access tags to apply to the Databases for PostgreSQL instance created by the solution. [Learn more](https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial)."
   default     = []
 }
 
@@ -202,7 +213,7 @@ variable "existing_kms_key_crn" {
 
 variable "skip_postgresql_kms_auth_policy" {
   type        = bool
-  description = "Set to true to skip the creation of IAM authorization policies that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect or Hyper Protect Crypto Services key. This policy is required in order to enable KMS encryption, so only skip creation if there is one already present in your account. No policy is created if `use_ibm_owned_encryption_key` is true."
+  description = "Whether to create an IAM authorization policy that permits all Databases for PostgreSQL instances in the resource group to read the encryption key from the Hyper Protect Crypto Services instance specified in the `existing_kms_instance_crn` variable."
   default     = false
 }
 
@@ -216,13 +227,13 @@ variable "ibmcloud_kms_api_key" {
 variable "key_ring_name" {
   type        = string
   default     = "postgresql-key-ring"
-  description = "The name for the key ring created for the PostgreSQL key. Applies only if not specifying an existing key or using IBM owned keys. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name for the key ring created for the Databases for PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "key_name" {
   type        = string
   default     = "postgresql-key"
-  description = "The name for the key created for the PostgreSQL key. Applies only if not specifying an existing key or using IBM owned keys. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  description = "The name for the key created for the Databases for PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
 variable "existing_backup_kms_key_crn" {
@@ -235,11 +246,20 @@ variable "backup_crn" {
   type        = string
   description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.backup_crn == null,
+      can(regex("^crn:.*:backup:", var.backup_crn))
+    ])
+    error_message = "backup_crn must be null OR starts with 'crn:' and contains ':backup:'"
+  }
 }
 
 ##############################################################
 # Auto Scaling
 ##############################################################
+
 variable "auto_scaling" {
   type = object({
     disk = object({

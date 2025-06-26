@@ -7,14 +7,14 @@ output "id" {
   value       = local.postgresql_id
 }
 
-output "guid" {
-  description = "PostgreSQL instance guid"
-  value       = local.postgresql_guid
-}
-
 output "version" {
   description = "PostgreSQL instance version"
   value       = local.postgresql_version
+}
+
+output "guid" {
+  description = "PostgreSQL instance guid"
+  value       = local.postgresql_guid
 }
 
 output "crn" {

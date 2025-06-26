@@ -12,19 +12,19 @@ variable "name" {
   description = "The name to give the Postgresql instance."
 }
 
-variable "pg_version" {
+variable "postgresql_version" {
   type        = string
   description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   default     = null
 
   validation {
     condition = anytrue([
-      var.pg_version == null,
-      var.pg_version == "17",
-      var.pg_version == "16",
-      var.pg_version == "15",
-      var.pg_version == "14",
-      var.pg_version == "13",
+      var.postgresql_version == null,
+      var.postgresql_version == "17",
+      var.postgresql_version == "16",
+      var.postgresql_version == "15",
+      var.postgresql_version == "14",
+      var.postgresql_version == "13",
     ])
     error_message = "Version must be 12, 13, 14, 15 or 16. If no value passed, the current ICD preferred version is used."
   }
@@ -53,30 +53,30 @@ variable "members" {
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
-variable "member_cpu_count" {
+variable "cpu_count" {
   type        = number
-  description = "Allocated dedicated CPU per member. For shared CPU, set to 0. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling). Ignored during restore and point in time recovery operations"
+  description = "Allocated dedicated CPU per member. For shared CPU, set to 0. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
   default     = 0
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
-variable "member_disk_mb" {
+variable "disk_mb" {
   type        = number
-  description = "Allocated disk per member. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling). Ignored during restore and point in time recovery operations"
+  description = "Allocated disk per member. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
   default     = 5120
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "member_host_flavor" {
   type        = string
-  description = "Allocated host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor). Ignored during restore and point in time recovery operations"
+  description = "Allocated host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
   default     = null
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
-variable "member_memory_mb" {
+variable "memory_mb" {
   type        = number
-  description = "Allocated memory per member. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling). Ignored during restore and point in time recovery operations"
+  description = "Allocated memory per member. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
   default     = 4096
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
@@ -260,7 +260,10 @@ variable "use_ibm_owned_encryption_key" {
   default     = true
 
   validation {
-    condition     = var.use_ibm_owned_encryption_key && (var.kms_key_crn != null || var.backup_encryption_key_crn != null) ? false : true
+    condition = !(
+      var.use_ibm_owned_encryption_key == true &&
+      (var.kms_key_crn != null || var.backup_encryption_key_crn != null)
+    )
     error_message = "When 'use_ibm_owned_encryption_key' is true, 'kms_key_crn' and 'backup_encryption_key_crn' must both be null."
   }
 
@@ -275,7 +278,7 @@ variable "use_ibm_owned_encryption_key" {
       var.backup_encryption_key_crn == null ||
       (!var.use_default_backup_encryption_key && !var.use_same_kms_key_for_backups)
     )
-    error_message = "When passing a value for backup_encryption_key_crn, you should set use_same_kms_key_for_backups to false, use_default_backup_encryption_key to false and use_ibm_owned_encryption_key to false."
+    error_message = "When passing a value for 'backup_encryption_key_crn' you cannot set 'use_default_backup_encryption_key' to true or 'use_ibm_owned_encryption_key' to false."
   }
 
   validation {
@@ -286,6 +289,12 @@ variable "use_ibm_owned_encryption_key" {
     )
     error_message = "When 'use_same_kms_key_for_backups' is set to false, a value needs to be passed for 'backup_encryption_key_crn'."
   }
+}
+
+variable "use_default_backup_encryption_key" {
+  type        = bool
+  description = "When `use_ibm_owned_encryption_key` is set to false, backups will be encrypted with either the key specified in `kms_key_crn`, or in `backup_encryption_key_crn` if a value is passed. If you do not want to use your own key for backups encryption, you can set this to `true` to use the IBM Cloud Databases default encryption for backups. Alternatively set `use_ibm_owned_encryption_key` to true to use the default encryption for both backups and deployment data."
+  default     = false
 }
 
 variable "kms_key_crn" {
@@ -322,12 +331,6 @@ variable "backup_encryption_key_crn" {
     ])
     error_message = "Value must be the KMS key CRN from a Key Protect or Hyper Protect Crypto Services instance in one of the supported backup regions."
   }
-}
-
-variable "use_default_backup_encryption_key" {
-  type        = bool
-  description = "When `use_ibm_owned_encryption_key` is set to false, backups will be encrypted with either the key specified in `kms_key_crn`, or in `backup_encryption_key_crn` if a value is passed. If you do not want to use your own key for backups encryption, you can set this to `true` to use the IBM Cloud Databases default encryption for backups. Alternatively set `use_ibm_owned_encryption_key` to true to use the default encryption for both backups and deployment data."
-  default     = false
 }
 
 variable "skip_iam_authorization_policy" {
