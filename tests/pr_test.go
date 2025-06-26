@@ -81,7 +81,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "postgresql_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
@@ -118,7 +118,7 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string", Secure: true},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "postgresql_access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
+		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: "16", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
@@ -143,7 +143,7 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 
 	options.TerraformVars = map[string]interface{}{
 		"prefix":                       options.Prefix,
-		"postgresql_access_tags":       permanentResources["accessTags"],
+		"access_tags":                  permanentResources["accessTags"],
 		"existing_kms_instance_crn":    permanentResources["hpcs_south_crn"],
 		"existing_resource_group_name": resourceGroup,
 	}
@@ -248,10 +248,10 @@ func TestRunExistingInstance(t *testing.T) {
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir + "/examples/basic",
 		Vars: map[string]interface{}{
-			"prefix":            prefix,
-			"region":            region,
-			"pg_version":        latestVersion,
-			"service_endpoints": "public-and-private",
+			"prefix":             prefix,
+			"region":             region,
+			"postgresql_version": latestVersion,
+			"service_endpoints":  "public-and-private",
 		},
 		// Set Upgrade to true to ensure latest version of providers and modules are used by terratest.
 		// This is the same as setting the -upgrade=true flag with terraform.
