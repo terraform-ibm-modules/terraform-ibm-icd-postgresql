@@ -6,7 +6,7 @@ module "postgresql_db" {
   remote_leader_crn                 = var.remote_leader_crn
   skip_iam_authorization_policy     = var.skip_iam_authorization_policy
   service_endpoints                 = "private"
-  pg_version                        = var.pg_version
+  postgresql_version                = var.pg_version
   use_ibm_owned_encryption_key      = var.use_ibm_owned_encryption_key
   use_same_kms_key_for_backups      = var.use_same_kms_key_for_backups
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
@@ -17,9 +17,9 @@ module "postgresql_db" {
   access_tags                       = var.access_tags
   cbr_rules                         = var.cbr_rules
   configuration                     = var.configuration
-  member_memory_mb                  = var.member_memory_mb
-  member_disk_mb                    = var.member_disk_mb
-  member_cpu_count                  = var.member_cpu_count
+  memory_mb                         = var.member_memory_mb
+  disk_mb                           = var.member_disk_mb
+  cpu_count                         = var.member_cpu_count
   member_host_flavor                = var.member_host_flavor
   members                           = var.members
   admin_pass                        = var.admin_pass

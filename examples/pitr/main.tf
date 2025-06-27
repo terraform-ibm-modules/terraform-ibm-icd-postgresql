@@ -21,12 +21,12 @@ module "postgresql_db_pitr" {
   region             = var.region
   tags               = var.resource_tags
   access_tags        = var.access_tags
-  member_memory_mb   = 4096
-  member_disk_mb     = 5120
-  member_cpu_count   = 0
+  memory_mb          = 4096
+  disk_mb            = 5120
+  cpu_count          = 0
   member_host_flavor = "multitenant"
   members            = var.members
-  pg_version         = var.pg_version
+  postgresql_version = var.pg_version
   pitr_id            = var.pitr_id
   pitr_time          = var.pitr_time
 }

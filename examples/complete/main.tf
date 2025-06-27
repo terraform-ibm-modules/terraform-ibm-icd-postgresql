@@ -106,12 +106,12 @@ module "icd_postgresql" {
   # remove the above line and uncomment the below 2 lines to consume the module from the registry
   # source            = "terraform-ibm-modules/icd-postgresql/ibm"
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
-  resource_group_id = module.resource_group.resource_group_id
-  name              = "${var.prefix}-postgres"
-  region            = var.region
-  pg_version        = var.pg_version
-  admin_pass        = var.admin_pass
-  users             = var.users
+  resource_group_id  = module.resource_group.resource_group_id
+  name               = "${var.prefix}-postgres"
+  region             = var.region
+  postgresql_version = var.pg_version
+  admin_pass         = var.admin_pass
+  users              = var.users
   # Example of how to use different KMS keys for data and backups
   use_ibm_owned_encryption_key = false
   use_same_kms_key_for_backups = false
