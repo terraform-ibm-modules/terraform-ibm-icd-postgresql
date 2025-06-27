@@ -203,13 +203,8 @@
             },
             {
               "key": "postgresql_version",
-              "required": false,
-              "default_value": "__NULL__",
+              "required": true,
               "options": [
-                {
-                  "displayname": "preferred",
-                  "value": "__NULL__"
-                },
                 {
                   "displayname": "13",
                   "value": "13"
@@ -499,13 +494,8 @@
             },
             {
               "key": "postgresql_version",
-              "required": false,
-              "default_value": "__NULL__",
+              "required": true,
               "options": [
-                {
-                  "displayname": "preferred",
-                  "value": "__NULL__"
-                },
                 {
                   "displayname": "13",
                   "value": "13"
