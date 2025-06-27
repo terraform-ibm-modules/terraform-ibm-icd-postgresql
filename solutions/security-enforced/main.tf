@@ -8,7 +8,6 @@ module "postgresql_db" {
   region                            = var.region
   existing_postgresql_instance_crn  = var.existing_postgresql_instance_crn
   postgresql_version                = var.postgresql_version
-  backup_crn                        = var.backup_crn
   remote_leader_crn                 = var.remote_leader_crn
   members                           = var.members
   member_memory_mb                  = var.member_memory_mb
@@ -31,6 +30,7 @@ module "postgresql_db" {
   key_name                          = var.key_name
   existing_backup_kms_key_crn       = var.existing_backup_kms_key_crn
   use_default_backup_encryption_key = false
+  backup_crn                        = var.backup_crn
   auto_scaling                      = var.auto_scaling
   service_endpoints                 = "private"
 }

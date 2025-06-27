@@ -61,7 +61,7 @@ variable "existing_postgresql_instance_crn" {
 }
 
 variable "postgresql_version" {
-  description = "The version of the PostgreSQL instance. If no value is specified, the current preferred version of PostgreSQL is used."
+  description = "The version of the Databases for Redis instance."
   type        = string
   default     = null
 }
@@ -75,10 +75,11 @@ variable "remote_leader_crn" {
 ##############################################################################
 # ICD hosting model properties
 ##############################################################################
+
 variable "members" {
   type        = number
   description = "The number of members that are allocated. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)."
-  default     = 3
+  default     = 2
 }
 
 variable "member_memory_mb" {
@@ -157,7 +158,7 @@ variable "service_credential_names" {
 
 variable "admin_pass" {
   type        = string
-  description = "The password for the database administrator. If the admin password is null, the admin user ID cannot be accessed. More users can be specified in a user block."
+  description = "The password for the database administrator. If no admin password is provided (i.e., it is null), one will be generated automatically. Additional users can be added using a user block."
   default     = null
   sensitive   = true
 }
@@ -171,7 +172,7 @@ variable "users" {
   }))
   default     = []
   sensitive   = true
-  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)."
+  description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the PostgreSQL instance. This blocks creates native postgres database users. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md#users)"
 }
 
 variable "resource_tags" {
@@ -283,6 +284,6 @@ variable "auto_scaling" {
       rate_units               = optional(string, "mb")
     })
   })
-  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)"
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)"
   default     = null
 }

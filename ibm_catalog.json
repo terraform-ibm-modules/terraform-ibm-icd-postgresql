@@ -14,7 +14,6 @@
       ],
       "keywords": [
         "postgresql",
-        "postgres",
         "IaC",
         "infrastructure as code",
         "terraform",

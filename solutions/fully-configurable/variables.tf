@@ -95,7 +95,7 @@ variable "service_endpoints" {
 variable "members" {
   type        = number
   description = "The number of members that are allocated. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)."
-  default     = 3
+  default     = 2
 }
 
 variable "member_memory_mb" {
@@ -339,6 +339,6 @@ variable "auto_scaling" {
       rate_units               = optional(string, "mb")
     })
   })
-  description = "The rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#autoscaling)"
+  description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#autoscaling)"
   default     = null
 }

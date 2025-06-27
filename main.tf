@@ -310,7 +310,7 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
-resource "ibm_resource_tag" "postgresql_tag" {
+resource "ibm_resource_tag" "access_tag" {
   count       = length(var.access_tags) == 0 ? 0 : 1
   resource_id = ibm_database.postgresql_db.resource_crn
   tags        = var.access_tags
@@ -320,6 +320,7 @@ resource "ibm_resource_tag" "postgresql_tag" {
 ##############################################################################
 # Context Based Restrictions
 ##############################################################################
+
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
@@ -346,6 +347,7 @@ module "cbr_rule" {
       }
     ]
   }]
+  #  There is only 1 operation type for Redis so it is not exposed as a configuration
   operations = [{
     api_types = [
       {
