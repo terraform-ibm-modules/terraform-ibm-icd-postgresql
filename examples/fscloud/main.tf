@@ -61,7 +61,7 @@ module "postgresql_db" {
   resource_group_id         = module.resource_group.resource_group_id
   name                      = "${var.prefix}-postgres"
   region                    = var.region
-  pg_version                = var.pg_version
+  postgresql_version        = var.postgresql_version
   kms_key_crn               = var.kms_key_crn
   backup_encryption_key_crn = var.backup_encryption_key_crn
   backup_crn                = var.backup_crn
