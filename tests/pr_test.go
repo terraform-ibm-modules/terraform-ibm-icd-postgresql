@@ -134,9 +134,9 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
 		Testing:                    t,
-		TerraformDir:               fullyConfigurableSolutionTerraformDir,
+		TerraformDir:               securityEnforcedSolutionTerraformDir,
 		Region:                     "us-south",
-		Prefix:                     "pg-fc-upg",
+		Prefix:                     "pg-se-upg",
 		ResourceGroup:              resourceGroup,
 		CheckApplyResultForUpgrade: true,
 	})
