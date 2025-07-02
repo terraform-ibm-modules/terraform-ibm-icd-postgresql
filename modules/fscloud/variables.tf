@@ -12,7 +12,7 @@ variable "name" {
   description = "The name to give the Postgresql instance."
 }
 
-variable "pg_version" {
+variable "postgresql_version" {
   type        = string
   description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   default     = null

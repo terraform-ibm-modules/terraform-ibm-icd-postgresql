@@ -15,7 +15,7 @@ module "postgresql_db" {
   source             = "../.."
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres"
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   region             = var.region
   tags               = var.resource_tags
   access_tags        = var.access_tags
@@ -35,7 +35,7 @@ module "restored_icd_postgresql" {
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres-restored"
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   region             = var.region
   tags               = var.resource_tags
   access_tags        = var.access_tags

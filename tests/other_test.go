@@ -19,7 +19,7 @@ func TestRunRestoredDBExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "13",
+			"postgresql_version": "13",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
@@ -39,10 +39,10 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 		ResourceGroup: resourceGroup,
 		Region:        fmt.Sprint(permanentResources["postgresqlPITRRegion"]),
 		TerraformVars: map[string]interface{}{
-			"pitr_id":    permanentResources["postgresqlPITRCrn"],
-			"pitr_time":  "", // if blank string is passed, earliest_point_in_time_recovery_time will be used to restore
-			"pg_version": permanentResources["postgresqlPITRVersion"],
-			"members":    "3", // Lock members to 3 as the permanent postgres instances has 3 members
+			"pitr_id":            permanentResources["postgresqlPITRCrn"],
+			"pitr_time":          "", // if blank string is passed, earliest_point_in_time_recovery_time will be used to restore
+			"postgresql_version": permanentResources["postgresqlPITRVersion"],
+			"members":            "3", // Lock members to 3 as the permanent postgres instances has 3 members
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
@@ -59,7 +59,7 @@ func testPlanICDVersions(t *testing.T, version string) {
 		Testing:      t,
 		TerraformDir: "examples/basic",
 		TerraformVars: map[string]interface{}{
-			"pg_version": version,
+			"postgresql_version": version,
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
@@ -88,7 +88,7 @@ func TestRunCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"pg_version": "13",
+			"postgresql_version": "13",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})

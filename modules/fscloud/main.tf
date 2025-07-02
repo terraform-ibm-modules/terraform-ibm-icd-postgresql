@@ -6,7 +6,7 @@ module "postgresql_db" {
   remote_leader_crn                 = var.remote_leader_crn
   skip_iam_authorization_policy     = var.skip_iam_authorization_policy
   service_endpoints                 = "private"
-  postgresql_version                = var.pg_version
+  postgresql_version                = var.postgresql_version
   use_ibm_owned_encryption_key      = var.use_ibm_owned_encryption_key
   use_same_kms_key_for_backups      = var.use_same_kms_key_for_backups
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
