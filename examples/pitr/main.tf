@@ -26,7 +26,7 @@ module "postgresql_db_pitr" {
   cpu_count          = 0
   member_host_flavor = "multitenant"
   members            = var.members
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   pitr_id            = var.pitr_id
   pitr_time          = var.pitr_time
 }

@@ -109,7 +109,7 @@ module "icd_postgresql" {
   resource_group_id  = module.resource_group.resource_group_id
   name               = "${var.prefix}-postgres"
   region             = var.region
-  postgresql_version = var.pg_version
+  postgresql_version = var.postgresql_version
   admin_pass         = var.admin_pass
   users              = var.users
   # Example of how to use different KMS keys for data and backups
