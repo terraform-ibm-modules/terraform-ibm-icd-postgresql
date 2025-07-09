@@ -292,18 +292,21 @@ module "postgresql_db" {
   access_tags                       = var.access_tags
   tags                              = var.resource_tags
   # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6141
-  admin_pass               = var.remote_leader_crn == null ? local.admin_pass : null
-  users                    = var.users
-  members                  = var.members
-  member_host_flavor       = var.member_host_flavor
-  memory_mb                = var.member_memory_mb
-  disk_mb                  = var.member_disk_mb
-  cpu_count                = var.member_cpu_count
-  auto_scaling             = var.auto_scaling
-  configuration            = var.configuration
-  service_credential_names = var.service_credential_names
-  backup_crn               = var.backup_crn
-  service_endpoints        = var.service_endpoints
+  admin_pass                  = var.remote_leader_crn == null ? local.admin_pass : null
+  users                       = var.users
+  members                     = var.members
+  member_host_flavor          = var.member_host_flavor
+  memory_mb                   = var.member_memory_mb
+  disk_mb                     = var.member_disk_mb
+  cpu_count                   = var.member_cpu_count
+  auto_scaling                = var.auto_scaling
+  configuration               = var.configuration
+  service_credential_names    = var.service_credential_names
+  backup_crn                  = var.backup_crn
+  service_endpoints           = var.service_endpoints
+  deletion_protection         = var.deletion_protection
+  version_upgrade_skip_backup = var.version_upgrade_skip_backup
+  timeouts_update             = var.timeouts_update
 }
 
 locals {

@@ -290,6 +290,15 @@
               ]
             },
             {
+              "key": "deletion_protection"
+            },
+            {
+              "key": "timeouts_update"
+            },
+            {
+              "key": "version_upgrade_skip_backup"
+            },
+            {
               "key": "service_credential_names"
             },
             {
@@ -385,7 +394,7 @@
               ],
               "service_name": "databases-for-postgresql"
             },
-           {
+            {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
@@ -564,12 +573,18 @@
               "key": "configuration"
             },
             {
+              "key": "deletion_protection"
+            },
+            {
+              "key": "timeouts_update"
+            },
+            {
               "key": "service_credential_names"
             },
             {
               "key": "admin_pass"
             },
-{
+            {
               "key": "skip_postgresql_kms_auth_policy"
             },
             {

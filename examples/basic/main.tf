@@ -19,14 +19,15 @@ module "database" {
   # remove the above line and uncomment the below 2 lines to consume the module from the registry
   # source            = "terraform-ibm-modules/icd-postgresql/ibm"
   # version           = "X.Y.Z" # Replace "X.Y.Z" with a release version to lock into a specific release
-  resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-data-store"
-  postgresql_version = var.postgresql_version
-  region             = var.region
-  tags               = var.resource_tags
-  access_tags        = var.access_tags
-  service_endpoints  = var.service_endpoints
-  member_host_flavor = var.member_host_flavor
+  resource_group_id   = module.resource_group.resource_group_id
+  name                = "${var.prefix}-data-store"
+  region              = var.region
+  postgresql_version  = var.postgresql_version
+  access_tags         = var.access_tags
+  tags                = var.resource_tags
+  service_endpoints   = var.service_endpoints
+  member_host_flavor  = var.member_host_flavor
+  deletion_protection = false
   service_credential_names = {
     "postgresql_admin" : "Administrator",
     "postgresql_operator" : "Operator",
@@ -54,17 +55,18 @@ resource "time_sleep" "wait_time" {
 ##############################################################################
 
 module "read_only_replica_postgresql_db" {
-  count              = var.read_only_replicas_count
-  source             = "../.."
-  resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-read-only-replica-${count.index}"
-  region             = var.region
-  tags               = var.resource_tags
-  access_tags        = var.access_tags
-  postgresql_version = var.postgresql_version
-  remote_leader_crn  = module.database.crn
-  member_host_flavor = "multitenant"
-  memory_mb          = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
-  disk_mb            = 5120 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
-  depends_on         = [time_sleep.wait_time]
+  count               = var.read_only_replicas_count
+  source              = "../.."
+  resource_group_id   = module.resource_group.resource_group_id
+  name                = "${var.prefix}-read-only-replica-${count.index}"
+  region              = var.region
+  tags                = var.resource_tags
+  access_tags         = var.access_tags
+  postgresql_version  = var.postgresql_version
+  remote_leader_crn   = module.database.crn
+  deletion_protection = false
+  member_host_flavor  = "multitenant"
+  memory_mb           = 4096 # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
+  disk_mb             = 5120 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
+  depends_on          = [time_sleep.wait_time]
 }
