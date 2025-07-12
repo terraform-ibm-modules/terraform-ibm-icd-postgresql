@@ -72,7 +72,8 @@ module "postgresql_db" {
     "postgressql_viewer" : "Viewer",
     "postgressql_editor" : "Editor",
   }
-  access_tags = var.access_tags
+  access_tags         = var.access_tags
+  deletion_protection = false
   auto_scaling = {
     disk = {
       capacity_enabled : true,

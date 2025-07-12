@@ -6,6 +6,11 @@ output "id" {
   value       = module.database.id
 }
 
+output "postgresql_crn" {
+  description = "Postgresql CRN"
+  value       = module.database.crn
+}
+
 output "version" {
   description = "Postgresql instance version"
   value       = module.database.version
@@ -30,9 +35,4 @@ output "certificate_base64" {
   description = "Database connection certificate"
   value       = module.database.certificate_base64
   sensitive   = true
-}
-
-output "postgresql_crn" {
-  description = "Postgresql CRN"
-  value       = module.database.crn
 }

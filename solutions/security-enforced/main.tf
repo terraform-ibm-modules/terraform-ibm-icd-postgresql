@@ -33,4 +33,7 @@ module "postgresql_db" {
   backup_crn                        = var.backup_crn
   auto_scaling                      = var.auto_scaling
   service_endpoints                 = "private"
+  deletion_protection               = var.deletion_protection
+  version_upgrade_skip_backup       = false
+  timeouts_update                   = var.timeouts_update
 }
