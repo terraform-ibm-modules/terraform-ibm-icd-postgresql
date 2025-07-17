@@ -8,9 +8,10 @@
         "ibm_created",
         "target_terraform",
         "terraform",
+        "solution",
         "data_management",
         "database",
-        "solution"
+        "converged_infra"
       ],
       "keywords": [
         "postgresql",
@@ -385,7 +386,7 @@
               ],
               "service_name": "databases-for-postgresql"
             },
-           {
+            {
               "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
@@ -569,7 +570,7 @@
             {
               "key": "admin_pass"
             },
-{
+            {
               "key": "skip_postgresql_kms_auth_policy"
             },
             {
