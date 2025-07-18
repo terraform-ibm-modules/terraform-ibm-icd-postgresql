@@ -124,8 +124,9 @@ module "icd_postgresql" {
     "postgressql_viewer" : "Viewer",
     "postgressql_editor" : "Editor",
   }
-  access_tags        = var.access_tags
-  member_host_flavor = "multitenant"
+  access_tags         = var.access_tags
+  member_host_flavor  = "multitenant"
+  deletion_protection = false
   # Example of setting configuration - none of the below is mandatory - those settings are set in this example for illustation purpose and ensure path is exercised in automated test using this example.
   configuration = {
     shared_buffers             = 32000

@@ -171,6 +171,8 @@ resource "ibm_database" "postgresql_db" {
   version                              = var.postgresql_version
   resource_group_id                    = var.resource_group_id
   service_endpoints                    = var.service_endpoints
+  deletion_protection                  = var.deletion_protection
+  version_upgrade_skip_backup          = var.version_upgrade_skip_backup
   tags                                 = var.tags
   adminpassword                        = var.admin_pass
   key_protect_key                      = var.kms_key_crn
@@ -297,7 +299,6 @@ resource "ibm_database" "postgresql_db" {
   lifecycle {
     ignore_changes = [
       # Ignore changes to these because a change will destroy and recreate the instance
-      version,
       key_protect_key,
       backup_encryption_key_crn,
     ]
@@ -305,7 +306,7 @@ resource "ibm_database" "postgresql_db" {
 
   timeouts {
     create = "120m" # Extending provisioning time to 120 minutes
-    update = "120m"
+    update = var.timeouts_update
     delete = "15m"
   }
 }
