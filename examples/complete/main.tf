@@ -58,7 +58,7 @@ data "ibm_iam_account_settings" "iam_account_settings" {
 
 module "vpc" {
   source            = "terraform-ibm-modules/landing-zone-vpc/ibm"
-  version           = "7.25.10"
+  version           = "7.25.11"
   resource_group_id = module.resource_group.resource_group_id
   region            = var.region
   prefix            = var.prefix
@@ -87,7 +87,7 @@ resource "time_sleep" "wait_30_seconds" {
 
 module "cbr_zone" {
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-zone-module"
-  version          = "1.32.3"
+  version          = "1.32.4"
   name             = "${var.prefix}-VPC-network-zone"
   zone_description = "CBR Network zone representing VPC"
   account_id       = data.ibm_iam_account_settings.iam_account_settings.account_id
@@ -178,7 +178,7 @@ resource "time_sleep" "wait_120_seconds" {
 
 module "vpe" {
   source  = "terraform-ibm-modules/vpe-gateway/ibm"
-  version = "4.6.6"
+  version = "4.6.7"
   prefix  = "vpe-to-pg"
   cloud_service_by_crn = [
     {
