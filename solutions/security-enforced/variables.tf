@@ -36,11 +36,18 @@ variable "prefix" {
   }
 
   validation {
-    # must not exceed 16 characters in length
-    condition     = length(var.prefix) <= 16
-    error_message = "Prefix must not exceed 16 characters."
-  }
-}
+
+
+  # must not exceed 16 characters in length
+
+
+  condition = var.prefix == null || var.prefix == "" ? true : length(var.prefix) <= 16
+
+
+  error_message = "Prefix must not exceed 16 characters."
+
+
+  }}
 
 variable "name" {
   type        = string
