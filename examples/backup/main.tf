@@ -11,15 +11,16 @@ module "resource_group" {
 }
 
 module "postgresql_db" {
-  count              = var.postgresql_db_backup_crn != null ? 0 : 1
-  source             = "../.."
-  resource_group_id  = module.resource_group.resource_group_id
-  name               = "${var.prefix}-postgres"
-  postgresql_version = var.postgresql_version
-  region             = var.region
-  tags               = var.resource_tags
-  access_tags        = var.access_tags
-  member_host_flavor = "multitenant"
+  count               = var.postgresql_db_backup_crn != null ? 0 : 1
+  source              = "../.."
+  resource_group_id   = module.resource_group.resource_group_id
+  name                = "${var.prefix}-postgres"
+  postgresql_version  = var.postgresql_version
+  region              = var.region
+  tags                = var.resource_tags
+  access_tags         = var.access_tags
+  deletion_protection = false
+  member_host_flavor  = "multitenant"
 }
 
 data "ibm_database_backups" "backup_database" {
