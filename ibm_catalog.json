@@ -364,7 +364,8 @@
             {
               "key": "remote_leader_crn"
             }
-          ]
+          ],
+          "terraform_version": "1.10.5"
         },
         {
           "label": "Security-enforced",
@@ -625,7 +626,8 @@
             {
               "key": "existing_postgresql_instance_crn"
             }
-          ]
+          ],
+          "terraform_version": "1.10.5"
         }
       ]
     }
