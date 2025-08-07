@@ -122,6 +122,8 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		WaitJobCompleteMinutes: 60,
 	})
 
+	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
+
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string", Secure: true},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -133,7 +135,9 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		{Name: "existing_resource_group_name", Value: "geretain-test-postgres-security-enforced", DataType: "string"},
 		{Name: "admin_pass", Value: GetRandomAdminPassword(t), DataType: "string"},
 	}
-	err := options.RunSchematicTest()
+	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		return options.RunSchematicTest()
+	})
 	assert.Nil(t, err, "This should not have errored")
 }
 
