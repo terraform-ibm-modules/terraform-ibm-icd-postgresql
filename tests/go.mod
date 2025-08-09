@@ -2,13 +2,13 @@ module github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql
 
 go 1.24.0
 
-toolchain go1.24.5
+toolchain go1.24.6
 
 require (
 	github.com/google/uuid v1.6.0
 	github.com/gruntwork-io/terratest v0.50.0
 	github.com/stretchr/testify v1.10.0
-	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.58.2
+	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.58.8
 )
 
 require (
