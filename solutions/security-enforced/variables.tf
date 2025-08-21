@@ -297,3 +297,93 @@ variable "auto_scaling" {
   description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md)"
   default     = null
 }
+
+#############################################################################
+# Secrets Manager Service Credentials
+#############################################################################
+
+variable "existing_secrets_manager_instance_crn" {
+  type        = string
+  default     = null
+  description = "The CRN of existing secrets manager to use to create service credential secrets for Databases for PostgreSQL instance."
+}
+
+variable "service_credential_secrets" {
+  type = list(object({
+    secret_group_name        = string
+    secret_group_description = optional(string)
+    existing_secret_group    = optional(bool)
+    service_credentials = list(object({
+      secret_name                                 = string
+      service_credentials_source_service_role_crn = string
+      secret_labels                               = optional(list(string))
+      secret_auto_rotation                        = optional(bool)
+      secret_auto_rotation_unit                   = optional(string)
+      secret_auto_rotation_interval               = optional(number)
+      service_credentials_ttl                     = optional(string)
+      service_credential_secret_description       = optional(string)
+
+    }))
+  }))
+  default     = []
+  description = "Service credential secrets configuration for Databases for PostgreSQL. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable/DA-types.md#service-credential-secrets)."
+
+  validation {
+    # Service roles CRNs can be found at https://cloud.ibm.com/iam/roles, select the IBM Cloud Database and select the role
+    condition = alltrue([
+      for group in var.service_credential_secrets : alltrue([
+        # crn:v?:bluemix; two non-empty segments; three possibly empty segments; :serviceRole or role: non-empty segment
+        for credential in group.service_credentials : can(regex("^crn:v[0-9]:bluemix(:..*){2}(:.*){3}:(serviceRole|role):..*$", credential.service_credentials_source_service_role_crn))
+      ])
+    ])
+    error_message = "service_credentials_source_service_role_crn must be a serviceRole CRN. See https://cloud.ibm.com/iam/roles"
+  }
+
+  validation {
+    condition = (
+      length(var.service_credential_secrets) == 0 ||
+      var.existing_secrets_manager_instance_crn != null
+    )
+    error_message = "`existing_secrets_manager_instance_crn` is required when adding service credentials to a secrets manager secret."
+  }
+}
+
+variable "skip_postgresql_secrets_manager_auth_policy" {
+  type        = bool
+  default     = false
+  description = "Whether an IAM authorization policy is created for Secrets Manager instance to create a service credential secrets for Databases for PostgreSQL. If set to false, the Secrets Manager instance passed by the user is granted the Key Manager access to the PostgreSQL instance created by the Deployable Architecture. Set to `true` to use an existing policy. The value of this is ignored if any value for 'existing_secrets_manager_instance_crn' is not passed."
+}
+
+variable "admin_pass_secrets_manager_secret_group" {
+  type        = string
+  description = "The name of a new or existing secrets manager secret group for admin password. To use existing secret group, `use_existing_admin_pass_secrets_manager_secret_group` must be set to `true`. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  default     = "postgresql-secrets"
+
+  validation {
+    condition = (
+      var.existing_secrets_manager_instance_crn == null ||
+      var.admin_pass_secrets_manager_secret_group != null
+    )
+    error_message = "`admin_pass_secrets_manager_secret_group` is required when `existing_secrets_manager_instance_crn` is set."
+  }
+}
+
+variable "use_existing_admin_pass_secrets_manager_secret_group" {
+  type        = bool
+  description = "Whether to use an existing secrets manager secret group for admin password."
+  default     = false
+}
+
+variable "admin_pass_secrets_manager_secret_name" {
+  type        = string
+  description = "The name of a new PostgreSQL administrator secret. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
+  default     = "postgresql-admin-password"
+
+  validation {
+    condition = (
+      var.existing_secrets_manager_instance_crn == null ||
+      var.admin_pass_secrets_manager_secret_name != null
+    )
+    error_message = "`admin_pass_secrets_manager_secret_name` is required when `existing_secrets_manager_instance_crn` is set."
+  }
+}

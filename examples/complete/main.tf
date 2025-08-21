@@ -119,10 +119,10 @@ module "icd_postgresql" {
   backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd.${local.backups_key_name}"].crn
   tags                         = var.resource_tags
   service_credential_names = {
-    "postgressql_admin" : "Administrator",
-    "postgressql_operator" : "Operator",
-    "postgressql_viewer" : "Viewer",
-    "postgressql_editor" : "Editor",
+    "postgresql_admin" : "Administrator",
+    "postgresql_operator" : "Operator",
+    "postgresql_viewer" : "Viewer",
+    "postgresql_editor" : "Editor",
   }
   access_tags         = var.access_tags
   member_host_flavor  = "multitenant"
