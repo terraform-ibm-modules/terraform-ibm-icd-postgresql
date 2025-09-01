@@ -33,13 +33,13 @@ You can specify a set of IAM credentials to connect to the database with the `se
 
 ## Service credential secrets <a name="service-credential-secrets"></a>
 
-When you add an IBM Database for PostgreSQL deployable architecture from the IBM Cloud catalog to IBM Cloud Project , you can configure service credentials. In edit mode for the projects configuration, from the configure panel click the optional tab.
+When you add an IBM Database for PostgreSQL deployable architecture from the IBM Cloud catalog to IBM Cloud Project, you can configure service credentials. In edit mode for the projects configuration, from the configure panel click the optional tab.
 
 To enter a custom value, use the edit action to open the "Edit Array" panel. Add the service credential secrets configurations to the array here.
 
 In the configuration, specify the secret group name, whether it already exists or will be created and include all the necessary service credential secrets that need to be created within that secret group.
 
- [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/sm_service_credentials_secret) about service credential secrets.
+ [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui#user-management-service-cred) about service credential secrets.
 
 - Variable name: `service_credential_secrets`.
 - Type: A list of objects that represent a service credential secret groups and secrets
