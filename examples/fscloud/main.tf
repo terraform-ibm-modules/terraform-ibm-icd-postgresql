@@ -67,10 +67,10 @@ module "postgresql_db" {
   backup_crn                = var.backup_crn
   tags                      = var.resource_tags
   service_credential_names = {
-    "postgressql_admin" : "Administrator",
-    "postgressql_operator" : "Operator",
-    "postgressql_viewer" : "Viewer",
-    "postgressql_editor" : "Editor",
+    "postgresql_admin" : "Administrator",
+    "postgresql_operator" : "Operator",
+    "postgresql_viewer" : "Viewer",
+    "postgresql_editor" : "Editor",
   }
   access_tags         = var.access_tags
   deletion_protection = false

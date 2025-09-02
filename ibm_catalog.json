@@ -303,7 +303,45 @@
               "key": "service_credential_names"
             },
             {
+              "key": "service_credential_secrets",
+              "type": "array",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
+            },
+            {
               "key": "admin_pass"
+            },
+            {
+              "key": "existing_secrets_manager_instance_crn"
+            },
+            {
+              "key": "existing_secrets_manager_endpoint_type",
+              "hidden": true,
+              "options": [
+                {
+                  "displayname": "public",
+                  "value": "public"
+                },
+                {
+                  "displayname": "private",
+                  "value": "private"
+                }
+              ]
+            },
+            {
+              "key": "skip_postgresql_secrets_manager_auth_policy"
+            },
+            {
+              "key": "admin_pass_secrets_manager_secret_group"
+            },
+            {
+              "key": "admin_pass_secrets_manager_secret_name"
+            },
+            {
+              "key": "use_existing_admin_pass_secrets_manager_secret_group"
             },
             {
               "key": "users",
@@ -584,10 +622,31 @@
               "key": "service_credential_names"
             },
             {
+              "key": "service_credential_secrets",
+              "type": "array",
+              "custom_config": {
+                "type": "textarea",
+                "grouping": "deployment",
+                "original_grouping": "deployment"
+              }
+            },
+            {
               "key": "admin_pass"
             },
             {
-              "key": "skip_postgresql_kms_auth_policy"
+              "key": "existing_secrets_manager_instance_crn"
+            },
+            {
+              "key": "skip_postgresql_secrets_manager_auth_policy"
+            },
+            {
+              "key": "admin_pass_secrets_manager_secret_group"
+            },
+            {
+              "key": "admin_pass_secrets_manager_secret_name"
+            },
+            {
+              "key": "use_existing_admin_pass_secrets_manager_secret_group"
             },
             {
               "key": "users",
@@ -621,10 +680,13 @@
               "key": "existing_backup_kms_key_crn"
             },
             {
-              "key": "remote_leader_crn"
+              "key": "skip_postgresql_kms_auth_policy"
             },
             {
               "key": "existing_postgresql_instance_crn"
+            },
+            {
+              "key": "remote_leader_crn"
             }
           ],
           "terraform_version": "1.10.5"
