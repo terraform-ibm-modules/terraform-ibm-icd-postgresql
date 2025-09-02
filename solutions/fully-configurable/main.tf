@@ -317,3 +317,90 @@ locals {
   postgresql_hostname = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].hostname : module.postgresql_db[0].hostname
   postgresql_port     = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].port : module.postgresql_db[0].port
 }
+
+#######################################################################################################################
+# Secrets management
+#######################################################################################################################
+
+locals {
+  create_secrets_manager_auth_policy = var.skip_postgresql_secrets_manager_auth_policy || var.existing_secrets_manager_instance_crn == null ? 0 : 1
+}
+
+# Parse the Secrets Manager CRN
+module "secrets_manager_instance_crn_parser" {
+  count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.2.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
+# create a service authorization between Secrets Manager and the target service (Databases for PostgreSQL)
+resource "ibm_iam_authorization_policy" "secrets_manager_key_manager" {
+  count                       = local.create_secrets_manager_auth_policy
+  source_service_name         = "secrets-manager"
+  source_resource_instance_id = local.existing_secrets_manager_instance_guid
+  target_service_name         = "databases-for-postgresql"
+  target_resource_instance_id = local.postgresql_guid
+  roles                       = ["Key Manager"]
+  description                 = "Allow Secrets Manager with instance id ${local.existing_secrets_manager_instance_guid} to manage key for the databases-for-postgresql instance"
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_postgresql_authorization_policy" {
+  count           = local.create_secrets_manager_auth_policy
+  depends_on      = [ibm_iam_authorization_policy.secrets_manager_key_manager]
+  create_duration = "30s"
+}
+
+locals {
+  service_credential_secrets = [
+    for service_credentials in var.service_credential_secrets : {
+      secret_group_name        = service_credentials.secret_group_name
+      secret_group_description = service_credentials.secret_group_description
+      existing_secret_group    = service_credentials.existing_secret_group
+      secrets = [
+        for secret in service_credentials.service_credentials : {
+          secret_name                                 = secret.secret_name
+          secret_labels                               = secret.secret_labels
+          secret_auto_rotation                        = secret.secret_auto_rotation
+          secret_auto_rotation_unit                   = secret.secret_auto_rotation_unit
+          secret_auto_rotation_interval               = secret.secret_auto_rotation_interval
+          service_credentials_ttl                     = secret.service_credentials_ttl
+          service_credential_secret_description       = secret.service_credential_secret_description
+          service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
+          service_credentials_source_service_crn      = local.postgresql_crn
+          secret_type                                 = "service_credentials" #checkov:skip=CKV_SECRET_6
+        }
+      ]
+    }
+  ]
+
+  # Build the structure of the arbitrary credential type secret for admin password
+  admin_pass_secret = [{
+    secret_group_name     = "${local.prefix}${var.admin_pass_secrets_manager_secret_group}"
+    existing_secret_group = var.use_existing_admin_pass_secrets_manager_secret_group
+    secrets = [{
+      secret_name             = "${local.prefix}${var.admin_pass_secrets_manager_secret_name}"
+      secret_type             = "arbitrary"
+      secret_payload_password = local.admin_pass
+      }
+    ]
+  }]
+
+  # Concatenate into 1 secrets object
+  secrets = concat(local.service_credential_secrets, local.admin_pass_secret)
+  # Parse Secrets Manager details from the CRN
+  existing_secrets_manager_instance_guid   = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].service_instance : null
+  existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].region : null
+}
+
+module "secrets_manager_service_credentials" {
+  count                       = length(local.service_credential_secrets) > 0 ? 1 : 0
+  depends_on                  = [time_sleep.wait_for_postgresql_authorization_policy]
+  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
+  version                     = "2.7.7"
+  existing_sm_instance_guid   = local.existing_secrets_manager_instance_guid
+  existing_sm_instance_region = local.existing_secrets_manager_instance_region
+  endpoint_type               = var.existing_secrets_manager_endpoint_type
+  secrets                     = local.secrets
+}
