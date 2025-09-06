@@ -46,7 +46,7 @@ variable "service_endpoints" {
   default     = "public"
 
   validation {
-    condition     = can(regex("public|public-and-private|private", var.service_endpoints))
+    condition     = can(regex("^(public|public-and-private|private)$", var.service_endpoints))
     error_message = "Valid values for service_endpoints are 'public', 'public-and-private', and 'private'"
   }
 }
