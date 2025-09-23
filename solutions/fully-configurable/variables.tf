@@ -358,7 +358,28 @@ variable "auto_scaling" {
     })
   })
   description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#autoscaling)"
-  default     = null
+  default = {
+    disk = {
+      capacity_enabled             = false
+      free_space_less_than_percent = 10
+      io_above_percent             = 90
+      io_enabled                   = false
+      io_over_period               = "15m"
+      rate_increase_percent        = 10
+      rate_limit_mb_per_member     = 3670016
+      rate_period_seconds          = 900
+      rate_units                   = "mb"
+    }
+    memory = {
+      io_above_percent         = 90
+      io_enabled               = false
+      io_over_period           = "15m"
+      rate_increase_percent    = 10
+      rate_limit_mb_per_member = 114688
+      rate_period_seconds      = 900
+      rate_units               = "mb"
+    }
+  }
 }
 
 #############################################################################
