@@ -206,6 +206,7 @@
             {
               "key": "postgresql_version",
               "required": true,
+              "default_value": "17",
               "options": [
                 {
                   "displayname": "13",
@@ -562,6 +563,7 @@
             {
               "key": "postgresql_version",
               "required": true,
+              "default_value": "17",
               "options": [
                 {
                   "displayname": "13",
