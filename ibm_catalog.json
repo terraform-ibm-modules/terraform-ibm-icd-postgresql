@@ -193,7 +193,7 @@
             {
               "key": "pg_version",
               "required": false,
-              "default_value": "__NULL__",
+              "default_value": "17",
               "options": [
                 {
                   "displayname": "preferred",
