@@ -36,3 +36,13 @@ output "certificate_base64" {
   value       = module.database.certificate_base64
   sensitive   = true
 }
+
+output "read_replica_ids" {
+  description = "Read-only replica Postgresql instance IDs"
+  value       = module.read_only_replica_postgresql_db[*].id
+}
+
+output "read_replica_crns" {
+  description = "Read-only replica Postgresql CRNs"
+  value       = module.read_only_replica_postgresql_db[*].crn
+}
