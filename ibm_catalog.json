@@ -103,7 +103,7 @@
               {
                 "diagram": {
                   "caption": "Databases for PostgreSQL instance on IBM Cloud",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architecture/deployable-architecture-postgresql.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architectures/deployable-architecture-postgresql.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL instance with KMS encryption."
@@ -478,7 +478,7 @@
               {
                 "diagram": {
                   "caption": "Databases for PostgreSQL instance on IBM Cloud",
-                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architecture/deployable-architecture-postgresql.svg",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architectures/deployable-architecture-postgresql.svg",
                   "type": "image/svg+xml"
                 },
                 "description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL instance with KMS encryption."
