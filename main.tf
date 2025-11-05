@@ -70,7 +70,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   count                    = local.create_kms_auth_policy
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
-  roles                    = ["Reader"]
+  roles                    = ["Reader", "Authorization Delegator"] # Authorization Delegator role required for backup encryption key
   description              = "Allow all PostgreSQL instances in the resource group ${var.resource_group_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_key_instance_guid}"
   resource_attributes {
     name     = "serviceName"
@@ -116,7 +116,7 @@ resource "ibm_iam_authorization_policy" "backup_kms_policy" {
   count                    = local.create_backup_kms_auth_policy
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
-  roles                    = ["Reader"]
+  roles                    = ["Reader", "Authorization Delegator"] # Authorization Delegator role required for backup encryption key
   description              = "Allow all PostgreSQL instances in the Resource Group ${var.resource_group_id} to read the ${local.backup_kms_service} key ${local.backup_kms_key_id} from the instance GUID ${local.backup_kms_key_instance_guid}"
   resource_attributes {
     name     = "serviceName"
