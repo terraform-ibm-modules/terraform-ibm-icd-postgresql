@@ -31,14 +31,14 @@ locals {
 module "kms_key_crn_parser" {
   count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
   count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.2.0"
+  version = "1.3.0"
   crn     = local.backup_encryption_key_crn
 }
 
@@ -70,7 +70,7 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   count                    = local.create_kms_auth_policy
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
-  roles                    = ["Reader"]
+  roles                    = ["Reader", "Authorization Delegator"] # Authorization Delegator role required for backup encryption key
   description              = "Allow all PostgreSQL instances in the resource group ${var.resource_group_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_key_instance_guid}"
   resource_attributes {
     name     = "serviceName"
@@ -116,7 +116,7 @@ resource "ibm_iam_authorization_policy" "backup_kms_policy" {
   count                    = local.create_backup_kms_auth_policy
   source_service_name      = "databases-for-postgresql"
   source_resource_group_id = var.resource_group_id
-  roles                    = ["Reader"]
+  roles                    = ["Reader", "Authorization Delegator"] # Authorization Delegator role required for backup encryption key
   description              = "Allow all PostgreSQL instances in the Resource Group ${var.resource_group_id} to read the ${local.backup_kms_service} key ${local.backup_kms_key_id} from the instance GUID ${local.backup_kms_key_instance_guid}"
   resource_attributes {
     name     = "serviceName"
@@ -325,7 +325,7 @@ resource "ibm_resource_tag" "access_tag" {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.33.7"
+  version          = "1.33.8"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
