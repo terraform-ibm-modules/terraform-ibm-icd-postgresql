@@ -340,7 +340,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_secrets_manager_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}{3}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
@@ -391,7 +391,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
@@ -401,7 +401,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_kms_key_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -431,7 +431,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'backup_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:.*:backup:"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:backup:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -441,7 +441,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_backup_kms_key_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -457,12 +457,19 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_postgresql_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}databases-for-postgresql:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
             {
-              "key": "remote_leader_crn"
+              "key": "remote_leader_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'remote_leader_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
             }
           ],
           "terraform_version": "1.12.2",
@@ -722,7 +729,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_secrets_manager_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}secrets-manager:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}{3}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
@@ -757,7 +764,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
@@ -767,7 +774,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_kms_key_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -783,7 +790,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'backup_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:.*:backup:"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:backup:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
                 }
               ]
             },
@@ -793,7 +800,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_backup_kms_key_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}(kms|hs-crypto):(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
                 }
               ]
             },
@@ -806,7 +813,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'existing_postgresql_instance_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}databases-for-postgresql:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             },
@@ -816,7 +823,7 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'remote_leader_crn' is not valid.",
-                  "value": "^__NULL__$|^crn:(.*:){3}databases-for-postgresql:(.*:){2}[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
             }

@@ -206,6 +206,14 @@ variable "existing_kms_instance_crn" {
   type        = string
   description = "The CRN of a Key Protect or Hyper Protect Crypto Services instance. Required to create a new encryption key and key ring which will be used to encrypt both deployment data and backups. To use an existing key, pass values for `existing_kms_key_crn` and/or `existing_backup_kms_key_crn`. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.existing_kms_instance_crn == null,
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_kms_instance_crn))
+    ])
+    error_message = "The value provided for 'existing_kms_instance_crn' is not valid."
+  }
 }
 
 variable "existing_kms_key_crn" {
@@ -219,6 +227,14 @@ variable "existing_kms_key_crn" {
       (var.existing_kms_key_crn == null && var.existing_kms_instance_crn != null)
     )
     error_message = "Either existing_kms_key_crn or existing_kms_instance_crn must be set, but not both."
+  }
+
+  validation {
+    condition = anytrue([
+      var.existing_kms_key_crn == null,
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_kms_key_crn))
+    ])
+    error_message = "The value provided for 'existing_kms_key_crn’ is not valid."
   }
 }
 
@@ -261,7 +277,7 @@ variable "backup_crn" {
   validation {
     condition = anytrue([
       var.backup_crn == null,
-      can(regex("^crn:.*:backup:", var.backup_crn))
+      can(regex("^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:backup:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", var.backup_crn))
     ])
     error_message = "backup_crn must be null OR starts with 'crn:' and contains ':backup:'"
   }
@@ -327,6 +343,14 @@ variable "existing_secrets_manager_instance_crn" {
   type        = string
   default     = null
   description = "The CRN of existing secrets manager to use to create service credential secrets for Databases for PostgreSQL instance."
+
+  validation {
+    condition = anytrue([
+      var.existing_secrets_manager_instance_crn == null,
+      can(regex("^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.existing_secrets_manager_instance_crn))
+    ])
+    error_message = "The value provided for 'existing_secrets_manager_instance_crn' is not valid."
+  }
 }
 
 variable "service_credential_secrets" {
