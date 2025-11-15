@@ -6,9 +6,9 @@ toolchain go1.25.4
 
 require (
 	github.com/google/uuid v1.6.0
-	github.com/gruntwork-io/terratest v0.52.0
+	github.com/gruntwork-io/terratest v0.53.0
 	github.com/stretchr/testify v1.11.1
-	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.60.24
+	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.60.26
 )
 
 require (
