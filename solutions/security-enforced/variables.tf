@@ -283,6 +283,14 @@ variable "existing_backup_kms_key_crn" {
   type        = string
   description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key that you want to use for encrypting the disk that holds deployment backups. If no value is passed, the value of `existing_kms_key_crn` is used. If no value is passed for `existing_kms_key_crn`, a new key will be created in the instance specified in the `existing_kms_instance_crn` input."
   default     = null
+
+  validation {
+    condition = anytrue([
+      var.existing_backup_kms_key_crn == null,
+      can(regex("^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$", var.existing_backup_kms_key_crn))
+    ])
+    error_message = "The value provided for 'existing_backup_kms_key_crn' is not valid."
+  }
 }
 
 variable "backup_crn" {
