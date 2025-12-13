@@ -31,14 +31,14 @@ locals {
 module "kms_key_crn_parser" {
   count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.3"
+  version = "1.3.5"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
   count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.3"
+  version = "1.3.5"
   crn     = local.backup_encryption_key_crn
 }
 
