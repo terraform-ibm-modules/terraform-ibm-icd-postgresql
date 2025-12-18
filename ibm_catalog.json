@@ -323,13 +323,16 @@
               "key": "deletion_protection"
             },
             {
-              "key": "create_timeout"
+              "key": "create_timeout",
+              "hidden": true
             },
             {
-              "key": "update_timeout"
+              "key": "update_timeout",
+              "hidden": true
             },
             {
-              "key": "delete_timeout"
+              "key": "delete_timeout",
+              "hidden": true
             },
             {
               "key": "version_upgrade_skip_backup"
@@ -746,13 +749,16 @@
               "key": "deletion_protection"
             },
             {
-              "key": "create_timeout"
+              "key": "create_timeout",
+              "hidden": true
             },
             {
-              "key": "update_timeout"
+              "key": "update_timeout",
+              "hidden": true
             },
             {
-              "key": "delete_timeout"
+              "key": "delete_timeout",
+              "hidden": true
             },
             {
               "key": "service_credential_names",
