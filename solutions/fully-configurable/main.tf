@@ -306,7 +306,9 @@ module "postgresql_db" {
   service_endpoints           = var.service_endpoints
   deletion_protection         = var.deletion_protection
   version_upgrade_skip_backup = var.version_upgrade_skip_backup
-  timeouts_update             = var.timeouts_update
+  create_timeout              = var.create_timeout
+  update_timeout              = var.update_timeout
+  delete_timeout              = var.delete_timeout
 }
 
 locals {
