@@ -230,10 +230,22 @@ variable "deletion_protection" {
   default     = true
 }
 
-variable "timeouts_update" {
+variable "update_timeout" {
   type        = string
   description = "A database update may require a longer timeout for the update to complete. The default is 120 minutes. Set this variable to change the `update` value in the `timeouts` block. [Learn more](https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts)."
   default     = "120m"
+}
+
+variable "create_timeout" {
+  type        = string
+  description = "A database creation may require a longer timeout for the creation to complete. The default is 120 minutes. Set this variable to change the `create` value in the `timeouts` block. [Learn more](https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts)."
+  default     = "120m"
+}
+
+variable "delete_timeout" {
+  type        = string
+  description = "A database deletion may require a longer timeout for the deletion to complete. The default is 15 minutes. Set this variable to change the `delete` value in the `timeouts` block. [Learn more](https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts)."
+  default     = "15m"
 }
 
 ##############################################################
