@@ -1,0 +1,35 @@
+# ============================================================================
+# PostgreSQL Version Check Workflow
+# ============================================================================
+# Checks for PostgreSQL version changes in IBM Cloud Databases and creates
+# PRs to update supported versions in this module.
+#
+# Runs daily at 6 AM UTC and can be triggered manually.
+# No manual version maintenance required - versions are extracted from the
+# codebase automatically.
+# ============================================================================
+
+name: Check PostgreSQL Versions
+
+on:
+  schedule:
+    # Run daily at 6:00 AM UTC
+    - cron: '0 6 * * *'
+
+  # Allow manual trigger
+  workflow_dispatch:
+    inputs:
+      dry_run:
+        description: 'Dry run (do not create PRs)'
+        required: false
+        type: boolean
+        default: false
+
+jobs:
+  check-versions:
+    uses: terraform-ibm-modules/common-pipeline-assets/.github/workflows/icd-version-update.yml@feat/icd-version-automation
+    with:
+      icd_service_type: 'postgresql'
+      dry_run: ${{ inputs.dry_run || false }}
+    secrets:
+      IBMCLOUD_API_KEY: ${{ secrets.IBMCLOUD_API_KEY }}
