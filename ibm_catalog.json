@@ -212,27 +212,31 @@
             {
               "key": "postgresql_version",
               "required": true,
-              "default_value": "17",
+              "default_value": "18 17 16 15 14 13",
               "options": [
                 {
-                  "displayname": "13",
-                  "value": "13"
+                  "displayname": "18",
+                  "value": "18"
                 },
                 {
-                  "displayname": "14",
-                  "value": "14"
-                },
-                {
-                  "displayname": "15",
-                  "value": "15"
+                  "displayname": "17",
+                  "value": "17"
                 },
                 {
                   "displayname": "16",
                   "value": "16"
                 },
                 {
-                  "displayname": "17",
-                  "value": "17"
+                  "displayname": "15",
+                  "value": "15"
+                },
+                {
+                  "displayname": "14",
+                  "value": "14"
+                },
+                {
+                  "displayname": "13",
+                  "value": "13"
                 }
               ]
             },
@@ -655,27 +659,31 @@
             {
               "key": "postgresql_version",
               "required": true,
-              "default_value": "17",
+              "default_value": "18 17 16 15 14 13",
               "options": [
                 {
-                  "displayname": "13",
-                  "value": "13"
+                  "displayname": "18",
+                  "value": "18"
                 },
                 {
-                  "displayname": "14",
-                  "value": "14"
-                },
-                {
-                  "displayname": "15",
-                  "value": "15"
+                  "displayname": "17",
+                  "value": "17"
                 },
                 {
                   "displayname": "16",
                   "value": "16"
                 },
                 {
-                  "displayname": "17",
-                  "value": "17"
+                  "displayname": "15",
+                  "value": "15"
+                },
+                {
+                  "displayname": "14",
+                  "value": "14"
+                },
+                {
+                  "displayname": "13",
+                  "value": "13"
                 }
               ]
             },

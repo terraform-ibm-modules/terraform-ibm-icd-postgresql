@@ -1,0 +1,9 @@
+{
+  "ibmcloud_api_key": "temp_value",
+  "region": "us-south",
+  "resource_tags": "temp_value",
+  "name": "temp_value",
+  "existing_resource_group_name": "geretain-test-postgres",
+  "existing_kms_instance_crn": "temp_value",
+  "deletion_protection": false
+}
