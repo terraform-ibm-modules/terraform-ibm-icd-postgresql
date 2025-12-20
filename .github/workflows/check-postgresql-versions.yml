@@ -12,6 +12,11 @@
 name: Check PostgreSQL Versions
 
 on:
+  # TODO: Remove after testing
+  push:
+    branches:
+      - feat/auto-version-check
+
   schedule:
     # Run daily at 6:00 AM UTC
     - cron: '0 6 * * *'
