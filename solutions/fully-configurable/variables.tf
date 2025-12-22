@@ -75,7 +75,7 @@ variable "existing_postgresql_instance_crn" {
 variable "postgresql_version" {
   description = "The version of the PostgreSQL instance. If no value is specified, the current preferred version of PostgreSQL is used."
   type        = string
-  default     = null
+  default     = "18"
 }
 
 variable "remote_leader_crn" {
