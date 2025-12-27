@@ -212,7 +212,7 @@
             {
               "key": "postgresql_version",
               "required": true,
-              "default_value": "17",
+              "default_value": "18",
               "options": [
                 {
                   "displayname": "13",
@@ -233,6 +233,10 @@
                 {
                   "displayname": "17",
                   "value": "17"
+                },
+                {
+                  "displayname": "18",
+                  "value": "18"
                 }
               ]
             },
@@ -655,7 +659,7 @@
             {
               "key": "postgresql_version",
               "required": true,
-              "default_value": "17",
+              "default_value": "18",
               "options": [
                 {
                   "displayname": "13",
@@ -676,6 +680,10 @@
                 {
                   "displayname": "17",
                   "value": "17"
+                },
+                {
+                  "displayname": "18",
+                  "value": "18"
                 }
               ]
             },
