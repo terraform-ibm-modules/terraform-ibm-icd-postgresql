@@ -28,7 +28,7 @@ import (
 const fscloudExampleTerraformDir = "examples/fscloud"
 const fullyConfigurableSolutionTerraformDir = "solutions/fully-configurable"
 const securityEnforcedSolutionTerraformDir = "solutions/security-enforced"
-const latestVersion = "17"
+const latestVersion = "18"
 
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
