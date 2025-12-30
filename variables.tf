@@ -20,13 +20,14 @@ variable "postgresql_version" {
   validation {
     condition = anytrue([
       var.postgresql_version == null,
+      var.postgresql_version == "18",
       var.postgresql_version == "17",
       var.postgresql_version == "16",
       var.postgresql_version == "15",
       var.postgresql_version == "14",
-      var.postgresql_version == "13",
+      var.postgresql_version == "13"
     ])
-    error_message = "Version must be 13, 14, 15, 16 or 17. If no value passed, the current ICD preferred version is used."
+    error_message = "Version must be 13, 14, 15, 16, 17, or 18. If no value passed, the current ICD preferred version is used."
   }
 }
 
