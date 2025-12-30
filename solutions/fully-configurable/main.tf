@@ -7,7 +7,7 @@ locals {
 
 module "resource_group" {
   source                       = "terraform-ibm-modules/resource-group/ibm"
-  version                      = "1.4.6"
+  version                      = "1.4.7"
   existing_resource_group_name = var.existing_resource_group_name
 }
 
@@ -32,7 +32,7 @@ module "kms" {
   }
   count                       = local.create_new_kms_key ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.5.4"
+  version                     = "5.5.16"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -62,21 +62,21 @@ module "kms" {
 module "kms_instance_crn_parser" {
   count   = var.existing_kms_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.5"
+  version = "1.3.7"
   crn     = var.existing_kms_instance_crn
 }
 
 module "kms_key_crn_parser" {
   count   = var.existing_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.5"
+  version = "1.3.7"
   crn     = var.existing_kms_key_crn
 }
 
 module "kms_backup_key_crn_parser" {
   count   = var.existing_backup_kms_key_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.5"
+  version = "1.3.7"
   crn     = var.existing_backup_kms_key_crn
 }
 
@@ -239,7 +239,7 @@ locals {
 module "postgresql_instance_crn_parser" {
   count   = var.existing_postgresql_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.5"
+  version = "1.3.7"
   crn     = var.existing_postgresql_instance_crn
 }
 
@@ -332,7 +332,7 @@ locals {
 module "secrets_manager_instance_crn_parser" {
   count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.3.5"
+  version = "1.3.7"
   crn     = var.existing_secrets_manager_instance_crn
 }
 
@@ -403,7 +403,7 @@ locals {
 module "secrets_manager_service_credentials" {
   count   = length(local.service_credential_secrets) > 0 ? 1 : 0
   source  = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version = "2.12.6"
+  version = "2.12.13"
   # converted into implicit dependency and removed explicit depends_on time_sleep.wait_for_postgresql_authorization_policy for this module because of issue https://github.com/terraform-ibm-modules/terraform-ibm-icd-redis/issues/608
   existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
