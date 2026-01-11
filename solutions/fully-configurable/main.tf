@@ -403,7 +403,7 @@ locals {
 module "secrets_manager_service_credentials" {
   count   = length(local.service_credential_secrets) > 0 ? 1 : 0
   source  = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version = "2.12.17"
+  version = "2.12.18"
   # converted into implicit dependency and removed explicit depends_on time_sleep.wait_for_postgresql_authorization_policy for this module because of issue https://github.com/terraform-ibm-modules/terraform-ibm-icd-redis/issues/608
   existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
