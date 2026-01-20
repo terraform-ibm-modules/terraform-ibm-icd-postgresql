@@ -9,6 +9,8 @@ import (
 	"log"
 	"math/big"
 	"os"
+	"sort"
+	"strconv"
 	"strings"
 	"testing"
 
@@ -28,7 +30,11 @@ import (
 const fscloudExampleTerraformDir = "examples/fscloud"
 const fullyConfigurableSolutionTerraformDir = "solutions/fully-configurable"
 const securityEnforcedSolutionTerraformDir = "solutions/security-enforced"
-const latestVersion = "18"
+
+var latestVersion string
+var oldestVersion string
+
+const icdType = "postgresql"
 
 // Use existing resource group
 const resourceGroup = "geretain-test-postgres"
@@ -54,6 +60,24 @@ func TestMain(m *testing.M) {
 	if err != nil {
 		log.Fatal(err)
 	}
+
+	icdAvailableVersions, err := sharedInfoSvc.GetAvailableIcdVersions(icdType)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	if len(icdAvailableVersions) == 0 {
+		log.Fatal("No available ICD versions found")
+	}
+	sort.Slice(icdAvailableVersions, func(i, j int) bool {
+		vi, _ := strconv.ParseFloat(icdAvailableVersions[i], 64)
+		vj, _ := strconv.ParseFloat(icdAvailableVersions[j], 64)
+		return vi < vj
+	})
+
+	latestVersion = icdAvailableVersions[len(icdAvailableVersions)-1]
+	oldestVersion = icdAvailableVersions[0]
 
 	permanentResources, err = common.LoadMapFromYaml(yamlLocation)
 	if err != nil {
@@ -121,7 +145,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
-		{Name: "postgresql_version", Value: "16", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 		{Name: "service_credential_names", Value: string(serviceCredentialNamesJSON), DataType: "map(string)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
@@ -194,7 +218,7 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		{Name: "deletion_protection", Value: false, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: "16", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 		{Name: "existing_resource_group_name", Value: uniqueResourceGroup, DataType: "string"},
 		{Name: "service_credential_names", Value: string(serviceCredentialNamesJSON), DataType: "map(string)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
@@ -289,7 +313,7 @@ func TestPlanValidation(t *testing.T) {
 		"prefix":                       options.Prefix,
 		"region":                       "us-south",
 		"kms_endpoint_type":            "public",
-		"postgresql_version":           "16",
+		"postgresql_version":           latestVersion,
 		"provider_visibility":          "public",
 		"existing_resource_group_name": resourceGroup,
 	}

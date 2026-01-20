@@ -19,7 +19,7 @@ func TestRunRestoredDBExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"postgresql_version": "13",
+			"postgresql_version": latestVersion,
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
@@ -88,7 +88,7 @@ func TestRunCompleteExample(t *testing.T) {
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{
-			"postgresql_version": "13",
+			"postgresql_version": latestVersion,
 		},
 		CloudInfoService: sharedInfoSvc,
 	})

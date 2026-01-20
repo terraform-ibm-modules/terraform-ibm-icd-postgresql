@@ -18,16 +18,8 @@ variable "postgresql_version" {
   default     = null
 
   validation {
-    condition = anytrue([
-      var.postgresql_version == null,
-      var.postgresql_version == "18",
-      var.postgresql_version == "17",
-      var.postgresql_version == "16",
-      var.postgresql_version == "15",
-      var.postgresql_version == "14",
-      var.postgresql_version == "13"
-    ])
-    error_message = "Version must be 13, 14, 15, 16, 17, or 18. If no value passed, the current ICD preferred version is used."
+    condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
+    error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
   }
 }
 
