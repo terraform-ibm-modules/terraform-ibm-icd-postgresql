@@ -70,10 +70,22 @@ func TestMain(m *testing.M) {
 	if len(icdAvailableVersions) == 0 {
 		log.Fatal("No available ICD versions found")
 	}
+
 	sort.Slice(icdAvailableVersions, func(i, j int) bool {
-		vi, _ := strconv.ParseFloat(icdAvailableVersions[i], 64)
-		vj, _ := strconv.ParseFloat(icdAvailableVersions[j], 64)
-		return vi < vj
+		partsI := strings.Split(icdAvailableVersions[i], ".")
+		partsJ := strings.Split(icdAvailableVersions[j], ".")
+
+		majorI, _ := strconv.Atoi(partsI[0])
+		majorJ, _ := strconv.Atoi(partsJ[0])
+
+		if majorI != majorJ {
+			return majorI < majorJ
+		}
+
+		minorI, _ := strconv.Atoi(partsI[1])
+		minorJ, _ := strconv.Atoi(partsJ[1])
+
+		return minorI < minorJ
 	})
 
 	latestVersion = icdAvailableVersions[len(icdAvailableVersions)-1]
