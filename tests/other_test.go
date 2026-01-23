@@ -18,11 +18,12 @@ func TestRunRestoredDBExample(t *testing.T) {
 		Prefix:             "pg-backup",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"postgresql_version": latestVersion,
-		},
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
+
+	region := options.Region
+	latestVersion, _ := GetRegionVersions(region)
+	options.TerraformVars["postgresql_version"] = latestVersion
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -61,11 +62,12 @@ func TestRunCompleteExample(t *testing.T) {
 		Prefix:             "pg-complete",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"postgresql_version": latestVersion,
-		},
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
+
+	region := options.Region
+	latestVersion, _ := GetRegionVersions(region)
+	options.TerraformVars["postgresql_version"] = latestVersion
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
