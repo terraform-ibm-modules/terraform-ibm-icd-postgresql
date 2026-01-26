@@ -154,8 +154,6 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		},
 	}
 
-	region := options.Region
-
 	serviceCredentialNames := map[string]string{
 		"admin": "Administrator",
 		"user1": "Viewer",
@@ -167,6 +165,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		log.Fatalf("Error converting to JSON: %s", err)
 	}
 
+	region := options.Region
 	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
@@ -231,8 +230,6 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		},
 	}
 
-	region := options.Region
-
 	serviceCredentialNames := map[string]string{
 		"admin": "Administrator",
 		"user1": "Viewer",
@@ -246,6 +243,7 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 
 	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
 
+	region := options.Region
 	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string", Secure: true},
@@ -317,12 +315,16 @@ func TestRunSecurityEnforcedUpgradeSolutionSchematics(t *testing.T) {
 		log.Fatalf("Error converting to JSON: %s", err)
 	}
 
+	region := options.Region
+	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "deletion_protection", Value: false, DataType: "bool"},
 		{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
 		{Name: "service_credential_names", Value: string(serviceCredentialNamesJSON), DataType: "map(string)"},
@@ -418,7 +420,6 @@ func TestRunExistingInstance(t *testing.T) {
 		fmt.Println("Error generating random number:", err)
 		return
 	}
-	region := validICDRegions[rand.Int64()]
 
 	// Verify ibmcloud_api_key variable is set
 	checkVariable := "TF_VAR_ibmcloud_api_key"
@@ -428,6 +429,7 @@ func TestRunExistingInstance(t *testing.T) {
 
 	logger.Log(t, "Tempdir: ", tempTerraformDir)
 
+	region := validICDRegions[rand.Int64()]
 	_, oldestVersion := GetRegionVersions(region)
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir + "/examples/basic",
