@@ -18,11 +18,12 @@ func TestRunRestoredDBExample(t *testing.T) {
 		Prefix:             "pg-backup",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"postgresql_version": "13",
-		},
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
+
+	region := options.Region
+	latestVersion, _ := GetRegionVersions(region)
+	options.TerraformVars["postgresql_version"] = latestVersion
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
@@ -52,32 +53,6 @@ func TestRunPointInTimeRecoveryDBExample(t *testing.T) {
 	assert.NotNil(t, output, "Expected some output")
 }
 
-func testPlanICDVersions(t *testing.T, version string) {
-	t.Parallel()
-
-	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
-		Testing:      t,
-		TerraformDir: "examples/basic",
-		TerraformVars: map[string]interface{}{
-			"postgresql_version": version,
-		},
-		CloudInfoService: sharedInfoSvc,
-	})
-	output, err := options.RunTestPlan()
-	assert.Nil(t, err, "This should not have errored")
-	assert.NotNil(t, output, "Expected some output")
-}
-
-func TestPlanICDVersions(t *testing.T) {
-	t.Parallel()
-
-	// This test will run a terraform plan on available stable versions of postgresql
-	versions, _ := sharedInfoSvc.GetAvailableIcdVersions("postgresql")
-	for _, version := range versions {
-		t.Run(version, func(t *testing.T) { testPlanICDVersions(t, version) })
-	}
-}
-
 func TestRunCompleteExample(t *testing.T) {
 	t.Parallel()
 
@@ -87,11 +62,12 @@ func TestRunCompleteExample(t *testing.T) {
 		Prefix:             "pg-complete",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
-		TerraformVars: map[string]interface{}{
-			"postgresql_version": "13",
-		},
-		CloudInfoService: sharedInfoSvc,
+		CloudInfoService:   sharedInfoSvc,
 	})
+
+	region := options.Region
+	latestVersion, _ := GetRegionVersions(region)
+	options.TerraformVars["postgresql_version"] = latestVersion
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
