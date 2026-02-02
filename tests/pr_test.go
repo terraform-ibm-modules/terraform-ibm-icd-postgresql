@@ -2,11 +2,9 @@
 package test
 
 import (
-	"crypto/rand"
 	"encoding/json"
 	"fmt"
 	"log"
-	"math/big"
 	"os"
 	"sort"
 	"strconv"
@@ -399,11 +397,6 @@ func TestRunExistingInstance(t *testing.T) {
 	prefix := fmt.Sprintf("pg-t-%s", strings.ToLower(random.UniqueId()))
 	realTerraformDir := ".."
 	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
-	rand, err := rand.Int(rand.Reader, big.NewInt(int64(len(validICDRegions))))
-	if err != nil {
-		fmt.Println("Error generating random number:", err)
-		return
-	}
 
 	// Verify ibmcloud_api_key variable is set
 	checkVariable := "TF_VAR_ibmcloud_api_key"
@@ -413,7 +406,7 @@ func TestRunExistingInstance(t *testing.T) {
 
 	logger.Log(t, "Tempdir: ", tempTerraformDir)
 
-	region := validICDRegions[rand.Int64()]
+	region := validICDRegions[common.CryptoIntn(len(validICDRegions))]
 	_, oldestVersion := GetRegionVersions(region)
 	existingTerraformOptions := terraform.WithDefaultRetryableErrors(t, &terraform.Options{
 		TerraformDir: tempTerraformDir + "/examples/basic",
@@ -442,7 +435,7 @@ func TestRunExistingInstance(t *testing.T) {
 			},
 			TemplateFolder:         fullyConfigurableSolutionTerraformDir,
 			BestRegionYAMLPath:     regionSelectionPath,
-			Prefix:                 "pg-da",
+			Prefix:                 "pg-ex",
 			ResourceGroup:          resourceGroup,
 			DeleteWorkspaceOnFail:  false,
 			WaitJobCompleteMinutes: 60,
