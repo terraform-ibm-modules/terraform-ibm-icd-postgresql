@@ -303,6 +303,7 @@ module "postgresql_db" {
   configuration               = var.configuration
   service_credential_names    = var.service_credential_names
   backup_crn                  = var.backup_crn
+  async_restore               = var.async_restore
   service_endpoints           = var.service_endpoints
   deletion_protection         = var.deletion_protection
   version_upgrade_skip_backup = var.version_upgrade_skip_backup

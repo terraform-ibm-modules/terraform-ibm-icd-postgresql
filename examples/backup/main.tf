@@ -43,4 +43,5 @@ module "restored_icd_postgresql" {
   deletion_protection = false
   member_host_flavor  = "multitenant"
   backup_crn          = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn
+  async_restore       = true
 }

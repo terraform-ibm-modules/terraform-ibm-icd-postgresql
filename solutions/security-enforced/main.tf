@@ -31,6 +31,7 @@ module "postgresql_db" {
   existing_backup_kms_key_crn                          = var.existing_backup_kms_key_crn
   use_default_backup_encryption_key                    = false
   backup_crn                                           = var.backup_crn
+  async_restore                                        = var.async_restore
   auto_scaling                                         = var.auto_scaling
   existing_secrets_manager_instance_crn                = var.existing_secrets_manager_instance_crn
   existing_secrets_manager_endpoint_type               = "private"

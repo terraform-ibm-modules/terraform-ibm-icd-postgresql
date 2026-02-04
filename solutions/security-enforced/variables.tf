@@ -319,6 +319,12 @@ variable "backup_crn" {
   }
 }
 
+variable "async_restore" {
+  type        = bool
+  description = "Set it to `true`, to initiate the restore as an asynchronous operation, which helps to reduce end-to-end restore time."
+  default     = false
+}
+
 ##############################################################
 # Auto Scaling
 ##############################################################
