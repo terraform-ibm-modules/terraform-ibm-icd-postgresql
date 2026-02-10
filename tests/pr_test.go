@@ -121,7 +121,6 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		TarIncludePatterns: []string{
 			"*.tf",
 			fullyConfigurableSolutionTerraformDir + "/*.tf",
-			"scripts/*.sh",
 		},
 		TemplateFolder:         fullyConfigurableSolutionTerraformDir,
 		BestRegionYAMLPath:     regionSelectionPath,
@@ -328,16 +327,18 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 	err = options.RunSchematicUpgradeTest()
-	assert.Nil(t, err, "This should not have errored")
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+	}
 }
 
 func TestPlanValidation(t *testing.T) {
 	options := testhelper.TestOptionsDefault(&testhelper.TestOptions{
-		Testing:       t,
-		TerraformDir:  fullyConfigurableSolutionTerraformDir,
-		Prefix:        "val-plan",
-		ResourceGroup: resourceGroup,
-		Region:        "us-south", // skip VPC region picker
+		Testing:      t,
+		TerraformDir: fullyConfigurableSolutionTerraformDir,
+		Prefix:       "val-plan",
+		// ResourceGroup: resourceGroup,
+		Region: "us-south", // skip VPC region picker
 	})
 	options.TestSetup()
 	options.TerraformOptions.NoColor = true
@@ -353,23 +354,29 @@ func TestPlanValidation(t *testing.T) {
 		"existing_resource_group_name": resourceGroup,
 	}
 
+	// Test the DA when using an existing KMS instance
+	var fullyConfigurableWithExistingKms = map[string]interface{}{
+		"access_tags":               permanentResources["accessTags"],
+		"existing_kms_instance_crn": permanentResources["hpcs_south_crn"],
+		"kms_encryption_enabled":    true,
+	}
+
+	// Test the DA when using IBM owned encryption key
+	var fullyConfigurableWithIbmOwnedKey = map[string]interface{}{
+		"kms_encryption_enabled": false,
+	}
+
 	// Test the DA when using IBM owned encryption keys
-	var ibmOwnedEncryptionKeyTFVars = map[string]interface{}{
+	var fullyConfigurableWithIbmOwnedBackupKey = map[string]interface{}{
 		"use_default_backup_encryption_key": false,
 		"kms_encryption_enabled":            false,
 	}
 
-	// Test the DA when using Default Backup Encryption Key and not IBM owned encryption keys
-	var notIbmOwnedEncryptionKeyTFVars = map[string]interface{}{
-		"existing_kms_instance_crn":         permanentResources["hpcs_south_crn"],
-		"use_default_backup_encryption_key": true,
-		"kms_encryption_enabled":            true,
-	}
-
 	// Create a map of the variables
 	tfVarsMap := map[string]map[string]interface{}{
-		"ibmOwnedEncryptionKeyTFVars":    ibmOwnedEncryptionKeyTFVars,
-		"notIbmOwnedEncryptionKeyTFVars": notIbmOwnedEncryptionKeyTFVars,
+		"fullyConfigurableWithExistingKms":       fullyConfigurableWithExistingKms,
+		"fullyConfigurableWithIbmOwnedKey":       fullyConfigurableWithIbmOwnedKey,
+		"fullyConfigurableWithIbmOwnedBackupKey": fullyConfigurableWithIbmOwnedBackupKey,
 	}
 
 	_, initErr := terraform.InitE(t, options.TerraformOptions)
