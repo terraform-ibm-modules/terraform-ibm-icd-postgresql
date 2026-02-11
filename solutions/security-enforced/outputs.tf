@@ -43,3 +43,28 @@ output "port" {
   description = "PostgreSQL instance port"
   value       = module.postgresql_db.port
 }
+
+output "next_steps_text" {
+  value       = module.postgresql_db.next_steps_text
+  description = "Next steps text"
+}
+
+output "next_step_primary_label" {
+  value       = module.postgresql_db.next_step_primary_label
+  description = "Primary label"
+}
+
+output "next_step_primary_url" {
+  value       = module.postgresql_db.next_step_primary_url
+  description = "Primary URL"
+}
+
+output "next_step_secondary_label" {
+  value       = module.postgresql_db.next_step_secondary_label
+  description = "Secondary label"
+}
+
+output "next_step_secondary_url" {
+  value       = module.postgresql_db.next_step_secondary_url
+  description = "Secondary URL"
+}
