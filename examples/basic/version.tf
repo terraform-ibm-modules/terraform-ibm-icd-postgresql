@@ -5,7 +5,7 @@ terraform {
     # module's version.tf (basic example), and 1 example that will always use the latest provider version (complete example).
     ibm = {
       source  = "IBM-Cloud/ibm"
-      version = "1.79.2"
+      version = "1.87.3"
     }
 
     time = {

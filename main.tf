@@ -196,6 +196,7 @@ resource "ibm_database" "postgresql_db" {
   configuration                        = var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
+  async_restore                        = var.async_restore
 
   dynamic "users" {
     for_each = nonsensitive(var.users != null ? var.users : [])

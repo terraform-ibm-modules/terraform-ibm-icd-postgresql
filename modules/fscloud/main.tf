@@ -17,6 +17,7 @@ module "postgresql_db" {
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
   kms_key_crn                       = var.kms_key_crn
   backup_crn                        = var.backup_crn
+  async_restore                     = var.async_restore
   backup_encryption_key_crn         = var.backup_encryption_key_crn
   tags                              = var.tags
   access_tags                       = var.access_tags

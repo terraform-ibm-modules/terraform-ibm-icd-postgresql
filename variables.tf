@@ -390,6 +390,12 @@ variable "cbr_rules" {
   }
 }
 
+variable "async_restore" {
+  type        = bool
+  description = "Set it to `true`, to initiate the restore as an asynchronous operation, which helps to reduce end-to-end restore time. This feature can only be used when the source and target PostgreSQL databases are running the same major version."
+  default     = false
+}
+
 ##############################################################
 # Backup
 ##############################################################
