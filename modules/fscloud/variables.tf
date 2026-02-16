@@ -224,6 +224,12 @@ variable "use_default_backup_encryption_key" {
   default     = false
 }
 
+variable "async_restore" {
+  type        = bool
+  description = "Set it to `true`, to initiate the restore as an asynchronous operation, which helps to reduce end-to-end restore time. This feature can only be used when the source and target PostgreSQL databases are running the same major version."
+  default     = false
+}
+
 variable "skip_iam_authorization_policy" {
   type        = bool
   description = "Set to true to skip the creation of IAM authorization policies that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect or Hyper Protect Crypto Services key that was provided in the `kms_key_crn` and `backup_encryption_key_crn` inputs. This policy is required in order to enable KMS encryption, so only skip creation if there is one already present in your account. No policy is created if `use_ibm_owned_encryption_key` is true."

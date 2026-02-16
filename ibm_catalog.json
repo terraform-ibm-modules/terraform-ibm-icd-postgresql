@@ -452,6 +452,9 @@
               ]
             },
             {
+              "key": "async_restore"
+            },
+            {
               "key": "existing_backup_kms_key_crn",
               "value_constraints": [
                 {
@@ -832,6 +835,9 @@
                   "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:backup:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$"
                 }
               ]
+            },
+            {
+              "key": "async_restore"
             },
             {
               "key": "existing_backup_kms_key_crn",
