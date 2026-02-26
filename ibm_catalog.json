@@ -178,28 +178,24 @@
               "default_value": "18",
               "options": [
                 {
-                  "displayname": "13",
-                  "value": "13"
-                },
-                {
-                  "displayname": "14",
-                  "value": "14"
-                },
-                {
-                  "displayname": "15",
-                  "value": "15"
-                },
-                {
-                  "displayname": "16",
-                  "value": "16"
+                  "displayname": "18",
+                  "value": "18"
                 },
                 {
                   "displayname": "17",
                   "value": "17"
                 },
                 {
-                  "displayname": "18",
-                  "value": "18"
+                  "displayname": "16",
+                  "value": "16"
+                },
+                {
+                  "displayname": "15",
+                  "value": "15"
+                },
+                {
+                  "displayname": "14",
+                  "value": "14"
                 }
               ]
             },
@@ -613,28 +609,24 @@
               "default_value": "18",
               "options": [
                 {
-                  "displayname": "13",
-                  "value": "13"
-                },
-                {
-                  "displayname": "14",
-                  "value": "14"
-                },
-                {
-                  "displayname": "15",
-                  "value": "15"
-                },
-                {
-                  "displayname": "16",
-                  "value": "16"
+                  "displayname": "18",
+                  "value": "18"
                 },
                 {
                   "displayname": "17",
                   "value": "17"
                 },
                 {
-                  "displayname": "18",
-                  "value": "18"
+                  "displayname": "16",
+                  "value": "16"
+                },
+                {
+                  "displayname": "15",
+                  "value": "15"
+                },
+                {
+                  "displayname": "14",
+                  "value": "14"
                 }
               ]
             },
