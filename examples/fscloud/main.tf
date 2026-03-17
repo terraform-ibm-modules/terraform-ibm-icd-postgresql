@@ -66,12 +66,28 @@ module "postgresql_db" {
   backup_encryption_key_crn = var.backup_encryption_key_crn
   backup_crn                = var.backup_crn
   tags                      = var.resource_tags
-  service_credential_names = {
-    "postgresql_admin" : "Administrator",
-    "postgresql_operator" : "Operator",
-    "postgresql_viewer" : "Viewer",
-    "postgresql_editor" : "Editor",
-  }
+  service_credential_names = [
+    {
+      name     = "postgresql_admin"
+      role     = "Administrator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_operator"
+      role     = "Operator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_viewer"
+      role     = "Viewer"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_editor"
+      role     = "Editor"
+      endpoint = "private"
+    }
+  ]
   access_tags         = var.access_tags
   deletion_protection = false
   auto_scaling = {

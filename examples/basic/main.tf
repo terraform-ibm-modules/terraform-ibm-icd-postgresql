@@ -28,12 +28,28 @@ module "database" {
   service_endpoints   = var.service_endpoints
   member_host_flavor  = var.member_host_flavor
   deletion_protection = false
-  service_credential_names = {
-    "postgresql_admin" : "Administrator",
-    "postgresql_operator" : "Operator",
-    "postgresql_viewer" : "Viewer",
-    "postgresql_editor" : "Editor",
-  }
+  service_credential_names = [
+    {
+      name     = "postgresql_admin"
+      role     = "Administrator"
+      endpoint = "public"
+    },
+    {
+      name     = "postgresql_operator"
+      role     = "Operator"
+      endpoint = "public"
+    },
+    {
+      name     = "postgresql_viewer"
+      role     = "Viewer"
+      endpoint = "public"
+    },
+    {
+      name     = "postgresql_editor"
+      role     = "Editor"
+      endpoint = "public"
+    }
+  ]
 }
 
 # On destroy, we are seeing that even though the replica has been returned as
