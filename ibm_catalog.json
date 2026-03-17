@@ -712,7 +712,7 @@
               "key": "delete_timeout",
               "hidden": true
             },
-           {
+            {
               "key": "service_credential_names",
               "type": "array",
               "custom_config": {
