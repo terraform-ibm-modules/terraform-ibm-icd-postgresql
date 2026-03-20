@@ -182,9 +182,13 @@ variable "configuration" {
 }
 
 variable "service_credential_names" {
-  description = "Map of name, role for service credentials that you want to create for the database. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#svc-credential-name)"
-  type        = map(string)
-  default     = {}
+  description = "A list of service credential resource keys to be created for the PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#svc-credential-name)"
+  type = list(object({
+    name     = string
+    role     = optional(string, "Viewer")
+    endpoint = optional(string, "private")
+  }))
+  default = []
 }
 
 variable "admin_pass" {

@@ -94,13 +94,38 @@ variable "users" {
 }
 
 variable "service_credential_names" {
-  type        = map(string)
-  description = "Map of name, role for service credentials that you want to create for the database"
-  default     = {}
+  type = list(object({
+    name     = string
+    role     = optional(string, "Viewer")
+    endpoint = optional(string, "private")
+  }))
+  description = "List of service credentials to create for the database, including name and optionally role and endpoint type."
+  default     = []
 
   validation {
-    condition     = alltrue([for name, role in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], role)])
-    error_message = "Valid values for service credential roles are 'Administrator', 'Operator', 'Viewer', and `Editor`"
+    condition     = alltrue([for credential in var.service_credential_names : contains(["Administrator", "Operator", "Viewer", "Editor"], credential.role)])
+    error_message = "`service_credential_names` role must be one of the following: `Administrator`, `Operator`, `Viewer` or `Editor`."
+  }
+
+  validation {
+    condition     = alltrue([for credential in var.service_credential_names : contains(["public", "private"], credential.endpoint)])
+    error_message = "`service_credential_names` endpoint must be `public` or `private`."
+  }
+
+  validation {
+    condition = !(
+      var.service_endpoints == "private" &&
+      anytrue([for credential in var.service_credential_names : credential.endpoint == "public"])
+    )
+    error_message = "When `service_endpoints` is set to `private`, `service_credential_names.endpoint` value cannot be `public`."
+  }
+
+  validation {
+    condition = !(
+      var.service_endpoints == "public" &&
+      anytrue([for credential in var.service_credential_names : credential.endpoint == "private"])
+    )
+    error_message = "When `service_endpoints` is set to `public`, `service_credential_names.endpoint` value cannot be `private`."
   }
 }
 

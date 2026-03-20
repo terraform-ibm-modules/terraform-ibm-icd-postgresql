@@ -78,9 +78,13 @@ variable "users" {
 }
 
 variable "service_credential_names" {
-  type        = map(string)
-  description = "Map of name, role for service credentials that you want to create for the database"
-  default     = {}
+  description = "A list of service credential resource keys to be created for the PostgreSQL instance."
+  type = list(object({
+    name     = string
+    role     = optional(string, "Viewer")
+    endpoint = optional(string, "private")
+  }))
+  default = []
 }
 
 variable "tags" {

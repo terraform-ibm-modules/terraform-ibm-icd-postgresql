@@ -118,12 +118,28 @@ module "icd_postgresql" {
   kms_key_crn                  = module.key_protect_all_inclusive.keys["icd.${local.data_key_name}"].crn
   backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd.${local.backups_key_name}"].crn
   tags                         = var.resource_tags
-  service_credential_names = {
-    "postgresql_admin" : "Administrator",
-    "postgresql_operator" : "Operator",
-    "postgresql_viewer" : "Viewer",
-    "postgresql_editor" : "Editor",
-  }
+  service_credential_names = [
+    {
+      name     = "postgresql_admin"
+      role     = "Administrator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_operator"
+      role     = "Operator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_viewer"
+      role     = "Viewer"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_editor"
+      role     = "Editor"
+      endpoint = "private"
+    }
+  ]
   access_tags         = var.access_tags
   member_host_flavor  = "multitenant"
   deletion_protection = false
