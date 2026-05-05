@@ -17,7 +17,7 @@ module "postgresql_db" {
   name                = "${var.prefix}-postgres"
   postgresql_version  = var.postgresql_version
   region              = var.region
-  tags                = var.resource_tags
+  resource_tags       = var.resource_tags
   access_tags         = var.access_tags
   deletion_protection = false
   member_host_flavor  = "multitenant"
@@ -38,7 +38,7 @@ module "restored_icd_postgresql" {
   name                = "${var.prefix}-postgres-restored"
   postgresql_version  = var.postgresql_version
   region              = var.region
-  tags                = var.resource_tags
+  resource_tags       = var.resource_tags
   access_tags         = var.access_tags
   deletion_protection = false
   member_host_flavor  = "multitenant"

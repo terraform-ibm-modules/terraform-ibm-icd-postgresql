@@ -19,7 +19,7 @@ module "postgresql_db" {
   backup_crn                        = var.backup_crn
   async_restore                     = var.async_restore
   backup_encryption_key_crn         = var.backup_encryption_key_crn
-  tags                              = var.tags
+  resource_tags                     = var.resource_tags
   access_tags                       = var.access_tags
   cbr_rules                         = var.cbr_rules
   configuration                     = var.configuration
