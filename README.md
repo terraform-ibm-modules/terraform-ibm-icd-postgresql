@@ -127,6 +127,7 @@ To attach access management tags to resources in this module, you need the follo
 | [time_sleep.wait_for_backup_kms_authorization_policy](https://registry.terraform.io/providers/hashicorp/time/latest/docs/resources/sleep) | resource |
 | [ibm_database_connection.database_connection](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/database_connection) | data source |
 | [ibm_database_point_in_time_recovery.source_db_earliest_pitr_time](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/database_point_in_time_recovery) | data source |
+| [ibm_iam_access_tag.access_tags](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/data-sources/iam_access_tag) | data source |
 
 ### Inputs
 
