@@ -37,7 +37,7 @@ variable "resource_tags" {
 variable "postgresql_version" {
   type        = string
   description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
-  default     = null
+  default     = 18
 }
 
 variable "service_endpoints" {
@@ -56,17 +56,4 @@ variable "member_host_flavor" {
   description = "The host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
   default     = "multitenant"
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
-}
-
-variable "read_only_replicas_count" {
-  type        = number
-  description = "Number of read-only replicas per leader"
-  default     = 1
-  validation {
-    condition = alltrue([
-      var.read_only_replicas_count >= 1,
-      var.read_only_replicas_count <= 5
-    ])
-    error_message = "There is a limit of five read-only replicas per leader"
-  }
 }

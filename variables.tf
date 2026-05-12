@@ -17,16 +17,30 @@ variable "postgresql_version" {
   description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   default     = null
 
-  validation {
-    condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
-    error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
-  }
+  #validation {
+  #  condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
+  #  error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
+  #}
 }
 
 variable "region" {
   type        = string
   description = "The region where you want to deploy your instance."
   default     = "us-south"
+}
+
+variable "plan" {
+  type        = string
+  description = "The name of the service plan that you choose for your PostgreSQL instance"
+  default     = "standard"
+
+  validation {
+    condition = anytrue([
+      var.plan == "standard",
+      var.plan == "standard-gen2",
+    ])
+    error_message = "Only supported plans are standard and standard-gen2"
+  }
 }
 
 variable "remote_leader_crn" {
@@ -91,6 +105,11 @@ variable "users" {
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters. Be warned that in most case using IAM service credentials (via the var.service_credential_names) is sufficient to control access to the Postgres instance. This blocks creates native postgres database users, more info on that can be found here https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-user-management&interface=ui"
   default     = []
   sensitive   = true
+
+  validation {
+    condition     = var.plan == "standard" || (length(var.users) == 0 && var.plan == "standard-gen2")
+    error_message = "`users` is only supported for classic instances, remove the `users` input or select a classic `plan`."
+  }
 }
 
 variable "service_credential_names" {
@@ -126,6 +145,11 @@ variable "service_credential_names" {
       anytrue([for credential in var.service_credential_names : credential.endpoint == "private"])
     )
     error_message = "When `service_endpoints` is set to `public`, `service_credential_names.endpoint` value cannot be `private`."
+  }
+
+  validation {
+    condition     = var.plan == "standard" || (length(var.service_credential_names) == 0 && var.plan == "standard-gen2")
+    error_message = "`service_credential_names` is only supported for classic instances, remove the `service_credential_names` input or select a classic `plan`."
   }
 }
 
@@ -265,6 +289,11 @@ variable "configuration" {
     condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
     error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
+
+  validation {
+    condition     = var.plan == "standard" || (var.configuration == null && var.plan == "standard-gen2")
+    error_message = "`configuration` is only supported for classic instances, remove the `configuration` input or select a classic `plan`."
+  }
 }
 
 ##############################################################
@@ -296,6 +325,11 @@ variable "auto_scaling" {
   })
   description = "Optional rules to allow the database to increase resources in response to usage. Only a single autoscaling block is allowed. Make sure you understand the effects of autoscaling, especially for production environments. See https://ibm.biz/autoscaling-considerations in the IBM Cloud Docs."
   default     = null
+
+  validation {
+    condition     = var.plan == "standard" || (var.auto_scaling == null && var.plan == "standard-gen2")
+    error_message = "`auto_scaling` is only supported for classic instances, remove the `auto_scaling` input or select a classic `plan`."
+  }
 }
 
 ##############################################################
@@ -437,6 +471,11 @@ variable "backup_crn" {
     ])
     error_message = "backup_crn must be null OR starts with 'crn:' and contains ':backup:'"
   }
+
+  validation {
+    condition     = var.plan == "standard" || (var.backup_crn == null && var.plan == "standard-gen2")
+    error_message = "`backup_crn` is only supported for classic instances, remove the `backup_crn` input or select a classic `plan`."
+  }
 }
 
 ##############################################################
@@ -457,10 +496,20 @@ variable "pitr_id" {
     condition     = var.pitr_id == null ? true : var.pitr_time != null
     error_message = "To use Point-In-Time Recovery (PITR), a value for var.pitr_time needs to be set when var.pitr_id is specified. Otherwise, unset var.pitr_id."
   }
+
+  validation {
+    condition     = var.plan == "standard" || (var.pitr_id == null && var.plan == "standard-gen2")
+    error_message = "`pitr_id` is only supported for classic instances, remove the `pitr_id` input or select a classic `plan`."
+  }
 }
 
 variable "pitr_time" {
   type        = string
   description = "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) for any time in the last 7 days that you want to restore to. If empty string (\"\") is passed, earliest_point_in_time_recovery_time will be used as pitr_time. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr"
   default     = null
+
+  validation {
+    condition     = var.plan == "standard" || (var.pitr_time == null && var.plan == "standard-gen2")
+    error_message = "`pitr_time` is only supported for classic instances, remove the `pitr_time` input or select a classic `plan`."
+  }
 }

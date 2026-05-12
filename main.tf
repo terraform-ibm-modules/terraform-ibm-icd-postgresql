@@ -161,22 +161,23 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 # Postgresql instance
 ########################################################################################################################
 
-module "available_versions" {
+#module "available_versions" {
 
-  source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.5.0"
-  region   = var.region
-  icd_type = "postgresql"
-}
+#  source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
+#  version  = "1.5.0"
+#  region   = var.region
+#  icd_type = "postgresql"
+#}
 
 
-locals {
-  icd_supported_versions = module.available_versions.supported_versions
-}
+#locals {
+#  icd_supported_versions = module.available_versions.supported_versions
+#}
 
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
+  count                                = var.plan == "standard" ? 1 : 0
   depends_on                           = [time_sleep.wait_for_authorization_policy]
   name                                 = var.name
   plan                                 = "standard" # Only standard plan is available for postgres
@@ -326,9 +327,30 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
+# Create Gen2 ICD instance
+resource "ibm_resource_instance" "postgresql" {
+  count = var.plan == "standard-gen2" ? 1 : 0
+  # depends_on        = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_sm_hpcs_authorization_policy]
+  name              = var.name
+  service           = "databases-for-postgresql"
+  plan              = "standard-gen2"
+  location          = var.region
+  resource_group_id = var.resource_group_id
+  tags              = var.tags
+  #parameters = {
+  #  "allowed_network" = var.allowed_network
+  #  "kms_instance"    = local.kms_instance_guid
+  #  "kms_key"         = var.kms_key_crn
+  #}
+
+  timeouts {
+    create = "30m" # Extending provisioning time to 30 minutes
+  }
+}
+
 resource "ibm_resource_tag" "access_tag" {
   count       = length(var.access_tags) == 0 ? 0 : 1
-  resource_id = ibm_database.postgresql_db.resource_crn
+  resource_id = var.plan == "standard" ? ibm_database.postgresql_db[0].resource_crn : ibm_resource_instance.postgresql[0].crn
   tags        = var.access_tags
   tag_type    = "access"
 }
@@ -353,7 +375,7 @@ module "cbr_rule" {
       },
       {
         name     = "serviceInstance"
-        value    = ibm_database.postgresql_db.guid
+        value    = ibm_database.postgresql_db[0].guid
         operator = "stringEquals"
       },
       {
@@ -381,7 +403,7 @@ resource "ibm_resource_key" "service_credentials" {
   for_each             = { for key in var.service_credential_names : key.name => key }
   name                 = each.key
   role                 = each.value.role
-  resource_instance_id = ibm_database.postgresql_db.id
+  resource_instance_id = ibm_database.postgresql_db[0].id
   parameters = {
     service-endpoints = each.value.endpoint
   }
@@ -409,9 +431,10 @@ locals {
 }
 
 data "ibm_database_connection" "database_connection" {
+  count         = var.plan == "standard" ? 1 : 0
   endpoint_type = var.service_endpoints == "public-and-private" ? "public" : var.service_endpoints
-  deployment_id = ibm_database.postgresql_db.id
-  user_id       = ibm_database.postgresql_db.adminuser
+  deployment_id = ibm_database.postgresql_db[0].id
+  user_id       = ibm_database.postgresql_db[0].adminuser
   user_type     = "database"
 }
 
