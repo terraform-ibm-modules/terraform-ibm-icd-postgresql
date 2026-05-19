@@ -54,6 +54,6 @@ variable "service_endpoints" {
 variable "member_host_flavor" {
   type        = string
   description = "The host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
-  default     = "multitenant"
+  default     = "b3c.4x16.encrypted"
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }

@@ -2,6 +2,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -394,7 +395,8 @@ func TestPlanValidation(t *testing.T) {
 		"fullyConfigurableWithIbmOwnedBackupKey": fullyConfigurableWithIbmOwnedBackupKey,
 	}
 
-	_, initErr := terraform.InitE(t, options.TerraformOptions)
+	ctx := context.Background()
+	_, initErr := terraform.InitContextE(t, ctx, options.TerraformOptions)
 	if assert.Nil(t, initErr, "This should not have errored") {
 		// Iterate over the slice of maps
 		for name, tfVars := range tfVarsMap {
@@ -403,7 +405,7 @@ func TestPlanValidation(t *testing.T) {
 				for key, value := range tfVars {
 					options.TerraformOptions.Vars[key] = value
 				}
-				output, err := terraform.PlanE(t, options.TerraformOptions)
+				output, err := terraform.PlanContextE(t, ctx, options.TerraformOptions)
 				assert.Nil(t, err, "This should not have errored")
 				assert.NotNil(t, output, "Expected some output")
 				// Delete the keys from the map
@@ -417,9 +419,9 @@ func TestPlanValidation(t *testing.T) {
 
 func TestRunExistingInstance(t *testing.T) {
 	t.Parallel()
-	prefix := fmt.Sprintf("%s-t-%s", icdShortType, strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("%s-t-%s", icdShortType, strings.ToLower(random.UniqueID()))
 	realTerraformDir := ".."
-	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
+	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueID())))
 
 	// Verify ibmcloud_api_key variable is set
 	checkVariable := "TF_VAR_ibmcloud_api_key"
@@ -444,12 +446,13 @@ func TestRunExistingInstance(t *testing.T) {
 		Upgrade: true,
 	})
 
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
+	ctx := context.Background()
+	terraform.WorkspaceSelectOrNewContext(t, ctx, existingTerraformOptions, prefix)
+	_, existErr := terraform.InitAndApplyContextE(t, ctx, existingTerraformOptions)
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
-		logger.Log(t, " existing_postgresql_instance_crn: ", terraform.Output(t, existingTerraformOptions, "postgresql_crn"))
+		logger.Log(t, ctx, " existing_postgresql_instance_crn: ", terraform.OutputContext(t, ctx, existingTerraformOptions, "postgresql_crn"))
 		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 			Testing: t,
 			TarIncludePatterns: []string{
@@ -467,7 +470,7 @@ func TestRunExistingInstance(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "prefix", Value: options.Prefix, DataType: "string"},
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_postgresql_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "postgresql_crn"), DataType: "string"},
+			{Name: "existing_postgresql_instance_crn", Value: terraform.OutputContext(t, ctx, existingTerraformOptions, "postgresql_crn"), DataType: "string"},
 			{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 			{Name: "deletion_protection", Value: false, DataType: "bool"},
 			{Name: "region", Value: region, DataType: "string"},
@@ -483,8 +486,8 @@ func TestRunExistingInstance(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (existing resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, ctx, existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, ctx, existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (existing resources)")
 	}
 }

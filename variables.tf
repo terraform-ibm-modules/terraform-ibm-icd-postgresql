@@ -17,10 +17,10 @@ variable "postgresql_version" {
   description = "Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used."
   default     = null
 
-  #validation {
-  #  condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
-  #  error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
-  #}
+  validation {
+    condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
+    error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
+  }
 }
 
 variable "region" {

@@ -4,22 +4,22 @@
 
 output "id" {
   description = "Postgresql instance id"
-  value       = can(ibm_database.postgresql_db[0].id) ? ibm_database.postgresql_db[0].id : null
+  value       = can(ibm_database.postgresql_db.id) ? ibm_database.postgresql_db.id : null
 }
 
 output "version" {
   description = "Postgresql instance version"
-  value       = can(ibm_database.postgresql_db[0].version) ? ibm_database.postgresql_db[0].version : null
+  value       = can(ibm_database.postgresql_db.version) ? ibm_database.postgresql_db.version : null
 }
 
 output "guid" {
   description = "Postgresql instance guid"
-  value       = can(ibm_database.postgresql_db[0].guid) ? ibm_database.postgresql_db[0].guid : null
+  value       = can(ibm_database.postgresql_db.guid) ? ibm_database.postgresql_db.guid : null
 }
 
 output "crn" {
   description = "Postgresql instance crn"
-  value       = can(ibm_database.postgresql_db[0].resource_crn) ? ibm_database.postgresql_db[0].resource_crn : null
+  value       = can(ibm_database.postgresql_db.resource_crn) ? ibm_database.postgresql_db.resource_crn : null
 }
 
 output "service_credentials_json" {
@@ -41,7 +41,7 @@ output "cbr_rule_ids" {
 
 output "adminuser" {
   description = "Database admin user name"
-  value       = can(ibm_database.postgresql_db[0].adminuser) ? ibm_database.postgresql_db[0].adminuser : null
+  value       = can(ibm_database.postgresql_db.adminuser) ? ibm_database.postgresql_db.adminuser : null
 }
 
 output "hostname" {
