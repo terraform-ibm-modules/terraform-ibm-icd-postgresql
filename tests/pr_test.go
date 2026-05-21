@@ -395,8 +395,7 @@ func TestPlanValidation(t *testing.T) {
 		"fullyConfigurableWithIbmOwnedBackupKey": fullyConfigurableWithIbmOwnedBackupKey,
 	}
 
-	ctx := context.Background()
-	_, initErr := terraform.InitContextE(t, ctx, options.TerraformOptions)
+	_, initErr := terraform.InitContextE(t, context.Background(), options.TerraformOptions)
 	if assert.Nil(t, initErr, "This should not have errored") {
 		// Iterate over the slice of maps
 		for name, tfVars := range tfVarsMap {
@@ -405,7 +404,7 @@ func TestPlanValidation(t *testing.T) {
 				for key, value := range tfVars {
 					options.TerraformOptions.Vars[key] = value
 				}
-				output, err := terraform.PlanContextE(t, ctx, options.TerraformOptions)
+				output, err := terraform.PlanContextE(t, context.Background(), options.TerraformOptions)
 				assert.Nil(t, err, "This should not have errored")
 				assert.NotNil(t, output, "Expected some output")
 				// Delete the keys from the map
@@ -446,13 +445,12 @@ func TestRunExistingInstance(t *testing.T) {
 		Upgrade: true,
 	})
 
-	ctx := context.Background()
-	terraform.WorkspaceSelectOrNewContext(t, ctx, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyContextE(t, ctx, existingTerraformOptions)
+	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
+	_, existErr := terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
-		logger.Log(t, ctx, " existing_postgresql_instance_crn: ", terraform.OutputContext(t, ctx, existingTerraformOptions, "postgresql_crn"))
+		logger.Log(t, " existing_postgresql_instance_crn: ", terraform.OutputContext(t, context.Background(), existingTerraformOptions, "postgresql_crn"))
 		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 			Testing: t,
 			TarIncludePatterns: []string{
@@ -470,7 +468,7 @@ func TestRunExistingInstance(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "prefix", Value: options.Prefix, DataType: "string"},
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_postgresql_instance_crn", Value: terraform.OutputContext(t, ctx, existingTerraformOptions, "postgresql_crn"), DataType: "string"},
+			{Name: "existing_postgresql_instance_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "postgresql_crn"), DataType: "string"},
 			{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 			{Name: "deletion_protection", Value: false, DataType: "bool"},
 			{Name: "region", Value: region, DataType: "string"},
@@ -486,8 +484,8 @@ func TestRunExistingInstance(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (existing resources)")
-		terraform.DestroyContext(t, ctx, existingTerraformOptions)
-		terraform.WorkspaceDeleteContext(t, ctx, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (existing resources)")
 	}
 }
