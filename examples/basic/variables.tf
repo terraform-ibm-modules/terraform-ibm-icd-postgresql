@@ -43,7 +43,7 @@ variable "postgresql_version" {
 variable "service_endpoints" {
   type        = string
   description = "The type of endpoint of the database instance. Possible values: `public`, `private`, `public-and-private`."
-  default     = "public"
+  default     = "private"
 
   validation {
     condition     = can(regex("^(public|public-and-private|private)$", var.service_endpoints))
@@ -54,6 +54,6 @@ variable "service_endpoints" {
 variable "member_host_flavor" {
   type        = string
   description = "The host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
-  default     = "b3c.4x16.encrypted"
+  default     = "bx3d.4x20"
   # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }

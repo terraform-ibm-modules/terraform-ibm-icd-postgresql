@@ -28,6 +28,7 @@ module "database" {
   tags                = var.resource_tags
   service_endpoints   = var.service_endpoints
   member_host_flavor  = var.member_host_flavor
+  disk_mb             = "10240"
   deletion_protection = false
   #  configuration = {
   #    shared_buffers             = 32000
@@ -47,32 +48,32 @@ module "database" {
   #    max_replication_slots      = 10
   #    max_wal_senders            = 20
   #  }
-  #  service_credential_names = [
-  #    {
-  #      name     = "postgresql_admin"
-  #      role     = "Administrator"
-  #      endpoint = "public"
-  #    },
-  #    {
-  #      name     = "postgresql_operator"
-  #      role     = "Operator"
-  #      endpoint = "public"
-  #    },
-  #    {
-  #      name     = "postgresql_viewer"
-  #      role     = "Viewer"
-  #      endpoint = "public"
-  #    },
-  #    {
-  #      name     = "postgresql_editor"
-  #      role     = "Editor"
-  #      endpoint = "public"
-  #    }
-  #  ]
-  #  users = [
-  #    {
-  #      name     = "nonexistent"
-  #   password = "notreal"
-  #  }
+  service_credential_names = [
+    {
+      name     = "postgresql_admin"
+      role     = "Administrator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_operator"
+      role     = "Operator"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_viewer"
+      role     = "Viewer"
+      endpoint = "private"
+    },
+    {
+      name     = "postgresql_editor"
+      role     = "Editor"
+      endpoint = "private"
+    }
+  ]
+  # users = [
+  #   {
+  #     name     = "nonexistent"
+  #     password = "notreal"
+  #   }
   # ]
 }

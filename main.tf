@@ -17,6 +17,10 @@ locals {
 
   # Determine if restore, from backup or point in time recovery
   recovery_mode = var.backup_crn != null || var.pitr_id != null
+
+  # Determine if gen2 plan is being used
+  is_gen2    = can(regex("-gen2$", var.plan))
+  is_classic = !local.is_gen2 # For code readability and maintenance
 }
 
 ########################################################################################################################
@@ -174,10 +178,9 @@ locals {
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  #  count                                = var.plan == "standard" ? 1 : 0
   depends_on                           = [time_sleep.wait_for_authorization_policy]
   name                                 = var.name
-  plan                                 = "standard" # Only standard plan is available for postgres
+  plan                                 = var.plan
   location                             = var.region
   service                              = "databases-for-postgresql"
   version                              = var.postgresql_version
@@ -324,27 +327,6 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
-# Create Gen2 ICD instance
-#resource "ibm_resource_instance" "postgresql" {
-#  count = var.plan == "standard-gen2" ? 1 : 0
-# depends_on        = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_sm_hpcs_authorization_policy]
-#  name              = var.name
-#  service           = "databases-for-postgresql"
-#  plan              = "standard-gen2"
-#  location          = var.region
-#  resource_group_id = var.resource_group_id
-#  tags              = var.tags
-#parameters = {
-#  "allowed_network" = var.allowed_network
-#  "kms_instance"    = local.kms_instance_guid
-#  "kms_key"         = var.kms_key_crn
-#}
-
-#  timeouts {
-#    create = "30m" # Extending provisioning time to 30 minutes
-#  }
-#}
-
 resource "ibm_resource_tag" "access_tag" {
   count       = length(var.access_tags) == 0 ? 0 : 1
   resource_id = ibm_database.postgresql_db.resource_crn
@@ -399,7 +381,7 @@ module "cbr_rule" {
 resource "ibm_resource_key" "service_credentials" {
   for_each             = { for key in var.service_credential_names : key.name => key }
   name                 = each.key
-  role                 = each.value.role
+  role                 = local.is_classic ? each.value.role : null
   resource_instance_id = ibm_database.postgresql_db.id
   parameters = {
     service-endpoints = each.value.endpoint
@@ -415,7 +397,7 @@ locals {
 
   service_credentials_object = length(var.service_credential_names) > 0 ? {
     hostname    = ibm_resource_key.service_credentials[var.service_credential_names[0].name].credentials["connection.postgres.hosts.0.hostname"]
-    certificate = ibm_resource_key.service_credentials[var.service_credential_names[0].name].credentials["connection.postgres.certificate.certificate_base64"]
+    certificate = can(ibm_resource_key.service_credentials[var.service_credential_names[0].name].credentials["connection.postgres.certificate.certificate_base64"]) ? ibm_resource_key.service_credentials[var.service_credential_names[0].name].credentials["connection.postgres.certificate.certificate_base64"] : null
     port        = ibm_resource_key.service_credentials[var.service_credential_names[0].name].credentials["connection.postgres.hosts.0.port"]
     credentials = {
       for service_credential in ibm_resource_key.service_credentials :
@@ -428,7 +410,7 @@ locals {
 }
 
 data "ibm_database_connection" "database_connection" {
-  count         = var.plan == "standard" ? 1 : 0
+  count         = local.is_classic ? 1 : 0
   endpoint_type = var.service_endpoints == "public-and-private" ? "public" : var.service_endpoints
   deployment_id = ibm_database.postgresql_db.id
   user_id       = ibm_database.postgresql_db.adminuser
