@@ -30,24 +30,6 @@ module "database" {
   member_host_flavor  = var.member_host_flavor
   disk_mb             = "10240"
   deletion_protection = false
-  #  configuration = {
-  #    shared_buffers             = 32000
-  #    max_connections            = 250
-  #    max_locks_per_transaction  = 64
-  #    max_prepared_transactions  = 0
-  #    synchronous_commit         = "local"
-  #    effective_io_concurrency   = 12
-  #    deadlock_timeout           = 10000
-  #    log_connections            = "off"
-  #    log_disconnections         = "off"
-  #    log_min_duration_statement = 100
-  #    tcp_keepalives_idle        = 200
-  #    tcp_keepalives_interval    = 50
-  #    tcp_keepalives_count       = 6
-  #    archive_timeout            = 1000
-  #    max_replication_slots      = 10
-  #    max_wal_senders            = 20
-  #  }
   service_credential_names = [
     {
       name     = "postgresql_admin"
@@ -70,10 +52,4 @@ module "database" {
       endpoint = "private"
     }
   ]
-  # users = [
-  #   {
-  #     name     = "nonexistent"
-  #     password = "notreal"
-  #   }
-  # ]
 }

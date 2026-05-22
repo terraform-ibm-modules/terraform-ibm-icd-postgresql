@@ -24,6 +24,12 @@ variable "region" {
   default     = "us-south"
 }
 
+variable "plan" {
+  type        = string
+  description = "The name of the service plan that you choose for your PostgreSQL instance"
+  default     = "standard"
+}
+
 ##############################################################################
 # ICD hosting model properties
 ##############################################################################
