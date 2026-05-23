@@ -109,10 +109,10 @@ To attach access management tags to resources in this module, you need the follo
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.5.0 |
-| <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.5.0 |
-| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.2 |
-| <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.5.0 |
+| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.6.0 |
+| <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.0 |
+| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.4 |
+| <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.0 |
 
 ### Resources
 
