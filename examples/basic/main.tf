@@ -32,23 +32,13 @@ module "database" {
   deletion_protection = false
   service_credential_names = [
     {
-      name     = "postgresql_admin"
-      role     = "Administrator"
+      name     = "postgresql_manager"
+      role     = "Manager"
       endpoint = "private"
     },
     {
-      name     = "postgresql_operator"
-      role     = "Operator"
-      endpoint = "private"
-    },
-    {
-      name     = "postgresql_viewer"
-      role     = "Viewer"
-      endpoint = "private"
-    },
-    {
-      name     = "postgresql_editor"
-      role     = "Editor"
+      name     = "postgresql_writer"
+      role     = "Writer"
       endpoint = "private"
     }
   ]
