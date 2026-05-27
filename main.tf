@@ -164,7 +164,7 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 module "available_versions" {
 
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.5.0"
+  version  = "1.16.1"
   region   = var.region
   icd_type = "postgresql"
 }
@@ -328,7 +328,7 @@ resource "ibm_database" "postgresql_db" {
 
 # Check whether access tags are valid and exist in the account
 data "ibm_iam_access_tag" "access_tags" {
-  for_each = length(var.access_tags) != 0 ? toset(var.access_tags) : []
+  for_each = toset(var.access_tags)
   name     = each.value
 }
 
