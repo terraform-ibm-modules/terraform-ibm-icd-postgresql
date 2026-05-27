@@ -164,7 +164,7 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 module "available_versions" {
 
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.6.0"
+  version  = "1.6.1"
   region   = var.region
   icd_type = "postgresql"
 }

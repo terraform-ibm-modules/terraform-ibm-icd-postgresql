@@ -62,6 +62,7 @@ This module implements an instance of the IBM Cloud Databases for PostgreSQL ser
 ### Usage
 
 IBM Cloud Databases supports:
+
 - Key Protect encryption in `us-south`, `us-east`, and `eu-de` for backup encryption. For more information, see [Bring Your Own Key for Backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) in the IBM Cloud Docs.
 - Hyper Protect Crypto Services in all regions for backup encryption. For more information, see [Hyper Protect Crypto Services for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups) in the IBM Cloud Docs.
 
@@ -87,14 +88,14 @@ module "postgresql_db" {
 You need the following permissions to run this module.
 
 - Account Management
-    - **Databases for PostgreSQL** service
-        - `Editor` role access
+  - **Databases for PostgreSQL** service
+    - `Editor` role access
 
 To attach access management tags to resources in this module, you need the following permissions.
 
 - IAM Services
-    - **Tagging** service
-        - `Administrator` platform access
+  - **Tagging** service
+    - `Administrator` platform access
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -109,7 +110,7 @@ To attach access management tags to resources in this module, you need the follo
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.6.0 |
+| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.6.1 |
 | <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.0 |
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.4 |
 | <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.0 |
