@@ -385,6 +385,7 @@ resource "ibm_resource_key" "service_credentials" {
   resource_instance_id = ibm_database.postgresql_db.id
   parameters = {
     service-endpoints = each.value.endpoint
+    role_crn          = local.is_gen2 ? "crn:v1:bluemix:public:iam::::role:${each.value.role}" : null
   }
 }
 
