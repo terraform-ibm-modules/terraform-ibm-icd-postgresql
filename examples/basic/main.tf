@@ -91,7 +91,8 @@ resource "time_sleep" "wait_time" {
   destroy_duration = "5m"
 }
 
-############################################################################### ICD postgresql read-only-replica
+##############################################################################
+# ICD postgresql read-only-replica
 ##############################################################################
 module "read_only_replica_postgresql_db" {
   count               = local.is_gen2 ? 0 : var.read_only_replicas_count

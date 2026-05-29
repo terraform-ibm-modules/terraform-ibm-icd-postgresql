@@ -43,7 +43,7 @@ variable "resource_tags" {
 variable "postgresql_version" {
   type        = string
   description = "Version of the postgresql instance. If no value passed, the current ICD preferred version is used."
-  default     = 18
+  default     = null
 }
 
 variable "service_endpoints" {

@@ -103,7 +103,7 @@ func TestRunBasicGen2Example(t *testing.T) {
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
-		Prefix:             "pg-flvr-multitenant",
+		Prefix:             "pg-gen2",
 		BestRegionYAMLPath: regionSelectionPath,
 		ResourceGroup:      resourceGroup,
 		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal and version 18
