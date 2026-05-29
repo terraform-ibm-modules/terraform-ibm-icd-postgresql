@@ -110,6 +110,7 @@ func TestRunBasicGen2Example(t *testing.T) {
 			"region":             "ca-mon",
 			"plan":               "standard-gen2",
 			"postgresql_version": "18",
+			"service_endpoints":  "private",
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
