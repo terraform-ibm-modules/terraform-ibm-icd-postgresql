@@ -5,38 +5,40 @@ locals {
   gen2_host_flavor    = "bx3d.4x20"
   classic_host_flavor = "multitenant"
 
+  endpoint_type = var.service_endpoints == "public-and-private" ? "private" : var.service_endpoints
+
   gen2_service_credential_names = [
     {
       name     = "postgresql_manager"
       role     = "Manager"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     },
     {
       name     = "postgresql_writer"
       role     = "Writer"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     }
   ]
   classic_service_credential_names = [
     {
       name     = "postgresql_admin"
       role     = "Administrator"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     },
     {
       name     = "postgresql_operator"
       role     = "Operator"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     },
     {
       name     = "postgresql_viewer"
       role     = "Viewer"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     },
     {
       name     = "postgresql_editor"
       role     = "Editor"
-      endpoint = var.service_endpoints
+      endpoint = local.endpoint_type
     }
   ]
 }
