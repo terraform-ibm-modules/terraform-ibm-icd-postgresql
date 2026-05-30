@@ -97,6 +97,29 @@ func GetRegionVersions(region string) (string, string) {
 	return latestVersion, oldestVersion
 }
 
+func TestRunBasicGen2Example(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "pg-gen2",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal and version 18
+			"region":             "ca-mon",
+			"plan":               "standard-gen2",
+			"postgresql_version": "18",
+			"service_endpoints":  "private",
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}
+
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
 func TestMain(m *testing.M) {
 	var err error

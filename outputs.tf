@@ -4,22 +4,22 @@
 
 output "id" {
   description = "Postgresql instance id"
-  value       = ibm_database.postgresql_db.id
+  value       = can(ibm_database.postgresql_db.id) ? ibm_database.postgresql_db.id : null
 }
 
 output "version" {
   description = "Postgresql instance version"
-  value       = ibm_database.postgresql_db.version
+  value       = can(ibm_database.postgresql_db.version) ? ibm_database.postgresql_db.version : null
 }
 
 output "guid" {
   description = "Postgresql instance guid"
-  value       = ibm_database.postgresql_db.guid
+  value       = can(ibm_database.postgresql_db.guid) ? ibm_database.postgresql_db.guid : null
 }
 
 output "crn" {
   description = "Postgresql instance crn"
-  value       = ibm_database.postgresql_db.resource_crn
+  value       = can(ibm_database.postgresql_db.resource_crn) ? ibm_database.postgresql_db.resource_crn : null
 }
 
 output "service_credentials_json" {
@@ -41,22 +41,22 @@ output "cbr_rule_ids" {
 
 output "adminuser" {
   description = "Database admin user name"
-  value       = ibm_database.postgresql_db.adminuser
+  value       = can(ibm_database.postgresql_db.adminuser) ? ibm_database.postgresql_db.adminuser : null
 }
 
 output "hostname" {
   description = "Database connection hostname"
-  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].hostname
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname) ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname : null
 }
 
 output "port" {
   description = "Database connection port"
-  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].port
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port) ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port : null
 }
 
 output "certificate_base64" {
   description = "Database connection certificate"
-  value       = data.ibm_database_connection.database_connection.postgres[0].certificate[0].certificate_base64
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].certificate[0].certificate_base64) ? data.ibm_database_connection.database_connection[0].postgres[0].certificate[0].certificate_base64 : null
   sensitive   = true
 }
 

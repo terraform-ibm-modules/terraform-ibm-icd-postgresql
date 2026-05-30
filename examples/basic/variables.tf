@@ -22,6 +22,12 @@ variable "resource_group" {
   default     = null
 }
 
+variable "plan" {
+  type        = string
+  description = "The name of the service plan that you choose for your PostgreSQL instance"
+  default     = "standard"
+}
+
 variable "access_tags" {
   type        = list(string)
   description = "A list of access tags to apply to the PostgreSQL instance created by the module, see https://cloud.ibm.com/docs/account?topic=account-access-tags-tutorial for more details"
@@ -49,13 +55,6 @@ variable "service_endpoints" {
     condition     = can(regex("^(public|public-and-private|private)$", var.service_endpoints))
     error_message = "Valid values for service_endpoints are 'public', 'public-and-private', and 'private'"
   }
-}
-
-variable "member_host_flavor" {
-  type        = string
-  description = "The host flavor per member. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database#host_flavor)."
-  default     = "multitenant"
-  # Validation is done in the Terraform plan phase by the IBM provider, so no need to add extra validation here.
 }
 
 variable "read_only_replicas_count" {
