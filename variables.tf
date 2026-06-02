@@ -21,8 +21,6 @@ variable "postgresql_version" {
     condition     = var.postgresql_version == null ? true : contains(local.icd_supported_versions, var.postgresql_version)
     error_message = "Unsupported postgresql_version '${var.postgresql_version == null ? "null" : var.postgresql_version}'. Supported versions: ${join(", ", local.icd_supported_versions)}"
   }
-
-  # Gen2 versions are different. Todo: add support for Gen2 validation
 }
 
 variable "region" {
