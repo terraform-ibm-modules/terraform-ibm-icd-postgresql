@@ -25,7 +25,6 @@ import (
 )
 
 const fullyConfigurableSolutionTerraformDir = "solutions/fully-configurable"
-const securityEnforcedSolutionTerraformDir = "solutions/security-enforced"
 
 const icdType = "postgresql"
 const icdShortType = "pg"
@@ -186,8 +185,8 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-// Test the security-enforced DA with defaults (KMS encryption enabled, BYOK)
-func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
+// Upgrade test the fully-configurable DA with KMS encryption (KYOK)
+func TestRunFullyConfigurableWithKMSUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
@@ -195,92 +194,10 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		TarIncludePatterns: []string{
 			"*.tf",
 			fullyConfigurableSolutionTerraformDir + "/*.tf",
-			securityEnforcedSolutionTerraformDir + "/*.tf",
 		},
-		TemplateFolder:             securityEnforcedSolutionTerraformDir,
-		BestRegionYAMLPath:         regionSelectionPath,
-		Prefix:                     fmt.Sprintf("%s-se-da", icdShortType),
-		ResourceGroup:              resourceGroup,
-		DeleteWorkspaceOnFail:      false,
-		WaitJobCompleteMinutes:     60,
-		CheckApplyResultForUpgrade: true,
-	})
-
-	serviceCredentialSecrets := []map[string]interface{}{
-		{
-			"secret_group_name": fmt.Sprintf("%s-secret-group", options.Prefix),
-			"service_credentials": []map[string]string{
-				{
-					"secret_name": fmt.Sprintf("%s-cred-reader", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Viewer",
-				},
-				{
-					"secret_name": fmt.Sprintf("%s-cred-writer", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Editor",
-				},
-			},
-		},
-	}
-
-	serviceCredentialNames := []map[string]string{
-		{
-			"name":     "admin",
-			"role":     "Administrator",
-			"endpoint": "private",
-		},
-		{
-			"name":     "user1",
-			"role":     "Viewer",
-			"endpoint": "private",
-		},
-		{
-			"name":     "user2",
-			"role":     "Editor",
-			"endpoint": "private",
-		},
-	}
-
-	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
-
-	region := "us-south"
-	latestVersion, _ := GetRegionVersions(region)
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-		{Name: "deletion_protection", Value: false, DataType: "bool"},
-		{Name: "region", Value: region, DataType: "string"},
-		{Name: "existing_resource_group_name", Value: uniqueResourceGroup, DataType: "string"},
-		{Name: "service_credential_names", Value: serviceCredentialNames, DataType: "list(object)"},
-		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
-		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-		{Name: "admin_pass_secrets_manager_secret_group", Value: fmt.Sprintf("%s-%s-admin-secrets", icdShortType, options.Prefix), DataType: "string"},
-		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
-		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
-		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
-	}
-	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
-		return options.RunSchematicTest()
-	})
-	assert.Nil(t, err, "This should not have errored")
-}
-
-// Upgrade test the security-enforced DA with defaults (KMS encryption enabled, KYOK)
-func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
-	t.Parallel()
-
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		TarIncludePatterns: []string{
-			"*.tf",
-			fullyConfigurableSolutionTerraformDir + "/*.tf",
-			securityEnforcedSolutionTerraformDir + "/*.tf",
-		},
-		TemplateFolder:             securityEnforcedSolutionTerraformDir,
-		Tags:                       []string{fmt.Sprintf("%s-se-upg", icdShortType)},
-		Prefix:                     fmt.Sprintf("%s-se-upg", icdShortType),
+		TemplateFolder:             fullyConfigurableSolutionTerraformDir,
+		Tags:                       []string{fmt.Sprintf("%s-fc-upg", icdShortType)},
+		Prefix:                     fmt.Sprintf("%s-fc-upg", icdShortType),
 		DeleteWorkspaceOnFail:      false,
 		WaitJobCompleteMinutes:     120,
 		CheckApplyResultForUpgrade: true,
@@ -337,6 +254,7 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_group", Value: fmt.Sprintf("%s-%s-admin-secrets", icdShortType, options.Prefix), DataType: "string"},
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
+		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
