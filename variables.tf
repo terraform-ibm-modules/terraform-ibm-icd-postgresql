@@ -140,7 +140,7 @@ variable "service_credential_names" {
     role     = optional(string, "Viewer")
     endpoint = optional(string, "private")
   }))
-  description = "List of service credentials to create for the database, including name and optionally role and endpoint type. For Gen2 instances any role will be ignored."
+  description = "List of service credentials to create for the database, including name and optionally role and endpoint type."
   default     = []
 
   validation {

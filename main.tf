@@ -165,6 +165,11 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 # Postgresql instance
 ########################################################################################################################
 
+# Workaround:
+# Montreal does not have ICD classic endpoint, so default to Toronto. This stops the module erroring,
+# but it gets the classic versions and not the gen2 versions.
+# This MAY be wrong and result in an apply time failure IF the user specifies gen2 and an unsupported version.
+# ref: https://github.com/terraform-ibm-modules/terraform-ibm-common-utilities/issues/157
 module "available_versions" {
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
   version  = "1.6.1"
