@@ -46,17 +46,17 @@ output "adminuser" {
 
 output "hostname" {
   description = "Database connection hostname"
-  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].hostname
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname) ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].hostname : null
 }
 
 output "port" {
   description = "Database connection port"
-  value       = data.ibm_database_connection.database_connection.postgres[0].hosts[0].port
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port) ? data.ibm_database_connection.database_connection[0].postgres[0].hosts[0].port : null
 }
 
 output "certificate_base64" {
   description = "Database connection certificate"
-  value       = data.ibm_database_connection.database_connection.postgres[0].certificate[0].certificate_base64
+  value       = can(data.ibm_database_connection.database_connection[0].postgres[0].certificate[0].certificate_base64) ? data.ibm_database_connection.database_connection[0].postgres[0].certificate[0].certificate_base64 : null
   sensitive   = true
 }
 
