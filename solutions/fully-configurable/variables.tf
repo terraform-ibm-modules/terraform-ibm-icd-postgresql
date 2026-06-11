@@ -78,6 +78,12 @@ variable "postgresql_version" {
   default     = null
 }
 
+variable "plan" {
+  type        = string
+  description = "The name of the service plan that you choose for your PostgreSQL instance"
+  default     = "standard"
+}
+
 variable "remote_leader_crn" {
   type        = string
   description = "A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)."
@@ -526,8 +532,12 @@ variable "admin_pass_secrets_manager_secret_group" {
 
   validation {
     condition = (
-      var.existing_secrets_manager_instance_crn == null ||
-      var.admin_pass_secrets_manager_secret_group != null
+      local.is_gen2 || (
+        local.is_classic && (
+          var.existing_secrets_manager_instance_crn == null ||
+          var.admin_pass_secrets_manager_secret_group != null
+        )
+      )
     )
     error_message = "`admin_pass_secrets_manager_secret_group` is required when `existing_secrets_manager_instance_crn` is set."
   }
@@ -546,8 +556,12 @@ variable "admin_pass_secrets_manager_secret_name" {
 
   validation {
     condition = (
-      var.existing_secrets_manager_instance_crn == null ||
-      var.admin_pass_secrets_manager_secret_name != null
+      local.is_gen2 || (
+        local.is_classic && (
+          var.existing_secrets_manager_instance_crn == null ||
+          var.admin_pass_secrets_manager_secret_name != null
+        )
+      )
     )
     error_message = "`admin_pass_secrets_manager_secret_name` is required when `existing_secrets_manager_instance_crn` is set."
   }

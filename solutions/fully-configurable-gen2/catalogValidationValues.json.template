@@ -1,0 +1,9 @@
+{
+  "ibmcloud_api_key": $VALIDATION_APIKEY,
+  "region": "ca-mon",
+  "resource_tags": $TAGS,
+  "name": $PREFIX,
+  "existing_resource_group_name": "geretain-test-postgres",
+  "existing_kms_instance_crn": $HPCS_US_SOUTH_CRN,
+  "deletion_protection": false
+}

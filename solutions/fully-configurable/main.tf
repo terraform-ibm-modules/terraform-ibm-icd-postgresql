@@ -3,6 +3,10 @@
 #######################################################################################################################
 locals {
   prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+
+  # Determine if gen2 plan is being used
+  is_gen2    = can(regex("-gen2$", var.plan))
+  is_classic = !local.is_gen2 # For code readability and maintenance
 }
 
 module "resource_group" {
@@ -110,7 +114,7 @@ locals {
   backup_kms_key_id        = local.create_cross_account_backup_kms_auth_policy ? module.kms_backup_key_crn_parser[0].resource : local.kms_key_id
   backup_kms_key_crn       = var.existing_postgresql_instance_crn != null || local.use_ibm_owned_encryption_key ? null : var.existing_backup_kms_key_crn
   # Always use same key for backups unless user explicially passed a value for 'existing_backup_kms_key_crn'
-  use_same_kms_key_for_backups = var.existing_backup_kms_key_crn == null ? true : false
+  use_same_kms_key_for_backups = local.is_gen2 ? false : var.existing_backup_kms_key_crn == null ? true : false
 }
 
 # Create auth policy (scoped to exact KMS key)
@@ -214,7 +218,7 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 #######################################################################################################################
 
 resource "random_password" "admin_password" {
-  count            = var.admin_pass == null ? 1 : 0
+  count            = local.is_classic && var.admin_pass == null ? 1 : 0
   length           = 32
   special          = true
   override_special = "-_"
@@ -228,7 +232,7 @@ locals {
   # else use asis
   generated_admin_password = (length(random_password.admin_password) > 0 ? (startswith(random_password.admin_password[0].result, "-") ? "J${substr(random_password.admin_password[0].result, 1, -1)}" : startswith(random_password.admin_password[0].result, "_") ? "K${substr(random_password.admin_password[0].result, 1, -1)}" : random_password.admin_password[0].result) : null)
   # admin password to use
-  admin_pass = var.admin_pass == null ? local.generated_admin_password : var.admin_pass
+  admin_pass = local.is_gen2 ? null : var.admin_pass == null ? local.generated_admin_password : var.admin_pass
 }
 
 #######################################################################################################################
@@ -283,6 +287,7 @@ module "postgresql_db" {
   region                            = var.region
   remote_leader_crn                 = var.remote_leader_crn
   postgresql_version                = var.postgresql_version
+  plan                              = var.plan
   skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
   use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
   kms_key_crn                       = local.kms_key_crn
@@ -383,7 +388,7 @@ locals {
   ]
 
   # Build the structure of the arbitrary credential type secret for admin password
-  admin_pass_secret = [{
+  admin_pass_secret = local.is_gen2 ? null : [{
     secret_group_name     = "${local.prefix}${var.admin_pass_secrets_manager_secret_group}"
     existing_secret_group = var.use_existing_admin_pass_secrets_manager_secret_group
     secrets = [{
@@ -395,7 +400,7 @@ locals {
   }]
 
   # Concatenate into 1 secrets object
-  secrets = concat(local.service_credential_secrets, local.admin_pass_secret)
+  secrets = local.admin_pass_secret != null ? concat(local.service_credential_secrets, local.admin_pass_secret) : local.service_credential_secrets
   # Parse Secrets Manager details from the CRN
   existing_secrets_manager_instance_guid   = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].service_instance : null
   existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].region : null

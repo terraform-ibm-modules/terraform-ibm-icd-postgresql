@@ -196,6 +196,10 @@
               ]
             },
             {
+              "key": "plan",
+              "hidden": true
+            },
+            {
               "key": "name"
             },
             {
@@ -490,6 +494,290 @@
                 {
                   "type": "regex",
                   "description": "The value provided for 'remote_leader_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
+            }
+          ],
+          "terraform_version": "1.12.2",
+          "ignore_readme": true
+        },
+        {
+          "label": "Fully configurable VPC (Gen2)",
+          "name": "fully-configurable-gen2",
+          "index": 2,
+          "install_type": "fullstack",
+          "working_directory": "solutions/fully-configurable-gen2",
+          "release_notes_url": "https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/releases",
+          "short_description": "Ideal for users who want flexibility with a reliable starting point for IBM Cloud Database on VPC (Gen2).",
+          "iam_permissions": [
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Viewer"
+              ],
+              "service_name": "Resource group only",
+              "notes": "Viewer access is required in the resource group you want to provision in."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "databases-for-postgresql"
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "kms",
+              "notes": "[Optional] Editor access is required to create keys. It is required only if KMS encryption is enabled."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "hs-crypto",
+              "notes": "[Optional] Editor access is required to create keys in HPCS. It is only required when using HPCS for encryption."
+            }
+          ],
+          "architecture": {
+            "features": [
+              {
+                "title": " ",
+                "description": "Configured to use IBM Cloud Databases for VPC (Gen2) by default standards that can't be changed."
+              }
+            ],
+            "diagrams": [
+              {
+                "diagram": {
+                  "caption": "Databases for PostgreSQL instance on IBM Cloud",
+                  "url": "https://raw.githubusercontent.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/main/reference-architectures/deployable-architecture-postgresql.svg",
+                  "type": "image/svg+xml"
+                },
+                "description": "This architecture supports creating and configuring an instance of Databases for PostgreSQL instance with KMS encryption."
+              }
+            ]
+          },
+          "configuration": [
+            {
+              "key": "ibmcloud_api_key"
+            },
+            {
+              "key": "kms_encryption_enabled"
+            },
+            {
+              "key": "existing_resource_group_name",
+              "display_name": "resource_group",
+              "custom_config": {
+                "type": "resource_group",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "identifier": "rg_name"
+                }
+              }
+            },
+            {
+              "key": "prefix",
+              "required": true,
+              "default_value": "dev",
+              "random_string": {
+                "length": 4
+              },
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "Prefix must begin with a lowercase letter and may contain only lowercase letters, digits, and hyphens '-'. It must not end with a hyphen ('-'), and cannot contain consecutive hyphens ('--'). It should not exceed 16 characters.",
+                  "value": "^$|^__NULL__$|^[a-z](?!.*--)(?:[a-z0-9-]{0,14}[a-z0-9])?$"
+                }
+              ]
+            },
+            {
+              "key": "region",
+              "required": true,
+              "custom_config": {
+                "type": "region",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "filterString": "service:databases-for-postgresql-group",
+                  "showKinds": [
+                    "region",
+                    "dc"
+                  ]
+                }
+              }
+            },
+            {
+              "key": "postgresql_version",
+              "required": true,
+              "default_value": "18",
+              "options": [
+                {
+                  "displayname": "18",
+                  "value": "18"
+                }
+              ]
+            },
+            {
+              "key": "name"
+            },
+            {
+              "key": "resource_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "access_tags",
+              "type": "array",
+              "custom_config": {
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "type": "string"
+                }
+              }
+            },
+            {
+              "key": "members"
+            },
+            {
+              "key": "member_memory_mb"
+            },
+            {
+              "key": "member_cpu_count"
+            },
+            {
+              "key": "member_disk_mb"
+            },
+            {
+              "key": "member_host_flavor"
+            },
+            {
+              "key": "deletion_protection"
+            },
+            {
+              "key": "create_timeout",
+              "hidden": true
+            },
+            {
+              "key": "update_timeout",
+              "hidden": true
+            },
+            {
+              "key": "delete_timeout",
+              "hidden": true
+            },
+            {
+              "key": "service_credential_names",
+              "type": "array",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
+            },
+            {
+              "key": "service_credential_secrets",
+              "type": "array",
+              "custom_config": {
+                "type": "code_editor",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "supportedLanguages": [
+                    "hcl"
+                  ]
+                }
+              }
+            },
+            {
+              "key": "existing_secrets_manager_instance_crn",
+              "display_name": "existing_secrets_manager_instance",
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "secrets-manager",
+                  "selection": "single_select",
+                  "valueType": "crn"
+                }
+              },
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_secrets_manager_instance_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}secrets-manager:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
+            },
+            {
+              "key": "skip_postgresql_secrets_manager_auth_policy"
+            },
+            {
+              "key": "ibmcloud_kms_api_key"
+            },
+            {
+              "key": "existing_kms_instance_crn",
+              "required": true,
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_kms_instance_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
+            },
+            {
+              "key": "existing_kms_key_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_kms_key_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}(kms|hs-crypto):(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:key:[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}$"
+                }
+              ]
+            },
+            {
+              "key": "key_ring_name"
+            },
+            {
+              "key": "key_name"
+            },
+            {
+              "key": "async_restore"
+            },
+            {
+              "key": "skip_postgresql_kms_auth_policy"
+            },
+            {
+              "key": "existing_postgresql_instance_crn",
+              "display_name": "existing_postgresql_instance",
+              "custom_config": {
+                "type": "platform_resource",
+                "grouping": "deployment",
+                "original_grouping": "deployment",
+                "config_constraints": {
+                  "resourceType": "databases-for-postgresql",
+                  "selection": "single_select",
+                  "valueType": "crn"
+                }
+              },
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'existing_postgresql_instance_crn' is not valid.",
                   "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]

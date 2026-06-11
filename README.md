@@ -50,6 +50,7 @@ This module implements an instance of the IBM Cloud Databases for MongoDB servic
   <li><a href="./solutions">Deployable Architectures</a>
     <ul>
       <li><a href="./solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
+      <li><a href="./solutions/fully-configurable-gen2">Cloud automation for PostgreSQL (Security enforced)</a></li>
     </ul>
   </li>
   <li><a href="#contributing">Contributing</a></li>
