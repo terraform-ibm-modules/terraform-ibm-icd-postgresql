@@ -70,7 +70,7 @@ module "database" {
   plan                     = var.plan
   postgresql_version       = var.postgresql_version
   access_tags              = var.access_tags
-  tags                     = var.resource_tags
+  resource_tags            = var.resource_tags
   service_endpoints        = var.service_endpoints
   member_host_flavor       = local.is_gen2 ? local.gen2_host_flavor : local.classic_host_flavor
   disk_mb                  = "10240"
