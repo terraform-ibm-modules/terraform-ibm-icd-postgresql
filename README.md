@@ -17,40 +17,39 @@ This module implements an instance of the IBM Cloud Databases for MongoDB servic
 ## Overview
 <ul>
   <li><a href="#terraform-ibm-icd-postgresql">terraform-ibm-icd-postgresql</a></li>
-  <li><a href="./modules">Submodules</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/modules">Submodules</a>
     <ul>
-      <li><a href="./modules/fscloud">fscloud</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/modules/fscloud">fscloud</a></li>
     </ul>
   </li>
-  <li><a href="./examples">Examples</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples">Examples</a>
     <ul>
       <li>
-        <a href="./examples/backup">Restore from backup example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/backup">Restore from backup example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-backup-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/backup"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/basic">Basic with read-only replica example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/basic">Basic with read-only replica example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/complete">Complete example with BYOK encryption, CBR rules and VPE creation</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/complete">Complete example with BYOK encryption, CBR rules and VPE creation</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/fscloud">Financial Services Cloud profile example with autoscaling enabled</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/fscloud">Financial Services Cloud profile example with autoscaling enabled</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/pitr">Point in time recovery example (PITR)</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/pitr">Point in time recovery example (PITR)</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-pitr-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/pitr"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
     </ul>
     ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
   </li>
-  <li><a href="./solutions">Deployable Architectures</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions">Deployable Architectures</a>
     <ul>
-      <li><a href="./solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
-      <li><a href="./solutions/fully-configurable-gen2">Cloud automation for PostgreSQL (Security enforced)</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
     </ul>
   </li>
   <li><a href="#contributing">Contributing</a></li>
