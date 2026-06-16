@@ -7,7 +7,7 @@
 [![semantic-release](https://img.shields.io/badge/%20%20%F0%9F%93%A6%F0%9F%9A%80-semantic--release-e10079.svg)](https://github.com/semantic-release/semantic-release)
 [![Terraform Registry](https://img.shields.io/badge/terraform-registry-623CE4?logo=terraform)](https://registry.terraform.io/modules/terraform-ibm-modules/icd-postgresql/ibm/latest)
 
-This module implements an instance of the IBM Cloud Databases for PostgreSQL service.
+This module implements an instance of the IBM Cloud Databases for MongoDB service supporting IBM classic platform (Gen 1) or the latest VPC platform (Gen 2). An [overview](https://cloud.ibm.com/docs/cloud-databases-gen2?topic=cloud-databases-gen2-overview-gen1-gen2) of differentiators and introduction the latest VPC platform (Gen 2).
 
 :exclamation: The module does not support major version upgrades or updates to encryption and backup encryption keys. To upgrade the version, create another instance of Databases for PostgreSQL with the updated version and follow the steps in [Upgrading PostgreSQL docs](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-upgrading&interface=cli) in the IBM Cloud Docs.
 
@@ -17,40 +17,39 @@ This module implements an instance of the IBM Cloud Databases for PostgreSQL ser
 ## Overview
 <ul>
   <li><a href="#terraform-ibm-icd-postgresql">terraform-ibm-icd-postgresql</a></li>
-  <li><a href="./modules">Submodules</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/modules">Submodules</a>
     <ul>
-      <li><a href="./modules/fscloud">fscloud</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/modules/fscloud">fscloud</a></li>
     </ul>
   </li>
-  <li><a href="./examples">Examples</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples">Examples</a>
     <ul>
       <li>
-        <a href="./examples/backup">Restore from backup example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/backup">Restore from backup example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-backup-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/backup"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/basic">Basic with read-only replica example</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/basic">Basic with read-only replica example</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-basic-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/basic"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/complete">Complete example with BYOK encryption, CBR rules and VPE creation</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/complete">Complete example with BYOK encryption, CBR rules and VPE creation</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-complete-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/complete"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/fscloud">Financial Services Cloud profile example with autoscaling enabled</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/fscloud">Financial Services Cloud profile example with autoscaling enabled</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-fscloud-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/fscloud"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
       <li>
-        <a href="./examples/pitr">Point in time recovery example (PITR)</a>
+        <a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/pitr">Point in time recovery example (PITR)</a>
         <a href="https://cloud.ibm.com/schematics/workspaces/create?workspace_name=icd-postgresql-pitr-example&repository=https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/examples/pitr"><img src="https://img.shields.io/badge/Deploy%20with%20IBM%20Cloud%20Schematics-0f62fe?style=flat&logo=ibm&logoColor=white&labelColor=0f62fe" alt="Deploy with IBM Cloud Schematics" style="height: 16px; vertical-align: text-bottom; margin-left: 5px;"></a>
       </li>
     </ul>
     ℹ️ Ctrl/Cmd+Click or right-click on the Schematics deploy button to open in a new tab.
   </li>
-  <li><a href="./solutions">Deployable Architectures</a>
+  <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions">Deployable Architectures</a>
     <ul>
-      <li><a href="./solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
-      <li><a href="./solutions/security-enforced">Cloud automation for PostgreSQL (Security enforced)</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
     </ul>
   </li>
   <li><a href="#contributing">Contributing</a></li>
@@ -62,6 +61,7 @@ This module implements an instance of the IBM Cloud Databases for PostgreSQL ser
 ### Usage
 
 IBM Cloud Databases supports:
+
 - Key Protect encryption in `us-south`, `us-east`, and `eu-de` for backup encryption. For more information, see [Bring Your Own Key for Backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) in the IBM Cloud Docs.
 - Hyper Protect Crypto Services in all regions for backup encryption. For more information, see [Hyper Protect Crypto Services for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups) in the IBM Cloud Docs.
 
@@ -87,14 +87,14 @@ module "postgresql_db" {
 You need the following permissions to run this module.
 
 - Account Management
-    - **Databases for PostgreSQL** service
-        - `Editor` role access
+  - **Databases for PostgreSQL** service
+    - `Editor` role access
 
 To attach access management tags to resources in this module, you need the following permissions.
 
 - IAM Services
-    - **Tagging** service
-        - `Administrator` platform access
+  - **Tagging** service
+    - `Administrator` platform access
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
@@ -102,17 +102,17 @@ To attach access management tags to resources in this module, you need the follo
 | Name | Version |
 |------|---------|
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
-| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 1.87.3, < 3.0.0 |
+| <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 2.2.0, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
 
 ### Modules
 
 | Name | Source | Version |
 |------|--------|---------|
-| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.5.0 |
-| <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.5.0 |
-| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.2 |
-| <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.5.0 |
+| <a name="module_available_versions"></a> [available\_versions](#module\_available\_versions) | terraform-ibm-modules/common-utilities/ibm//modules/icd-versions | 1.6.1 |
+| <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.1 |
+| <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.5 |
+| <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.6.1 |
 
 ### Resources
 
@@ -153,6 +153,7 @@ To attach access management tags to resources in this module, you need the follo
 | <a name="input_name"></a> [name](#input\_name) | The name to give the Postgresql instance. | `string` | n/a | yes |
 | <a name="input_pitr_id"></a> [pitr\_id](#input\_pitr\_id) | (Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state. | `string` | `null` | no |
 | <a name="input_pitr_time"></a> [pitr\_time](#input\_pitr\_time) | (Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) for any time in the last 7 days that you want to restore to. If empty string ("") is passed, earliest\_point\_in\_time\_recovery\_time will be used as pitr\_time. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr | `string` | `null` | no |
+| <a name="input_plan"></a> [plan](#input\_plan) | The name of the service plan that you choose for your PostgreSQL instance | `string` | `"standard"` | no |
 | <a name="input_postgresql_version"></a> [postgresql\_version](#input\_postgresql\_version) | Version of the PostgreSQL instance. If no value is passed, the current preferred version of IBM Cloud Databases is used. | `string` | `null` | no |
 | <a name="input_region"></a> [region](#input\_region) | The region where you want to deploy your instance. | `string` | `"us-south"` | no |
 | <a name="input_remote_leader_crn"></a> [remote\_leader\_crn](#input\_remote\_leader\_crn) | A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. For more information, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas | `string` | `null` | no |

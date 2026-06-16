@@ -2,6 +2,7 @@
 package test
 
 import (
+	"context"
 	"fmt"
 	"log"
 	"os"
@@ -24,7 +25,6 @@ import (
 )
 
 const fullyConfigurableSolutionTerraformDir = "solutions/fully-configurable"
-const securityEnforcedSolutionTerraformDir = "solutions/security-enforced"
 
 const icdType = "postgresql"
 const icdShortType = "pg"
@@ -94,6 +94,29 @@ func GetRegionVersions(region string) (string, string) {
 	oldestVersion := icdAvailableVersions[0]
 
 	return latestVersion, oldestVersion
+}
+
+func TestRunBasicGen2Example(t *testing.T) {
+	t.Parallel()
+
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:            t,
+		TerraformDir:       "examples/basic",
+		Prefix:             "pg-gen2",
+		BestRegionYAMLPath: regionSelectionPath,
+		ResourceGroup:      resourceGroup,
+		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal and version 18
+			"region":             "ca-mon",
+			"plan":               "standard-gen2",
+			"postgresql_version": "18",
+			"service_endpoints":  "private",
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
 }
 
 // TestMain will be run before any parallel tests, used to read data from yaml for use with tests
@@ -185,8 +208,8 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-// Test the security-enforced DA with defaults (KMS encryption enabled, BYOK)
-func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
+// Upgrade test the fully-configurable DA with KMS encryption (KYOK)
+func TestRunFullyConfigurableWithKMSUpgradeSolution(t *testing.T) {
 	t.Parallel()
 
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
@@ -194,92 +217,10 @@ func TestRunSecurityEnforcedSolutionSchematics(t *testing.T) {
 		TarIncludePatterns: []string{
 			"*.tf",
 			fullyConfigurableSolutionTerraformDir + "/*.tf",
-			securityEnforcedSolutionTerraformDir + "/*.tf",
 		},
-		TemplateFolder:             securityEnforcedSolutionTerraformDir,
-		BestRegionYAMLPath:         regionSelectionPath,
-		Prefix:                     fmt.Sprintf("%s-se-da", icdShortType),
-		ResourceGroup:              resourceGroup,
-		DeleteWorkspaceOnFail:      false,
-		WaitJobCompleteMinutes:     60,
-		CheckApplyResultForUpgrade: true,
-	})
-
-	serviceCredentialSecrets := []map[string]interface{}{
-		{
-			"secret_group_name": fmt.Sprintf("%s-secret-group", options.Prefix),
-			"service_credentials": []map[string]string{
-				{
-					"secret_name": fmt.Sprintf("%s-cred-reader", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Viewer",
-				},
-				{
-					"secret_name": fmt.Sprintf("%s-cred-writer", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Editor",
-				},
-			},
-		},
-	}
-
-	serviceCredentialNames := []map[string]string{
-		{
-			"name":     "admin",
-			"role":     "Administrator",
-			"endpoint": "private",
-		},
-		{
-			"name":     "user1",
-			"role":     "Viewer",
-			"endpoint": "private",
-		},
-		{
-			"name":     "user2",
-			"role":     "Editor",
-			"endpoint": "private",
-		},
-	}
-
-	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
-
-	region := "us-south"
-	latestVersion, _ := GetRegionVersions(region)
-	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
-		{Name: "prefix", Value: options.Prefix, DataType: "string"},
-		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
-		{Name: "deletion_protection", Value: false, DataType: "bool"},
-		{Name: "region", Value: region, DataType: "string"},
-		{Name: "existing_resource_group_name", Value: uniqueResourceGroup, DataType: "string"},
-		{Name: "service_credential_names", Value: serviceCredentialNames, DataType: "list(object)"},
-		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
-		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-		{Name: "admin_pass_secrets_manager_secret_group", Value: fmt.Sprintf("%s-%s-admin-secrets", icdShortType, options.Prefix), DataType: "string"},
-		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
-		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
-		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
-	}
-	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
-		return options.RunSchematicTest()
-	})
-	assert.Nil(t, err, "This should not have errored")
-}
-
-// Upgrade test the security-enforced DA with defaults (KMS encryption enabled, KYOK)
-func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
-	t.Parallel()
-
-	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
-		Testing: t,
-		TarIncludePatterns: []string{
-			"*.tf",
-			fullyConfigurableSolutionTerraformDir + "/*.tf",
-			securityEnforcedSolutionTerraformDir + "/*.tf",
-		},
-		TemplateFolder:             securityEnforcedSolutionTerraformDir,
-		Tags:                       []string{fmt.Sprintf("%s-se-upg", icdShortType)},
-		Prefix:                     fmt.Sprintf("%s-se-upg", icdShortType),
+		TemplateFolder:             fullyConfigurableSolutionTerraformDir,
+		Tags:                       []string{fmt.Sprintf("%s-fc-upg", icdShortType)},
+		Prefix:                     fmt.Sprintf("%s-fc-upg", icdShortType),
 		DeleteWorkspaceOnFail:      false,
 		WaitJobCompleteMinutes:     120,
 		CheckApplyResultForUpgrade: true,
@@ -336,6 +277,7 @@ func TestRunSecurityEnforcedUpgradeSolution(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_group", Value: fmt.Sprintf("%s-%s-admin-secrets", icdShortType, options.Prefix), DataType: "string"},
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
+		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
@@ -394,7 +336,7 @@ func TestPlanValidation(t *testing.T) {
 		"fullyConfigurableWithIbmOwnedBackupKey": fullyConfigurableWithIbmOwnedBackupKey,
 	}
 
-	_, initErr := terraform.InitE(t, options.TerraformOptions)
+	_, initErr := terraform.InitContextE(t, context.Background(), options.TerraformOptions)
 	if assert.Nil(t, initErr, "This should not have errored") {
 		// Iterate over the slice of maps
 		for name, tfVars := range tfVarsMap {
@@ -403,7 +345,7 @@ func TestPlanValidation(t *testing.T) {
 				for key, value := range tfVars {
 					options.TerraformOptions.Vars[key] = value
 				}
-				output, err := terraform.PlanE(t, options.TerraformOptions)
+				output, err := terraform.PlanContextE(t, context.Background(), options.TerraformOptions)
 				assert.Nil(t, err, "This should not have errored")
 				assert.NotNil(t, output, "Expected some output")
 				// Delete the keys from the map
@@ -417,9 +359,9 @@ func TestPlanValidation(t *testing.T) {
 
 func TestRunExistingInstance(t *testing.T) {
 	t.Parallel()
-	prefix := fmt.Sprintf("%s-t-%s", icdShortType, strings.ToLower(random.UniqueId()))
+	prefix := fmt.Sprintf("%s-t-%s", icdShortType, strings.ToLower(random.UniqueID()))
 	realTerraformDir := ".."
-	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueId())))
+	tempTerraformDir, _ := files.CopyTerraformFolderToTemp(realTerraformDir, fmt.Sprintf(prefix+"-%s", strings.ToLower(random.UniqueID())))
 
 	// Verify ibmcloud_api_key variable is set
 	checkVariable := "TF_VAR_ibmcloud_api_key"
@@ -444,12 +386,12 @@ func TestRunExistingInstance(t *testing.T) {
 		Upgrade: true,
 	})
 
-	terraform.WorkspaceSelectOrNew(t, existingTerraformOptions, prefix)
-	_, existErr := terraform.InitAndApplyE(t, existingTerraformOptions)
+	terraform.WorkspaceSelectOrNewContext(t, context.Background(), existingTerraformOptions, prefix)
+	_, existErr := terraform.InitAndApplyContextE(t, context.Background(), existingTerraformOptions)
 	if existErr != nil {
 		assert.True(t, existErr == nil, "Init and Apply of temp existing resource failed")
 	} else {
-		logger.Log(t, " existing_postgresql_instance_crn: ", terraform.Output(t, existingTerraformOptions, "postgresql_crn"))
+		logger.Log(t, " existing_postgresql_instance_crn: ", terraform.OutputContext(t, context.Background(), existingTerraformOptions, "postgresql_crn"))
 		options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 			Testing: t,
 			TarIncludePatterns: []string{
@@ -467,7 +409,7 @@ func TestRunExistingInstance(t *testing.T) {
 		options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 			{Name: "prefix", Value: options.Prefix, DataType: "string"},
 			{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
-			{Name: "existing_postgresql_instance_crn", Value: terraform.Output(t, existingTerraformOptions, "postgresql_crn"), DataType: "string"},
+			{Name: "existing_postgresql_instance_crn", Value: terraform.OutputContext(t, context.Background(), existingTerraformOptions, "postgresql_crn"), DataType: "string"},
 			{Name: "existing_resource_group_name", Value: resourceGroup, DataType: "string"},
 			{Name: "deletion_protection", Value: false, DataType: "bool"},
 			{Name: "region", Value: region, DataType: "string"},
@@ -483,8 +425,8 @@ func TestRunExistingInstance(t *testing.T) {
 		fmt.Println("Terratest failed. Debug the test and delete resources manually.")
 	} else {
 		logger.Log(t, "START: Destroy (existing resources)")
-		terraform.Destroy(t, existingTerraformOptions)
-		terraform.WorkspaceDelete(t, existingTerraformOptions, prefix)
+		terraform.DestroyContext(t, context.Background(), existingTerraformOptions)
+		terraform.WorkspaceDeleteContext(t, context.Background(), existingTerraformOptions, prefix)
 		logger.Log(t, "END: Destroy (existing resources)")
 	}
 }
