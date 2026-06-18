@@ -388,7 +388,7 @@ locals {
   ]
 
   # Build the structure of the arbitrary credential type secret for admin password
-  admin_pass_secret = local.is_gen2 ? null : [{
+  admin_pass_secret = local.is_gen2 ? [] : [{
     secret_group_name     = "${local.prefix}${var.admin_pass_secrets_manager_secret_group}"
     existing_secret_group = var.use_existing_admin_pass_secrets_manager_secret_group
     secrets = [{
@@ -400,7 +400,7 @@ locals {
   }]
 
   # Concatenate into 1 secrets object
-  secrets = local.admin_pass_secret != null ? concat(local.service_credential_secrets, local.admin_pass_secret) : local.service_credential_secrets
+  secrets = length(local.admin_pass_secret) > 0 ? concat(local.service_credential_secrets, local.admin_pass_secret) : local.service_credential_secrets
   # Parse Secrets Manager details from the CRN
   existing_secrets_manager_instance_guid   = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].service_instance : null
   existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].region : null

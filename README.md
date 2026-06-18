@@ -50,7 +50,7 @@ This module implements an instance of the IBM Cloud Databases for MongoDB servic
   <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions">Deployable Architectures</a>
     <ul>
       <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable">Cloud automation for PostgreSQL (Fully configurable)</a></li>
-      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable-gen2">Cloud automation for PostgreSQL (Security enforced)</a></li>
+      <li><a href="https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/tree/main/solutions/fully-configurable-gen2">Cloud automation for PostgreSQL (VPC(Gen2))</a></li>
     </ul>
   </li>
   <li><a href="#contributing">Contributing</a></li>

@@ -220,7 +220,7 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 			fullyConfigurableGen2SolutionTerraformDir + "/*.tf",
 		},
 		TemplateFolder:             fullyConfigurableGen2SolutionTerraformDir,
-		Prefix:                     fmt.Sprintf("%s-gen2-da", icdShortType),
+		Prefix:                     fmt.Sprintf("%s-gen2da", icdShortType),
 		ResourceGroup:              resourceGroup,
 		DeleteWorkspaceOnFail:      false,
 		WaitJobCompleteMinutes:     60,
