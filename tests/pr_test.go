@@ -129,7 +129,7 @@ func TestRunBasicGen2Example(t *testing.T) {
 
 	latestVersion, _ := GetVersionsGen2("ca-mon", "standard-gen2")
 	fmt.Println("Latest version is ", latestVersion)
-	
+
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
