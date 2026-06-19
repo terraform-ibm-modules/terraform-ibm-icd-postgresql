@@ -128,6 +128,8 @@ func TestRunBasicGen2Example(t *testing.T) {
 	t.Parallel()
 
 	latestVersion, _ := GetVersionsGen2("ca-mon", "standard-gen2")
+	fmt.Println("Latest version is ", latestVersion)
+	
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
@@ -142,8 +144,6 @@ func TestRunBasicGen2Example(t *testing.T) {
 		},
 		CloudInfoService: sharedInfoSvc,
 	})
-
-	fmt.Println("Latest version is ", latestVersion)
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")
