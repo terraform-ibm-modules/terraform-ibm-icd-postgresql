@@ -290,7 +290,7 @@ module "postgresql_db" {
   use_same_kms_key_for_backups      = local.use_same_kms_key_for_backups
   use_default_backup_encryption_key = var.use_default_backup_encryption_key
   access_tags                       = var.access_tags
-  tags                              = var.resource_tags
+  resource_tags                     = var.resource_tags
   # workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/6141
   admin_pass                  = var.remote_leader_crn == null ? local.admin_pass : null
   users                       = var.users

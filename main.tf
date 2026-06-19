@@ -166,14 +166,14 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 ########################################################################################################################
 
 # Workaround:
-# Montreal does not have ICD classic endpoint, so default to Toronto. This stops the module erroring,
+# The latest release of common-utility https://github.com/terraform-ibm-modules/terraform-ibm-common-utilities/releases/tag/v1.7.0
+# takes care of the endpoint unavailability of Montreal region. It fallbacks to Toronto region and then us-south region.
 # but it gets the classic versions and not the gen2 versions.
 # This MAY be wrong and result in an apply time failure IF the user specifies gen2 and an unsupported version.
-# ref: https://github.com/terraform-ibm-modules/terraform-ibm-common-utilities/issues/157
 module "available_versions" {
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.6.1"
-  region   = var.region == "ca-mon" ? "ca-tor" : var.region
+  version  = "1.7.0"
+  region   = var.region
   icd_type = "postgresql"
 }
 
@@ -193,7 +193,7 @@ resource "ibm_database" "postgresql_db" {
   service_endpoints                    = var.service_endpoints
   deletion_protection                  = var.deletion_protection
   version_upgrade_skip_backup          = var.version_upgrade_skip_backup
-  tags                                 = var.tags
+  tags                                 = var.resource_tags
   adminpassword                        = var.admin_pass
   key_protect_key                      = var.kms_key_crn
   backup_encryption_key_crn            = local.backup_encryption_key_crn
@@ -332,7 +332,14 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
+# Check whether access tags are valid and exist in the account
+data "ibm_iam_access_tag" "access_tags" {
+  for_each = toset(var.access_tags)
+  name     = each.value
+}
+
 resource "ibm_resource_tag" "access_tag" {
+  depends_on  = [data.ibm_iam_access_tag.access_tags] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
   count       = length(var.access_tags) == 0 ? 0 : 1
   resource_id = ibm_database.postgresql_db.resource_crn
   tags        = var.access_tags
