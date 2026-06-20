@@ -35,14 +35,14 @@ locals {
 module "kms_key_crn_parser" {
   count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
   count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = local.backup_encryption_key_crn
 }
 
@@ -172,7 +172,7 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 # This MAY be wrong and result in an apply time failure IF the user specifies gen2 and an unsupported version.
 module "available_versions" {
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.7.0"
+  version  = "1.8.0"
   region   = var.region
   icd_type = "postgresql"
 }
