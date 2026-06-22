@@ -35,14 +35,14 @@ locals {
 module "kms_key_crn_parser" {
   count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
   count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.6.1"
+  version = "1.8.0"
   crn     = local.backup_encryption_key_crn
 }
 
@@ -192,7 +192,7 @@ resource "ibm_database" "postgresql_db" {
   service_endpoints                    = var.service_endpoints
   deletion_protection                  = var.deletion_protection
   version_upgrade_skip_backup          = var.version_upgrade_skip_backup
-  tags                                 = var.tags
+  tags                                 = var.resource_tags
   adminpassword                        = var.admin_pass
   key_protect_key                      = var.kms_key_crn
   backup_encryption_key_crn            = local.backup_encryption_key_crn
@@ -331,7 +331,14 @@ resource "ibm_database" "postgresql_db" {
   }
 }
 
+# Check whether access tags are valid and exist in the account
+data "ibm_iam_access_tag" "access_tags" {
+  for_each = toset(var.access_tags)
+  name     = each.value
+}
+
 resource "ibm_resource_tag" "access_tag" {
+  depends_on  = [data.ibm_iam_access_tag.access_tags] # Force dependency on data source validation to ensure access_tags exist and are valid before use.
   count       = length(var.access_tags) == 0 ? 0 : 1
   resource_id = ibm_database.postgresql_db.resource_crn
   tags        = var.access_tags

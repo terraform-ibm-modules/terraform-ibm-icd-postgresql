@@ -117,7 +117,7 @@ module "icd_postgresql" {
   use_same_kms_key_for_backups = false
   kms_key_crn                  = module.key_protect_all_inclusive.keys["icd.${local.data_key_name}"].crn
   backup_encryption_key_crn    = module.key_protect_all_inclusive.keys["icd.${local.backups_key_name}"].crn
-  tags                         = var.resource_tags
+  resource_tags                = var.resource_tags
   service_credential_names = [
     {
       name     = "postgresql_admin"
