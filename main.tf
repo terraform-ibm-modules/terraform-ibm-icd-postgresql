@@ -166,15 +166,14 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 ########################################################################################################################
 
 # Workaround:
-# The latest release of common-utility https://github.com/terraform-ibm-modules/terraform-ibm-common-utilities/releases/tag/v1.7.0
-# takes care of the endpoint unavailability of Montreal region. It fallbacks to Toronto region and then us-south region.
-# but it gets the classic versions and not the gen2 versions.
-# This MAY be wrong and result in an apply time failure IF the user specifies gen2 and an unsupported version.
+# Montreal does not have ICD classic endpoint, so common-utilities submodule defaults to Toronto for Gen1 Databases. This stops the module erroring.
 module "available_versions" {
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
   version  = "1.8.0"
   region   = var.region
   icd_type = "postgresql"
+  plan     = var.plan
+  service  = "databases-for-postgresql"
 }
 
 locals {
