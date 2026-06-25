@@ -1,10 +1,10 @@
 module "postgresql_db" {
-  source                                               = "../fully-configurable"
+  source                                               = "../../"
   ibmcloud_api_key                                     = var.ibmcloud_api_key
   existing_resource_group_name                         = var.existing_resource_group_name
   prefix                                               = var.prefix
   name                                                 = var.name
-  provider_visibility                                  = "private"
+  provider_visibility                                  = var.provider_visibility
   region                                               = var.region
   plan                                                 = "standard-gen2" # this is the only gen2 plan
   existing_postgresql_instance_crn                     = var.existing_postgresql_instance_crn
@@ -24,7 +24,7 @@ module "postgresql_db" {
   kms_encryption_enabled                               = var.kms_encryption_enabled
   existing_kms_instance_crn                            = var.existing_kms_instance_crn
   existing_kms_key_crn                                 = var.existing_kms_key_crn
-  kms_endpoint_type                                    = "private"
+  kms_endpoint_type                                    = var.kms_endpoint_type
   skip_postgresql_kms_auth_policy                      = var.skip_postgresql_kms_auth_policy
   ibmcloud_kms_api_key                                 = var.ibmcloud_kms_api_key
   key_ring_name                                        = var.key_ring_name
@@ -35,7 +35,7 @@ module "postgresql_db" {
   async_restore                                        = var.async_restore
   auto_scaling                                         = null # not supported by gen2
   existing_secrets_manager_instance_crn                = var.existing_secrets_manager_instance_crn
-  existing_secrets_manager_endpoint_type               = "private"
+  existing_secrets_manager_endpoint_type               = var.existing_secrets_manager_endpoint_type
   service_credential_secrets                           = var.service_credential_secrets
   skip_postgresql_secrets_manager_auth_policy          = var.skip_postgresql_secrets_manager_auth_policy
   admin_pass_secrets_manager_secret_group              = null # not supported by gen2

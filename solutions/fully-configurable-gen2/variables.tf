@@ -308,3 +308,41 @@ variable "skip_postgresql_secrets_manager_auth_policy" {
   default     = false
   description = "Whether an IAM authorization policy is created for Secrets Manager instance to create a service credential secrets for Databases for PostgreSQL. If set to false, the Secrets Manager instance passed by the user is granted the Key Manager access to the PostgreSQL instance created by the Deployable Architecture. Set to `true` to use an existing policy. The value of this is ignored if any value for 'existing_secrets_manager_instance_crn' is not passed."
 }
+
+
+##############################################################
+# Endpoint Configuration
+##############################################################
+
+variable "provider_visibility" {
+  description = "Set the visibility value for the IBM terraform provider. Supported values are `public`, `private`, `public-and-private`. [Learn more](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/guides/custom-service-endpoints)."
+  type        = string
+  default     = "private"
+
+  validation {
+    condition     = contains(["public", "private", "public-and-private"], var.provider_visibility)
+    error_message = "Invalid visibility option. Allowed values are 'public', 'private', or 'public-and-private'."
+  }
+}
+
+variable "kms_endpoint_type" {
+  type        = string
+  description = "The type of endpoint to use for communicating with the Key Protect or Hyper Protect Crypto Services instance. Possible values: `public`, `private`. Applies only if `existing_kms_key_crn` is not specified."
+  default     = "private"
+
+  validation {
+    condition     = can(regex("^(public|private)$", var.kms_endpoint_type))
+    error_message = "The kms_endpoint_type value must be 'public' or 'private'."
+  }
+}
+
+variable "existing_secrets_manager_endpoint_type" {
+  type        = string
+  description = "The endpoint type to use if `existing_secrets_manager_instance_crn` is specified. Possible values: public, private."
+  default     = "private"
+
+  validation {
+    condition     = contains(["public", "private"], var.existing_secrets_manager_endpoint_type)
+    error_message = "Only \"public\" and \"private\" are allowed values for 'existing_secrets_endpoint_type'."
+  }
+}
