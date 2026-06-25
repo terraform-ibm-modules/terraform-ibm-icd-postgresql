@@ -283,7 +283,6 @@ module "postgresql_db" {
   region                            = var.region
   remote_leader_crn                 = var.remote_leader_crn
   postgresql_version                = var.postgresql_version
-  plan                              = "standard"
   skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
   use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
   kms_key_crn                       = local.kms_key_crn
