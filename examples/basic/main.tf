@@ -70,7 +70,7 @@ module "database" {
   plan                     = var.plan
   postgresql_version       = var.postgresql_version
   access_tags              = var.access_tags
-  tags                     = var.resource_tags
+  resource_tags            = var.resource_tags
   service_endpoints        = var.service_endpoints
   member_host_flavor       = local.is_gen2 ? local.gen2_host_flavor : local.classic_host_flavor
   disk_mb                  = "10240"
@@ -102,7 +102,7 @@ module "read_only_replica_postgresql_db" {
   resource_group_id   = module.resource_group.resource_group_id
   name                = "${var.prefix}-read-only-replica-${count.index}"
   region              = var.region
-  tags                = var.resource_tags
+  resource_tags       = var.resource_tags
   access_tags         = var.access_tags
   postgresql_version  = var.postgresql_version
   remote_leader_crn   = module.database.crn
