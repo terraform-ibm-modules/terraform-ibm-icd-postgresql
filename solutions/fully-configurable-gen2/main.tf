@@ -1,5 +1,5 @@
 module "postgresql_db" {
-  source                                               = "../../"
+  source                                               = "../fully-configurable"
   ibmcloud_api_key                                     = var.ibmcloud_api_key
   existing_resource_group_name                         = var.existing_resource_group_name
   prefix                                               = var.prefix

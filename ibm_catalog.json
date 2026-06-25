@@ -781,6 +781,15 @@
                   "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
                 }
               ]
+            },
+            {
+              "key": "provider_visibility"
+            },
+            {
+              "key": "kms_endpoint_type"
+            },
+            {
+              "key": "existing_secrets_manager_endpoint_type"
             }
           ],
           "terraform_version": "1.12.2",
