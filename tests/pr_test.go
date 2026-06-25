@@ -287,8 +287,6 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 	// Temporary external issues. Hardcoding can be removed when external features are addressed
 	// Hard code region ca-mon, the test function to lookup latest does not work in Montreal, no classic endpoint
 	// Hard code version 18, because latest can not be looked (see also region)
-	// Excluded HPCS key, HPCS is unsupported for Gen2, waiting for HPCS persistent instance to KP migration,
-	// Note: KP manually tested and working.
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
@@ -299,8 +297,8 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 		{Name: "service_credential_names", Value: serviceCredentialNames, DataType: "list(object)"},
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
-		// {Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		// {Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: "18", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 
