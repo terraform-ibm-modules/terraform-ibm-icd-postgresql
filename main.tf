@@ -35,14 +35,14 @@ locals {
 module "kms_key_crn_parser" {
   count   = local.parse_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.8.0"
+  version = "1.9.0"
   crn     = var.kms_key_crn
 }
 
 module "backup_key_crn_parser" {
   count   = local.parse_backup_kms_key ? 1 : 0
   source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
-  version = "1.8.0"
+  version = "1.9.0"
   crn     = local.backup_encryption_key_crn
 }
 
@@ -169,7 +169,7 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 # Montreal does not have ICD classic endpoint, so common-utilities submodule defaults to Toronto for Gen1 Databases. This stops the module erroring.
 module "available_versions" {
   source   = "terraform-ibm-modules/common-utilities/ibm//modules/icd-versions"
-  version  = "1.8.0"
+  version  = "1.9.0"
   region   = var.region
   icd_type = "postgresql"
   plan     = var.plan
@@ -352,7 +352,7 @@ resource "ibm_resource_tag" "access_tag" {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.36.5"
+  version          = "1.36.6"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
