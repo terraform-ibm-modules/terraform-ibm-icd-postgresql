@@ -1,50 +1,294 @@
+#######################################################################################################################
+# Resource Group
+#######################################################################################################################
+locals {
+  prefix = var.prefix != null ? trimspace(var.prefix) != "" ? "${var.prefix}-" : "" : ""
+}
+
+module "resource_group" {
+  source                       = "terraform-ibm-modules/resource-group/ibm"
+  version                      = "1.6.1"
+  existing_resource_group_name = var.existing_resource_group_name
+}
+
+#######################################################################################################################
+# KMS encryption key
+#######################################################################################################################
+
+locals {
+  use_ibm_owned_encryption_key = !var.kms_encryption_enabled
+  create_new_kms_key = (
+    var.kms_encryption_enabled &&
+    var.existing_postgresql_instance_crn == null &&
+    var.existing_kms_key_crn == null
+  )
+  postgres_key_name      = "${local.prefix}${var.key_name}"
+  postgres_key_ring_name = "${local.prefix}${var.key_ring_name}"
+}
+
+module "kms" {
+  providers = {
+    ibm = ibm.kms
+  }
+  count                       = local.create_new_kms_key ? 1 : 0
+  source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
+  version                     = "5.6.5"
+  create_key_protect_instance = false
+  region                      = local.kms_region
+  existing_kms_instance_crn   = var.existing_kms_instance_crn
+  key_ring_endpoint_type      = var.kms_endpoint_type
+  key_endpoint_type           = var.kms_endpoint_type
+  keys = [
+    {
+      key_ring_name     = local.postgres_key_ring_name
+      existing_key_ring = false
+      keys = [
+        {
+          key_name                 = local.postgres_key_name
+          standard_key             = false
+          rotation_interval_month  = 3
+          dual_auth_delete_enabled = false
+          force_delete             = true
+        }
+      ]
+    }
+  ]
+}
+
+########################################################################################################################
+# Parse KMS info from given CRNs
+########################################################################################################################
+
+module "kms_instance_crn_parser" {
+  count   = var.existing_kms_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.8.0"
+  crn     = var.existing_kms_instance_crn
+}
+
+module "kms_key_crn_parser" {
+  count   = var.existing_kms_key_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.8.0"
+  crn     = var.existing_kms_key_crn
+}
+
+#######################################################################################################################
+# KMS IAM Authorization Policies
+#######################################################################################################################
+
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
+locals {
+  account_id                           = data.ibm_iam_account_settings.iam_account_settings.account_id
+  create_cross_account_kms_auth_policy = var.kms_encryption_enabled && !var.skip_postgresql_kms_auth_policy && var.ibmcloud_kms_api_key != null
+
+  kms_account_id    = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? module.kms_key_crn_parser[0].account_id : module.kms_instance_crn_parser[0].account_id
+  kms_service       = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? module.kms_key_crn_parser[0].service_name : module.kms_instance_crn_parser[0].service_name
+  kms_instance_guid = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? module.kms_key_crn_parser[0].service_instance : module.kms_instance_crn_parser[0].service_instance
+  kms_key_crn       = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? var.existing_kms_key_crn : module.kms[0].keys[format("%s.%s", local.postgres_key_ring_name, local.postgres_key_name)].crn
+  kms_key_id        = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? module.kms_key_crn_parser[0].resource : module.kms[0].keys[format("%s.%s", local.postgres_key_ring_name, local.postgres_key_name)].key_id
+  kms_region        = !var.kms_encryption_enabled || var.existing_postgresql_instance_crn != null ? null : var.existing_kms_key_crn != null ? module.kms_key_crn_parser[0].region : module.kms_instance_crn_parser[0].region
+}
+
+resource "ibm_iam_authorization_policy" "kms_policy" {
+  count                    = local.create_cross_account_kms_auth_policy ? 1 : 0
+  provider                 = ibm.kms
+  source_service_account   = local.account_id
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = module.resource_group.resource_group_id
+  roles                    = ["Reader", "Authorization Delegator"]
+  description              = "Allow all PostgreSQL instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_instance_guid}"
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = local.kms_service
+  }
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = local.kms_account_id
+  }
+  resource_attributes {
+    name     = "serviceInstance"
+    operator = "stringEquals"
+    value    = local.kms_instance_guid
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "key"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = local.kms_key_id
+  }
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+resource "time_sleep" "wait_for_authorization_policy" {
+  count           = local.create_cross_account_kms_auth_policy ? 1 : 0
+  depends_on      = [ibm_iam_authorization_policy.kms_policy]
+  create_duration = "30s"
+}
+
+#######################################################################################################################
+# Postgresql Gen2
+#######################################################################################################################
+
+module "postgresql_instance_crn_parser" {
+  count   = var.existing_postgresql_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.8.0"
+  crn     = var.existing_postgresql_instance_crn
+}
+
+locals {
+  existing_postgresql_guid   = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].service_instance : null
+  existing_postgresql_region = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].region : null
+}
+
+data "ibm_resource_instance" "existing_instance_resource" {
+  count      = var.existing_postgresql_instance_crn != null ? 1 : 0
+  identifier = local.existing_postgresql_guid
+}
+
+data "ibm_database" "existing_db_instance" {
+  count             = var.existing_postgresql_instance_crn != null ? 1 : 0
+  name              = data.ibm_resource_instance.existing_instance_resource[0].name
+  resource_group_id = data.ibm_resource_instance.existing_instance_resource[0].resource_group_id
+  location          = var.region
+  service           = "databases-for-postgresql"
+}
+
+data "ibm_database_connection" "existing_connection" {
+  count         = var.existing_postgresql_instance_crn != null ? 1 : 0
+  endpoint_type = "private"
+  deployment_id = data.ibm_database.existing_db_instance[0].id
+  user_id       = data.ibm_database.existing_db_instance[0].adminuser
+  user_type     = "database"
+}
+
 module "postgresql_db" {
-  source                                               = "../.."
-  ibmcloud_api_key                                     = var.ibmcloud_api_key
-  existing_resource_group_name                         = var.existing_resource_group_name
-  prefix                                               = var.prefix
-  name                                                 = var.name
-  provider_visibility                                  = var.provider_visibility
-  region                                               = var.region
-  plan                                                 = "standard-gen2" # this is the only gen2 plan
-  existing_postgresql_instance_crn                     = var.existing_postgresql_instance_crn
-  postgresql_version                                   = var.postgresql_version
-  remote_leader_crn                                    = null # not supported by gen2
-  members                                              = var.members
-  member_memory_mb                                     = var.member_memory_mb
-  member_cpu_count                                     = var.member_cpu_count
-  member_disk_mb                                       = var.member_disk_mb
-  member_host_flavor                                   = var.member_host_flavor
-  service_credential_names                             = var.service_credential_names
-  admin_pass                                           = null # not supported by gen2
-  users                                                = []   # not supported by gen2
-  configuration                                        = null # not supported by gen2
-  resource_tags                                        = var.resource_tags
-  access_tags                                          = var.access_tags
-  kms_encryption_enabled                               = var.kms_encryption_enabled
-  existing_kms_instance_crn                            = var.existing_kms_instance_crn
-  existing_kms_key_crn                                 = var.existing_kms_key_crn
-  kms_endpoint_type                                    = var.kms_endpoint_type
-  skip_postgresql_kms_auth_policy                      = var.skip_postgresql_kms_auth_policy
-  ibmcloud_kms_api_key                                 = var.ibmcloud_kms_api_key
-  key_ring_name                                        = var.key_ring_name
-  key_name                                             = var.key_name
-  existing_backup_kms_key_crn                          = null # not supported by gen2
-  use_default_backup_encryption_key                    = false
-  backup_crn                                           = null # not supported by gen2
-  async_restore                                        = var.async_restore
-  auto_scaling                                         = null # not supported by gen2
-  existing_secrets_manager_instance_crn                = var.existing_secrets_manager_instance_crn
-  existing_secrets_manager_endpoint_type               = var.existing_secrets_manager_endpoint_type
-  service_credential_secrets                           = var.service_credential_secrets
-  skip_postgresql_secrets_manager_auth_policy          = var.skip_postgresql_secrets_manager_auth_policy
-  admin_pass_secrets_manager_secret_group              = null # not supported by gen2
-  use_existing_admin_pass_secrets_manager_secret_group = null # not supported by gen2
-  admin_pass_secrets_manager_secret_name               = null # not supported by gen2
-  service_endpoints                                    = "private"
-  deletion_protection                                  = var.deletion_protection
-  version_upgrade_skip_backup                          = false
-  create_timeout                                       = var.create_timeout
-  update_timeout                                       = var.update_timeout
-  delete_timeout                                       = var.delete_timeout
+  count                             = var.existing_postgresql_instance_crn != null ? 0 : 1
+  source                            = "../.."
+  depends_on                        = [time_sleep.wait_for_authorization_policy]
+  resource_group_id                 = module.resource_group.resource_group_id
+  name                              = "${local.prefix}${var.name}"
+  region                            = var.region
+  remote_leader_crn                 = null
+  postgresql_version                = var.postgresql_version
+  plan                              = "standard-gen2"
+  skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
+  use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
+  kms_key_crn                       = local.kms_key_crn
+  backup_encryption_key_crn         = null
+  use_same_kms_key_for_backups      = false
+  use_default_backup_encryption_key = false
+  access_tags                       = var.access_tags
+  resource_tags                     = var.resource_tags
+  admin_pass                        = null
+  users                             = []
+  members                           = var.members
+  member_host_flavor                = var.member_host_flavor
+  memory_mb                         = var.member_memory_mb
+  disk_mb                           = var.member_disk_mb
+  cpu_count                         = var.member_cpu_count
+  auto_scaling                      = null
+  configuration                     = null
+  service_credential_names          = var.service_credential_names
+  backup_crn                        = null
+  async_restore                     = var.async_restore
+  service_endpoints                 = "private"
+  deletion_protection               = var.deletion_protection
+  version_upgrade_skip_backup       = false
+  create_timeout                    = var.create_timeout
+  update_timeout                    = var.update_timeout
+  delete_timeout                    = var.delete_timeout
+}
+
+locals {
+  postgresql_guid     = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].guid : module.postgresql_db[0].guid
+  postgresql_id       = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].id : module.postgresql_db[0].id
+  postgresql_version  = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].version : module.postgresql_db[0].version
+  postgresql_crn      = var.existing_postgresql_instance_crn != null ? var.existing_postgresql_instance_crn : module.postgresql_db[0].crn
+  postgresql_hostname = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].hostname : module.postgresql_db[0].hostname
+  postgresql_port     = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].port : module.postgresql_db[0].port
+}
+
+#######################################################################################################################
+# Secrets management
+#######################################################################################################################
+
+locals {
+  create_secrets_manager_auth_policy = var.skip_postgresql_secrets_manager_auth_policy || var.existing_secrets_manager_instance_crn == null ? 0 : 1
+}
+
+module "secrets_manager_instance_crn_parser" {
+  count   = var.existing_secrets_manager_instance_crn != null ? 1 : 0
+  source  = "terraform-ibm-modules/common-utilities/ibm//modules/crn-parser"
+  version = "1.8.0"
+  crn     = var.existing_secrets_manager_instance_crn
+}
+
+resource "ibm_iam_authorization_policy" "secrets_manager_key_manager" {
+  count                       = local.create_secrets_manager_auth_policy
+  source_service_name         = "secrets-manager"
+  source_resource_instance_id = local.existing_secrets_manager_instance_guid
+  target_service_name         = "databases-for-postgresql"
+  target_resource_instance_id = local.postgresql_guid
+  roles                       = ["Key Manager"]
+  description                 = "Allow Secrets Manager with instance id ${local.existing_secrets_manager_instance_guid} to manage key for the databases-for-postgresql instance"
+}
+
+resource "time_sleep" "wait_for_postgresql_authorization_policy" {
+  count           = local.create_secrets_manager_auth_policy
+  depends_on      = [ibm_iam_authorization_policy.secrets_manager_key_manager]
+  create_duration = "30s"
+  triggers = {
+    secrets_manager_region = local.existing_secrets_manager_instance_region
+    secrets_manager_guid   = local.existing_secrets_manager_instance_guid
+  }
+}
+
+locals {
+  service_credential_secrets = [
+    for service_credentials in var.service_credential_secrets : {
+      secret_group_name        = service_credentials.secret_group_name
+      secret_group_description = service_credentials.secret_group_description
+      existing_secret_group    = service_credentials.existing_secret_group
+      secrets = [
+        for secret in service_credentials.service_credentials : {
+          secret_name                                 = secret.secret_name
+          secret_labels                               = secret.secret_labels
+          secret_auto_rotation                        = secret.secret_auto_rotation
+          secret_auto_rotation_unit                   = secret.secret_auto_rotation_unit
+          secret_auto_rotation_interval               = secret.secret_auto_rotation_interval
+          service_credentials_ttl                     = secret.service_credentials_ttl
+          service_credential_secret_description       = secret.service_credential_secret_description
+          service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
+          service_credentials_source_service_crn      = local.postgresql_crn
+          secret_type                                 = "service_credentials"
+        }
+      ]
+    }
+  ]
+
+  secrets                                  = local.service_credential_secrets
+  existing_secrets_manager_instance_guid   = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].service_instance : null
+  existing_secrets_manager_instance_region = var.existing_secrets_manager_instance_crn != null ? module.secrets_manager_instance_crn_parser[0].region : null
+}
+
+module "secrets_manager_service_credentials" {
+  count                       = length(local.secrets) > 0 && var.existing_secrets_manager_instance_crn != null ? 1 : 0
+  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
+  version                     = "2.15.7"
+  existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
+  existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
+  endpoint_type               = var.existing_secrets_manager_endpoint_type
+  secrets                     = local.secrets
 }

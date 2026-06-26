@@ -1,1 +1,13 @@
-# Explicit provider config not required here as provider config in fully-configurable is used
+provider "ibm" {
+  ibmcloud_api_key = var.ibmcloud_api_key
+  region           = var.region
+  visibility       = var.provider_visibility
+}
+
+# Provider block for KMS (Key Protect or HPCS)
+provider "ibm" {
+  alias            = "kms"
+  ibmcloud_api_key = var.ibmcloud_kms_api_key != null ? var.ibmcloud_kms_api_key : var.ibmcloud_api_key
+  region           = var.region
+  visibility       = var.provider_visibility
+}
