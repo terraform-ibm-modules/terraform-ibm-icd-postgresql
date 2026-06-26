@@ -77,6 +77,7 @@ variable "postgresql_version" {
   type        = string
   default     = null
 }
+
 variable "plan" {
   type        = string
   description = "The name of the service plan that you choose for your PostgreSQL instance"

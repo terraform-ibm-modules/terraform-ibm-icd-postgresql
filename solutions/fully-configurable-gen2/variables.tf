@@ -48,9 +48,9 @@ variable "name" {
 }
 
 variable "region" {
-  description = "The region where you want to deploy your instance."
+  description = "The region where you want to deploy your instance. For more information on which regions Gen2 is available, see [Feature differentiators](https://cloud.ibm.com/docs/cloud-databases-gen2?topic=cloud-databases-gen2-overview-gen1-gen2#feature-differentiators)."
   type        = string
-  default     = "us-south"
+  default     = "ca-mon"
 }
 
 variable "existing_postgresql_instance_crn" {
@@ -202,7 +202,7 @@ variable "existing_kms_instance_crn" {
 
 variable "existing_kms_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect encryption key to encrypt your data. By default this key is used for deployment data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
+  description = "The CRN of a Key Protect encryption key to encrypt your data. By default this key is used for deployment data. If no value is passed a new key will be created in the instance specified in the `existing_kms_instance_crn` input. Note that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)."
   default     = null
 
   validation {

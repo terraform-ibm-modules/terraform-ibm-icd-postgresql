@@ -247,7 +247,6 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 		Testing: t,
 		TarIncludePatterns: []string{
 			"*.tf",
-			fullyConfigurableSolutionTerraformDir + "/*.tf",
 			fullyConfigurableGen2SolutionTerraformDir + "/*.tf",
 		},
 		TemplateFolder:             fullyConfigurableGen2SolutionTerraformDir,
