@@ -148,8 +148,7 @@ module "postgresql_instance_crn_parser" {
 }
 
 locals {
-  existing_postgresql_guid   = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].service_instance : null
-  existing_postgresql_region = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].region : null
+  existing_postgresql_guid = var.existing_postgresql_instance_crn != null ? module.postgresql_instance_crn_parser[0].service_instance : null
 }
 
 data "ibm_resource_instance" "existing_instance_resource" {
