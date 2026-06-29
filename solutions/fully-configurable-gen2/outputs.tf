@@ -45,7 +45,7 @@ output "port" {
 }
 
 output "next_steps_text" {
-  value       = "Your IBM Cloud Databases Gen 2 (VPC) for PostgreSQL instance is ready. You can now take advantage of a fully managed service enabling you to efficiently create sophisticated, high-performance applications with enhanced JSON support and improved query parallelism. For more information, see [Databases for PostgreSQL Gen 2](https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-provisioning&interface=ui)."
+  value       = "Your IBM Cloud Databases Gen 2 (VPC) for PostgreSQL instance is ready. You can now take advantage of a fully managed service enabling you to efficiently create sophisticated, high-performance applications with enhanced JSON support and improved query parallelism."
   description = "Next steps text"
 }
 
