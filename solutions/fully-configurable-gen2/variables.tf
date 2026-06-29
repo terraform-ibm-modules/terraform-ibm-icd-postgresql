@@ -68,7 +68,7 @@ variable "existing_postgresql_instance_crn" {
 }
 
 variable "postgresql_version" {
-  description = "The version of the Databases for Redis instance."
+  description = "The version of the Databases for PostgreSQL instance."
   type        = string
   default     = null
 }
