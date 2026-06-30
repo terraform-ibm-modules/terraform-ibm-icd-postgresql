@@ -65,6 +65,6 @@ output "next_step_secondary_label" {
 }
 
 output "next_step_secondary_url" {
-  value       = "https://cloud.ibm.com/docs/databases-for-postgresql"
+  value       = "https://cloud.ibm.com/docs/databases-for-postgresql-gen2"
   description = "Secondary URL"
 }
