@@ -776,13 +776,16 @@
               ]
             },
             {
-              "key": "provider_visibility"
+              "key": "provider_visibility",
+              "hidden": true
             },
             {
-              "key": "kms_endpoint_type"
+              "key": "kms_endpoint_type",
+              "hidden": true
             },
             {
-              "key": "existing_secrets_manager_endpoint_type"
+              "key": "existing_secrets_manager_endpoint_type",
+              "hidden": true
             }
           ],
           "terraform_version": "1.12.2",
