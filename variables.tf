@@ -391,9 +391,12 @@ variable "use_ibm_owned_encryption_key" {
 
   validation {
     condition = (
-      var.use_ibm_owned_encryption_key ||
-      var.backup_encryption_key_crn != null ||
-      var.use_same_kms_key_for_backups
+      local.is_gen2 ||
+      local.is_classic && (
+        var.use_ibm_owned_encryption_key ||
+        var.backup_encryption_key_crn != null ||
+        var.use_same_kms_key_for_backups
+      )
     )
     error_message = "When 'use_same_kms_key_for_backups' is set to false, a value needs to be passed for 'backup_encryption_key_crn'."
   }
