@@ -73,7 +73,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "databases-for-postgresql",
-              "notes": "Required to configure a Databases for PostgreSQL instance."
+              "notes": "Required to configure an instance of Databases for PostgreSQL."
             },
             {
               "role_crns": [
@@ -524,7 +524,7 @@
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "databases-for-postgresql",
-              "notes": "Required to configure a Databases for PostgreSQL instance."
+              "notes": "Required to configure an instance of Databases for PostgreSQL."
             },
             {
               "role_crns": [
