@@ -97,8 +97,10 @@ resource "ibm_iam_authorization_policy" "kms_policy" {
   provider               = ibm.kms
   source_service_account = local.account_id
   source_service_name    = "databases-for-postgresql"
-  roles                  = ["Reader", "Authorization Delegator"]
-  description            = "Allow all PostgreSQL instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_instance_guid}"
+  # See issue,https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/issues/885
+  # source_resource_group_id = module.resource_group.resource_group_id
+  roles       = ["Reader", "Authorization Delegator"]
+  description = "Allow all PostgreSQL instances in the resource group ${module.resource_group.resource_group_id} in the account ${local.account_id} to read the ${local.kms_service} key ${local.kms_key_id} from the instance GUID ${local.kms_instance_guid}"
   resource_attributes {
     name     = "serviceName"
     operator = "stringEquals"
