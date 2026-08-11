@@ -40,12 +40,12 @@ variable "postgresql_version" {
 
 variable "kms_key_crn" {
   type        = string
-  description = "The root key CRN of a Hyper Protect Crypto Services (HPCS) that you want to use for disk encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs&interface=ui for more information on integrating HPCS with PostgreSQL database."
+  description = "The root key CRN of a Key Protect instance that you want to use for disk encryption."
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a Hyper Protect Crypto Services use for encrypting the disk that holds deployment backups. There are limitation per region on the Hyper Protect Crypto Services and region for those services. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups"
+  description = "The CRN of a Key Protect key to use for encrypting the disk that holds deployment backups. There are limitations per region for backup encryption. See https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok"
   default     = null
   # Validation happens in the root module
 }
