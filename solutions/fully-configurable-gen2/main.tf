@@ -286,7 +286,7 @@ locals {
 module "secrets_manager_service_credentials" {
   count                       = length(local.secrets) > 0 && var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "2.15.12"
+  version                     = "2.15.13"
   existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
