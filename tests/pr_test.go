@@ -240,9 +240,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 	assert.Nil(t, err, "This should not have errored")
 }
 
-func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
-	t.Parallel()
-
+func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschematic.TestSchematicOptions, string) {
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
 		TarIncludePatterns: []string{
@@ -250,10 +248,9 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 			fullyConfigurableGen2SolutionTerraformDir + "/*.tf",
 		},
 		TemplateFolder:             fullyConfigurableGen2SolutionTerraformDir,
-		Prefix:                     fmt.Sprintf("%s-gen2da", icdShortType),
+		Prefix:                     prefix,
 		ResourceGroup:              resourceGroup,
 		DeleteWorkspaceOnFail:      false,
-		WaitJobCompleteMinutes:     60,
 		CheckApplyResultForUpgrade: true,
 	})
 
@@ -301,10 +298,34 @@ func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 		{Name: "postgresql_version", Value: "18", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 
+	return options, uniqueResourceGroup
+}
+
+func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
+	t.Parallel()
+
+	options, uniqueResourceGroup := setupFullyConfigurableGen2Options(t, fmt.Sprintf("%s-gen2da", icdShortType))
+	options.WaitJobCompleteMinutes = 60
+
 	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
 		return options.RunSchematicTest()
 	})
 	assert.Nil(t, err, "This should not have errored")
+}
+
+// Upgrade test for Gen2 fully-configurable DA
+func TestRunFullyConfigurableGen2UpgradeSolutionSchematics(t *testing.T) {
+	t.Parallel()
+
+	options, uniqueResourceGroup := setupFullyConfigurableGen2Options(t, fmt.Sprintf("%s-gen2-upg", icdShortType))
+	options.WaitJobCompleteMinutes = 120
+
+	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
+		return options.RunSchematicUpgradeTest()
+	})
+	if !options.UpgradeTestSkipped {
+		assert.Nil(t, err, "This should not have errored")
+	}
 }
 
 // Upgrade test the fully-configurable DA with KMS encryption (KYOK)
