@@ -67,6 +67,8 @@ locals {
   create_kms_auth_policy = !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy ? 1 : 0
   # only create backup auth policy if 'use_ibm_owned_encryption_key' is false, 'skip_iam_authorization_policy' is false and 'use_same_kms_key_for_backups' is false
   create_backup_kms_auth_policy = local.is_classic && !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy && !var.use_same_kms_key_for_backups ? 1 : 0
+  # only create gen2 auth policies if plan is gen2 and skip_iam_authorization_policy is false
+  create_gen2_auth_policies = local.is_gen2 && !var.skip_iam_authorization_policy ? 1 : 0
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
@@ -164,12 +166,77 @@ resource "time_sleep" "wait_for_backup_kms_authorization_policy" {
 }
 
 ########################################################################################################################
+# Gen2 IAM Authorization Policies
+########################################################################################################################
+data "ibm_iam_account_settings" "iam_account_settings" {
+}
+
+resource "ibm_iam_authorization_policy" "gen2_independent_backups_policy" {
+  count                    = local.create_gen2_auth_policies
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Editor"]
+  description              = "Allow PostgreSQL instances in resource group ${var.resource_group_id} to access independent backups service with Editor role"
+
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = data.ibm_iam_account_settings.iam_account_settings.account_id
+  }
+  resource_attributes {
+    name     = "serviceName"
+    operator = "stringEquals"
+    value    = "databases-independent-backups"
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# Authorization policy for databases-for-mysql to access resource-group with Viewer role
+resource "ibm_iam_authorization_policy" "gen2_resource_group_policy" {
+  count                    = local.create_gen2_auth_policies
+  source_service_name      = "databases-for-postgresql"
+  source_resource_group_id = var.resource_group_id
+  roles                    = ["Viewer"]
+  description              = "Allow PostgreSQL instances in resource group ${var.resource_group_id} to view resource group with Viewer role"
+
+  resource_attributes {
+    name     = "accountId"
+    operator = "stringEquals"
+    value    = data.ibm_iam_account_settings.iam_account_settings.account_id
+  }
+  resource_attributes {
+    name     = "resourceType"
+    operator = "stringEquals"
+    value    = "resource-group"
+  }
+  resource_attributes {
+    name     = "resource"
+    operator = "stringEquals"
+    value    = var.resource_group_id
+  }
+
+  lifecycle {
+    create_before_destroy = true
+  }
+}
+
+# workaround for https://github.com/IBM-Cloud/terraform-provider-ibm/issues/4478
+resource "time_sleep" "wait_for_gen2_authorization_policies" {
+  count           = local.create_gen2_auth_policies
+  depends_on      = [ibm_iam_authorization_policy.gen2_independent_backups_policy, ibm_iam_authorization_policy.gen2_resource_group_policy]
+  create_duration = "30s"
+}
+
+########################################################################################################################
 # Postgresql instance
 ########################################################################################################################
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on                           = [time_sleep.wait_for_authorization_policy]
+  depends_on                           = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_gen2_authorization_policies]
   name                                 = var.name
   plan                                 = var.plan
   location                             = var.region
