@@ -232,7 +232,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
-		{Name: "existing_backup_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
+		{Name: "existing_backup_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 
