@@ -131,12 +131,14 @@ func TestRunBasicGen2Example(t *testing.T) {
 	latestVersion, _ := GetVersionsGen2("ca-mon", "standard-gen2")
 	fmt.Println("Latest version is ", latestVersion)
 
+	// ResourceGroup is intentionally not set so a unique group is created per run for this test.
+	// Independent backup policies may not be destroyed on failure, causing conflicts on re-runs within the same group.
 	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
 		Testing:            t,
 		TerraformDir:       "examples/basic",
 		Prefix:             "pg-gen2",
 		BestRegionYAMLPath: regionSelectionPath,
-		ResourceGroup:      resourceGroup,
+		// ResourceGroup: resourceGroup,
 		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal
 			"region":             "ca-mon",
 			"plan":               "standard-gen2",
@@ -228,9 +230,9 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
-		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
+		{Name: "existing_backup_kms_key_crn", Value: permanentResources["kp_dedicated_us_south_root_key_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 
@@ -243,15 +245,17 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 func TestRunFullyConfigurableGen2SolutionSchematics(t *testing.T) {
 	t.Parallel()
 
+	// ResourceGroup is intentionally not set so a unique group is created per run for this test.
+	// Independent backup policies may not be destroyed on failure, causing conflicts on re-runs within the same group.
 	options := testschematic.TestSchematicOptionsDefault(&testschematic.TestSchematicOptions{
 		Testing: t,
 		TarIncludePatterns: []string{
 			"*.tf",
 			fullyConfigurableGen2SolutionTerraformDir + "/*.tf",
 		},
-		TemplateFolder:             fullyConfigurableGen2SolutionTerraformDir,
-		Prefix:                     fmt.Sprintf("%s-gen2da", icdShortType),
-		ResourceGroup:              resourceGroup,
+		TemplateFolder: fullyConfigurableGen2SolutionTerraformDir,
+		Prefix:         fmt.Sprintf("%s-gen2da", icdShortType),
+		// ResourceGroup: resourceGroup,
 		DeleteWorkspaceOnFail:      false,
 		WaitJobCompleteMinutes:     60,
 		CheckApplyResultForUpgrade: true,
@@ -377,7 +381,7 @@ func TestRunFullyConfigurableWithKMSUpgradeSolution(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
 		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
 	}
 	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
@@ -413,7 +417,7 @@ func TestPlanValidation(t *testing.T) {
 	// Test the DA when using an existing KMS instance
 	var fullyConfigurableWithExistingKms = map[string]interface{}{
 		"access_tags":               permanentResources["accessTags"],
-		"existing_kms_instance_crn": permanentResources["hpcs_south_crn"],
+		"existing_kms_instance_crn": permanentResources["kp_dedicated_us_south_crn"],
 		"kms_encryption_enabled":    true,
 	}
 
