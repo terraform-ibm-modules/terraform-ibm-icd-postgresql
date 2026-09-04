@@ -194,7 +194,7 @@ resource "ibm_iam_authorization_policy" "gen2_independent_backups_policy" {
   }
 }
 
-# Authorization policy for databases-for-mysql to access resource-group with Viewer role
+# Authorization policy for databases-for-postgresql to access resource-group with Viewer role
 resource "ibm_iam_authorization_policy" "gen2_resource_group_policy" {
   count                    = local.create_gen2_auth_policies
   source_service_name      = "databases-for-postgresql"
