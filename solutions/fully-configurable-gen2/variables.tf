@@ -131,7 +131,19 @@ variable "configuration" {
     tcp_keepalives_interval    = optional(number)
     tcp_keepalives_count       = optional(number)
   })
-  default = null
+  default = {
+    max_connections            = 115
+    max_prepared_transactions  = 50
+    synchronous_commit         = "local"
+    effective_io_concurrency   = 12
+    deadlock_timeout           = 10000
+    log_connections            = "off"
+    log_disconnections         = "off"
+    log_min_duration_statement = 100
+    tcp_keepalives_idle        = 111
+    tcp_keepalives_interval    = 15
+    tcp_keepalives_count       = 6
+  }
 }
 
 variable "service_credential_names" {
