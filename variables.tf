@@ -256,8 +256,13 @@ variable "configuration" {
     max_replication_slots      = optional(number)
     max_wal_senders            = optional(number)
   })
-  description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
+  description = "Database configuration parameters for classic (gen1) plans. See https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details. Not supported for gen2 plans — use `configuration_gen2` instead."
   default     = null
+
+  validation {
+    condition     = local.is_classic || var.configuration == null
+    error_message = "`configuration` is only supported for classic instances. Use `configuration_gen2` for gen2 plans."
+  }
 
   # uncomment below validation when max_locks_per_transaction provider bug is resolved
   # validation {
@@ -310,10 +315,53 @@ variable "configuration" {
     condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
     error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
+}
+
+variable "configuration_gen2" {
+  type = object({
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    synchronous_commit         = optional(string)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
+    log_connections            = optional(string)
+    log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+  })
+  description = "Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead."
+  default     = null
 
   validation {
-    condition     = local.is_classic || (local.is_gen2 && var.configuration == null)
-    error_message = "`configuration` is only supported for classic instances, remove `configuration` or select a classic `plan`."
+    condition     = local.is_gen2 || var.configuration_gen2 == null
+    error_message = "`configuration_gen2` is only supported for gen2 instances. Use `configuration` for classic plans."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration_gen2["synchronous_commit"]) : true) : true
+    error_message = "Value for `configuration_gen2[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["deadlock_timeout"] != null ? var.configuration_gen2["deadlock_timeout"] >= 100 : true) : true
+    error_message = "Value for `configuration_gen2[\"deadlock_timeout\"]` must be 100 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_connections"] != null ? contains(["on", "off"], var.configuration_gen2["log_connections"]) : true) : true
+    error_message = "Value for `configuration_gen2[\"log_connections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_disconnections"] != null ? contains(["on", "off"], var.configuration_gen2["log_disconnections"]) : true) : true
+    error_message = "Value for `configuration_gen2[\"log_disconnections\"]` must be either `on` or `off`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_min_duration_statement"] != null ? var.configuration_gen2["log_min_duration_statement"] >= 100 : true) : true
+    error_message = "Value for `configuration_gen2[\"log_min_duration_statement\"]` must be 100 or more, if specified."
   }
 }
 
