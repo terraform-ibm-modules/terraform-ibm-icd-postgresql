@@ -116,6 +116,36 @@ variable "member_host_flavor" {
   }
 }
 
+variable "configuration" {
+  description = "Database configuration parameters for the PostgreSQL Gen2 instance. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details."
+  type = object({
+    max_connections            = optional(number)
+    max_prepared_transactions  = optional(number)
+    synchronous_commit         = optional(string)
+    effective_io_concurrency   = optional(number)
+    deadlock_timeout           = optional(number)
+    log_connections            = optional(string)
+    log_disconnections         = optional(string)
+    log_min_duration_statement = optional(number)
+    tcp_keepalives_idle        = optional(number)
+    tcp_keepalives_interval    = optional(number)
+    tcp_keepalives_count       = optional(number)
+  })
+  default = {
+    max_connections            = 115
+    max_prepared_transactions  = 50
+    synchronous_commit         = "local"
+    effective_io_concurrency   = 12
+    deadlock_timeout           = 10000
+    log_connections            = "off"
+    log_disconnections         = "off"
+    log_min_duration_statement = 100
+    tcp_keepalives_idle        = 111
+    tcp_keepalives_interval    = 15
+    tcp_keepalives_count       = 6
+  }
+}
+
 variable "service_credential_names" {
   description = "A list of service credential resource keys to be created for the PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#svc-credential-name)"
   type = list(object({
