@@ -77,10 +77,28 @@
             },
             {
               "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "kms",
-              "notes": "[Optional] Editor access is required to create keys. It is only required when using Key Protect for encryption."
+              "notes": "[Optional] Required to create and manage keys. It is only required when using Key Protect for encryption."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
+                "crn:v1:bluemix:public:iam::::role:Editor"
+              ],
+              "service_name": "hs-crypto",
+              "notes": "[Optional] Required to create and manage keys in HPCS. It is only required when using HPCS for encryption."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Operator",
+                "crn:v1:bluemix:public:iam::::serviceRole:Writer",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "service_name": "secrets-manager",
+              "notes": "[Optional] Required to write service credentials to an existing IBM Cloud Secrets Manager instance. 'Manager' access is required if new secret groups need to be created."
             }
           ],
           "architecture": {
@@ -521,10 +539,20 @@
             },
             {
               "role_crns": [
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
                 "crn:v1:bluemix:public:iam::::role:Editor"
               ],
               "service_name": "kms",
-              "notes": "[Optional] Editor access is required to create keys. It is required only if KMS encryption is enabled."
+              "notes": "[Optional] Required if you are creating and configuring a Key Protect instance for key encryption."
+            },
+            {
+              "role_crns": [
+                "crn:v1:bluemix:public:iam::::role:Operator",
+                "crn:v1:bluemix:public:iam::::serviceRole:Writer",
+                "crn:v1:bluemix:public:iam::::serviceRole:Manager"
+              ],
+              "service_name": "secrets-manager",
+              "notes": "[Optional] Required to write service credentials to an existing IBM Cloud Secrets Manager instance. 'Manager' access is required if new secret groups need to be created."
             }
           ],
           "architecture": {
