@@ -85,14 +85,6 @@
             },
             {
               "role_crns": [
-                "crn:v1:bluemix:public:iam::::serviceRole:Manager",
-                "crn:v1:bluemix:public:iam::::role:Editor"
-              ],
-              "service_name": "hs-crypto",
-              "notes": "[Optional] Required to create and manage keys in HPCS. It is only required when using HPCS for encryption."
-            },
-            {
-              "role_crns": [
                 "crn:v1:bluemix:public:iam::::role:Operator",
                 "crn:v1:bluemix:public:iam::::serviceRole:Writer",
                 "crn:v1:bluemix:public:iam::::serviceRole:Manager"
