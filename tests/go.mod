@@ -6,7 +6,7 @@ require (
 	github.com/google/uuid v1.6.0
 	github.com/gruntwork-io/terratest v1.0.1
 	github.com/stretchr/testify v1.12.1
-	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.78.3
+	github.com/terraform-ibm-modules/ibmcloud-terratest-wrapper v1.78.6
 )
 
 require (
