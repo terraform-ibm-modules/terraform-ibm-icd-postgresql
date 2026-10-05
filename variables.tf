@@ -412,6 +412,7 @@ variable "kms_key_crn" {
     condition = anytrue([
       var.kms_key_crn == null,
       can(regex(".*kms.*", var.kms_key_crn)),
+      can(regex(".*hs-crypto.*", var.kms_key_crn)),
     ])
     error_message = "Value must be the KMS key CRN from a Key Protect instance."
   }
@@ -432,6 +433,7 @@ variable "backup_encryption_key_crn" {
     condition = anytrue([
       var.backup_encryption_key_crn == null,
       can(regex(".*kms.*", var.backup_encryption_key_crn)),
+      can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)),
     ])
     error_message = "Value must be the KMS key CRN from a Key Protect instance in one of the supported backup regions."
   }

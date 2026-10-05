@@ -68,6 +68,7 @@ func TestRunCompleteExample(t *testing.T) {
 	region := options.Region
 	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars["postgresql_version"] = latestVersion
+	options.TerraformVars["existing_kms_crn"] = permanentResources["hpcs_south_crn"]
 
 	output, err := options.RunTestConsistency()
 	assert.Nil(t, err, "This should not have errored")

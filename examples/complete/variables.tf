@@ -56,3 +56,9 @@ variable "users" {
   sensitive   = true
   description = "A list of users that you want to create on the database. Multiple blocks are allowed. The user password must be in the range of 10-32 characters."
 }
+
+variable "existing_kms_crn" {
+  type        = string
+  description = "The CRN of an existing Key Protect instance. If provided, the example skips provisioning a new Key Protect instance and creates keys in this existing instance."
+  default     = null
+}
