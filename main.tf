@@ -488,19 +488,16 @@ data "ibm_database_point_in_time_recovery" "source_db_earliest_pitr_time" {
   deployment_id = var.pitr_id
 }
 
-########################################################################################################################
-# HPCS key warning
-########################################################################################################################
+##############################################################################
+# Check Blocks
+##############################################################################
 
-locals {
-  is_hpcs_key = (
-    (var.kms_key_crn != null && can(regex(".*hs-crypto.*", var.kms_key_crn))) ||
-    (var.backup_encryption_key_crn != null && can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)))
-  )
-}
-
-resource "terraform_data" "hpcs_key_warning" {
-  provisioner "local-exec" {
-    command = local.is_hpcs_key ? "echo 'WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is set to be deprecated soon. Consider migrating to a supported alternative.'" : "echo ''"
+check "warn_hs_crypto_key" {
+  assert {
+    condition = !(
+      (var.kms_key_crn != null && can(regex(".*hs-crypto.*", var.kms_key_crn))) ||
+      (var.backup_encryption_key_crn != null && can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)))
+    )
+    error_message = "WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is set to be deprecated soon. Consider migrating to a supported alternative."
   }
 }
