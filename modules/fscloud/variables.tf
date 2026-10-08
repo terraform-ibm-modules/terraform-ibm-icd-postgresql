@@ -206,13 +206,6 @@ variable "kms_key_crn" {
   type        = string
   description = "The CRN of a Key Protect encryption key to encrypt your data. Applies only if `use_ibm_owned_encryption_key` is false. By default this key is used for both deployment data and backups, but this behaviour can be altered using the `use_same_kms_key_for_backups` and `backup_encryption_key_crn` inputs. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)."
   default     = null
-  validation {
-    condition = anytrue([
-      var.kms_key_crn == null,
-      can(regex(".*kms.*", var.kms_key_crn)),
-    ])
-    error_message = "Value must be the KMS key CRN from a Key Protect instance."
-  }
 }
 
 variable "use_same_kms_key_for_backups" {

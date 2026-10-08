@@ -487,3 +487,17 @@ data "ibm_database_point_in_time_recovery" "source_db_earliest_pitr_time" {
   count         = var.pitr_time != "" ? 0 : 1
   deployment_id = var.pitr_id
 }
+
+##############################################################################
+# Check Blocks
+##############################################################################
+
+check "warn_hpcs_deprecation" {
+  assert {
+    condition = !(
+      (var.kms_key_crn != null && can(regex(".*hs-crypto.*", var.kms_key_crn))) ||
+      (var.backup_encryption_key_crn != null && can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)))
+    )
+    error_message = "WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) instance or key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is deprecated. Consider migrating to a supported alternative."
+  }
+}
