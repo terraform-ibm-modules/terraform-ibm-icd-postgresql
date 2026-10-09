@@ -184,6 +184,7 @@ module "postgresql_db" {
   postgresql_version                = var.postgresql_version
   plan                              = "standard-gen2" # this is the only gen2 plan
   skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
+  skip_independent_backup_policies  = var.skip_independent_backup_policies
   use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
   kms_key_crn                       = local.kms_key_crn
   backup_encryption_key_crn         = null  # not supported by gen2
