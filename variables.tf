@@ -446,7 +446,13 @@ variable "backup_encryption_key_crn" {
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of IAM authorization policies that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect key that was provided in the `kms_key_crn` and `backup_encryption_key_crn` inputs. This policy is required in order to enable KMS encryption, so only skip creation if there is one already present in your account. No policy is created if `use_ibm_owned_encryption_key` is true."
+  description = "Set to true to skip the creation of IAM authorization policies. When set to false (default), a policy that permits all Databases for PostgresSQL instances in the given resource group 'Reader' access to the Key Protect encryption key provided in the `kms_key_crn` and `backup_encryption_key_crn` inputs (required for KMS encryption) will be created. Skip only if one already exists in your account; no policy is created if `use_ibm_owned_encryption_key` is true."
+  default     = false
+}
+
+variable "skip_independent_backup_policies" {
+  type        = bool
+  description = "Set to true to skip the creation of independent backup authorization policies. When set to false (default). The following 2 policies will be created - (1) a policy that permits Databases for PostgresSQL instances in the given resource group 'Editor' access to the independent backups service (`gen2_independent_backups_policy`), (2) a policy that permits Databases for PostgresSQL instances in the given resource group 'Viewer' access to the resource group (`gen2_resource_group_policy`)."
   default     = false
 }
 

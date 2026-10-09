@@ -778,6 +778,9 @@
               "key": "skip_postgresql_kms_auth_policy"
             },
             {
+              "key": "skip_independent_backup_policies"
+            },
+            {
               "key": "existing_postgresql_instance_crn",
               "display_name": "existing_postgresql_instance",
               "custom_config": {
