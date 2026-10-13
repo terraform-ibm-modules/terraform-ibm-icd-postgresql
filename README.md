@@ -100,7 +100,7 @@ To attach access management tags to resources in this module, you need the follo
 ### Requirements
 
 | Name | Version |
-|------|---------|
+| ---- | ------- |
 | <a name="requirement_terraform"></a> [terraform](#requirement\_terraform) | >= 1.9.0 |
 | <a name="requirement_ibm"></a> [ibm](#requirement\_ibm) | >= 2.7.0, < 3.0.0 |
 | <a name="requirement_time"></a> [time](#requirement\_time) | >= 0.9.1, < 1.0.0 |
@@ -108,7 +108,7 @@ To attach access management tags to resources in this module, you need the follo
 ### Modules
 
 | Name | Source | Version |
-|------|--------|---------|
+| ---- | ------ | ------- |
 | <a name="module_backup_key_crn_parser"></a> [backup\_key\_crn\_parser](#module\_backup\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.9.0 |
 | <a name="module_cbr_rule"></a> [cbr\_rule](#module\_cbr\_rule) | terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module | 1.36.9 |
 | <a name="module_kms_key_crn_parser"></a> [kms\_key\_crn\_parser](#module\_kms\_key\_crn\_parser) | terraform-ibm-modules/common-utilities/ibm//modules/crn-parser | 1.9.0 |
@@ -116,7 +116,7 @@ To attach access management tags to resources in this module, you need the follo
 ### Resources
 
 | Name | Type |
-|------|------|
+| ---- | ---- |
 | [ibm_database.postgresql_db](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/database) | resource |
 | [ibm_iam_authorization_policy.backup_kms_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
 | [ibm_iam_authorization_policy.gen2_independent_backups_policy](https://registry.terraform.io/providers/IBM-Cloud/ibm/latest/docs/resources/iam_authorization_policy) | resource |
@@ -135,7 +135,7 @@ To attach access management tags to resources in this module, you need the follo
 ### Inputs
 
 | Name | Description | Type | Default | Required |
-|------|-------------|------|---------|:--------:|
+| ---- | ----------- | ---- | ------- | :------: |
 | <a name="input_access_tags"></a> [access\_tags](#input\_access\_tags) | Add access management tags to the PostgreSQL instance to control access. [Learn more](https://cloud.ibm.com/docs/account?topic=account-tag&interface=ui#create-access-console). | `list(string)` | `[]` | no |
 | <a name="input_admin_pass"></a> [admin\_pass](#input\_admin\_pass) | The password for the database administrator. If the admin password is null then the admin user ID cannot be accessed. More users can be specified in a user block. | `string` | `null` | no |
 | <a name="input_async_restore"></a> [async\_restore](#input\_async\_restore) | Set it to `true`, to initiate the restore as an asynchronous operation, which helps to reduce end-to-end restore time. This feature can only be used when the source and target PostgreSQL databases are running the same major version. | `bool` | `false` | no |
@@ -143,7 +143,8 @@ To attach access management tags to resources in this module, you need the follo
 | <a name="input_backup_crn"></a> [backup\_crn](#input\_backup\_crn) | The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty. | `string` | `null` | no |
 | <a name="input_backup_encryption_key_crn"></a> [backup\_encryption\_key\_crn](#input\_backup\_encryption\_key\_crn) | The CRN of a Key Protect encryption key that you want to use for encrypting the disk that holds deployment backups. Applies only if `use_ibm_owned_encryption_key` is false and `use_same_kms_key_for_backups` is false. If no value is passed, and `use_same_kms_key_for_backups` is true, the value of `kms_key_crn` is used. Alternatively set `use_default_backup_encryption_key` to true to use the IBM Cloud Databases default encryption. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok). | `string` | `null` | no |
 | <a name="input_cbr_rules"></a> [cbr\_rules](#input\_cbr\_rules) | The context-based restrictions rule to create. Only one rule is allowed. | <pre>list(object({<br/>    description = string<br/>    account_id  = string<br/>    rule_contexts = list(object({<br/>      attributes = optional(list(object({<br/>        name  = string<br/>        value = string<br/>    }))) }))<br/>    enforcement_mode = string<br/>    tags = optional(list(object({<br/>      name  = string<br/>      value = string<br/>    })))<br/>  }))</pre> | `[]` | no |
-| <a name="input_configuration"></a> [configuration](#input\_configuration) | Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details. | <pre>object({<br/>    shared_buffers  = optional(number)<br/>    max_connections = optional(number)<br/>    # below field gives error when sent to provider<br/>    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403<br/>    # max_locks_per_transaction  = optional(number)<br/>    max_prepared_transactions  = optional(number)<br/>    synchronous_commit         = optional(string)<br/>    effective_io_concurrency   = optional(number)<br/>    deadlock_timeout           = optional(number)<br/>    log_connections            = optional(string)<br/>    log_disconnections         = optional(string)<br/>    log_min_duration_statement = optional(number)<br/>    tcp_keepalives_idle        = optional(number)<br/>    tcp_keepalives_interval    = optional(number)<br/>    tcp_keepalives_count       = optional(number)<br/>    archive_timeout            = optional(number)<br/>    wal_level                  = optional(string)<br/>    max_replication_slots      = optional(number)<br/>    max_wal_senders            = optional(number)<br/>  })</pre> | `null` | no |
+| <a name="input_configuration"></a> [configuration](#input\_configuration) | Database configuration parameters for classic (gen1) plans. See https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details. Not supported for gen2 plans — use `configuration_gen2` instead. | <pre>object({<br/>    shared_buffers  = optional(number)<br/>    max_connections = optional(number)<br/>    # below field gives error when sent to provider<br/>    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403<br/>    # max_locks_per_transaction  = optional(number)<br/>    max_prepared_transactions  = optional(number)<br/>    synchronous_commit         = optional(string)<br/>    effective_io_concurrency   = optional(number)<br/>    deadlock_timeout           = optional(number)<br/>    log_connections            = optional(string)<br/>    log_disconnections         = optional(string)<br/>    log_min_duration_statement = optional(number)<br/>    tcp_keepalives_idle        = optional(number)<br/>    tcp_keepalives_interval    = optional(number)<br/>    tcp_keepalives_count       = optional(number)<br/>    archive_timeout            = optional(number)<br/>    wal_level                  = optional(string)<br/>    max_replication_slots      = optional(number)<br/>    max_wal_senders            = optional(number)<br/>  })</pre> | `null` | no |
+| <a name="input_configuration_gen2"></a> [configuration\_gen2](#input\_configuration\_gen2) | Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead. | <pre>object({<br/>    max_connections            = optional(number)<br/>    max_prepared_transactions  = optional(number)<br/>    synchronous_commit         = optional(string)<br/>    effective_io_concurrency   = optional(number)<br/>    deadlock_timeout           = optional(number)<br/>    log_connections            = optional(string)<br/>    log_disconnections         = optional(string)<br/>    log_min_duration_statement = optional(number)<br/>    tcp_keepalives_idle        = optional(number)<br/>    tcp_keepalives_interval    = optional(number)<br/>    tcp_keepalives_count       = optional(number)<br/>  })</pre> | `null` | no |
 | <a name="input_cpu_count"></a> [cpu\_count](#input\_cpu\_count) | Allocated dedicated CPU per member. For shared CPU, set to 0. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling) | `number` | `0` | no |
 | <a name="input_create_timeout"></a> [create\_timeout](#input\_create\_timeout) | A database creation may require a longer timeout for the creation to complete. The default is 120 minutes. Set this variable to change the `create` value in the `timeouts` block. [Learn more](https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts). | `string` | `"120m"` | no |
 | <a name="input_delete_timeout"></a> [delete\_timeout](#input\_delete\_timeout) | A database deletion may require a longer timeout for the deletion to complete. The default is 15 minutes. Set this variable to change the `delete` value in the `timeouts` block. [Learn more](https://developer.hashicorp.com/terraform/language/resources/syntax#operation-timeouts). | `string` | `"15m"` | no |
@@ -175,7 +176,7 @@ To attach access management tags to resources in this module, you need the follo
 ### Outputs
 
 | Name | Description |
-|------|-------------|
+| ---- | ----------- |
 | <a name="output_adminuser"></a> [adminuser](#output\_adminuser) | Database admin user name |
 | <a name="output_cbr_rule_ids"></a> [cbr\_rule\_ids](#output\_cbr\_rule\_ids) | CBR rule ids created to restrict Postgresql |
 | <a name="output_certificate_base64"></a> [certificate\_base64](#output\_certificate\_base64) | Database connection certificate |
