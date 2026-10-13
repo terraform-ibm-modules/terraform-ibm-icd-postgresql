@@ -220,7 +220,7 @@ variable "skip_postgresql_kms_auth_policy" {
   default     = false
 }
 
-variable "skip_independent_backup_policies" {
+variable "skip_independent_backup_auth_policies" {
   type        = bool
   description = "Set to true to skip the creation of independent backup authorization policies. When set to false (default). The following 2 policies will be created - (1) a policy that permits Databases for PostgreSQL instances in the given resource group 'Editor' access to the independent backups service (`gen2_independent_backups_policy`), (2) a policy that permits Databases for PostgreSQL instances in the given resource group 'Viewer' access to the resource group (`gen2_resource_group_policy`)."
   default     = false
