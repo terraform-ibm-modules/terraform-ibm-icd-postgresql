@@ -319,17 +319,20 @@ variable "configuration" {
 
 variable "configuration_gen2" {
   type = object({
-    max_connections            = optional(number)
-    max_prepared_transactions  = optional(number)
-    synchronous_commit         = optional(string)
-    effective_io_concurrency   = optional(number)
-    deadlock_timeout           = optional(number)
-    log_connections            = optional(string)
-    log_disconnections         = optional(string)
-    log_min_duration_statement = optional(number)
-    tcp_keepalives_idle        = optional(number)
-    tcp_keepalives_interval    = optional(number)
-    tcp_keepalives_count       = optional(number)
+    max_connections                 = optional(number)
+    max_prepared_transactions       = optional(number)
+    max_locks_per_transaction       = optional(number)
+    max_worker_processes            = optional(number)
+    max_logical_replication_workers = optional(number)
+    shared_buffers                  = optional(number)
+    wal_level                       = optional(string)
+    max_wal_senders                 = optional(number)
+    max_replication_slots           = optional(number)
+    log_connections                 = optional(bool)
+    log_disconnections              = optional(bool)
+    log_min_duration_statement      = optional(number)
+    pgaudit_log                     = optional(string)
+    pgaudit_role                    = optional(string)
   })
   description = "Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead."
   default     = null
@@ -340,28 +343,48 @@ variable "configuration_gen2" {
   }
 
   validation {
-    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["synchronous_commit"] != null ? contains(["local", "on", "off"], var.configuration_gen2["synchronous_commit"]) : true) : true
-    error_message = "Value for `configuration_gen2[\"synchronous_commit\"]` must be one of `local`, `on`, or `off`, if specified."
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_connections"] != null ? var.configuration_gen2["max_connections"] >= 25 && var.configuration_gen2["max_connections"] <= 500 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_connections\"]` must be between 25 and 500, if specified."
   }
 
   validation {
-    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["deadlock_timeout"] != null ? var.configuration_gen2["deadlock_timeout"] >= 100 : true) : true
-    error_message = "Value for `configuration_gen2[\"deadlock_timeout\"]` must be 100 or more, if specified."
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_prepared_transactions"] != null ? var.configuration_gen2["max_prepared_transactions"] >= 0 && var.configuration_gen2["max_prepared_transactions"] <= 500 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_prepared_transactions\"]` must be between 0 and 500, if specified."
   }
 
   validation {
-    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_connections"] != null ? contains(["on", "off"], var.configuration_gen2["log_connections"]) : true) : true
-    error_message = "Value for `configuration_gen2[\"log_connections\"]` must be either `on` or `off`, if specified."
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_locks_per_transaction"] != null ? var.configuration_gen2["max_locks_per_transaction"] >= 10 && var.configuration_gen2["max_locks_per_transaction"] <= 1024 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_locks_per_transaction\"]` must be between 10 and 1024, if specified."
   }
 
   validation {
-    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_disconnections"] != null ? contains(["on", "off"], var.configuration_gen2["log_disconnections"]) : true) : true
-    error_message = "Value for `configuration_gen2[\"log_disconnections\"]` must be either `on` or `off`, if specified."
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_worker_processes"] != null ? var.configuration_gen2["max_worker_processes"] >= 8 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_worker_processes\"]` must be 8 or more, if specified."
   }
 
   validation {
-    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_min_duration_statement"] != null ? var.configuration_gen2["log_min_duration_statement"] >= 100 : true) : true
-    error_message = "Value for `configuration_gen2[\"log_min_duration_statement\"]` must be 100 or more, if specified."
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_logical_replication_workers"] != null ? var.configuration_gen2["max_logical_replication_workers"] >= 4 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_logical_replication_workers\"]` must be 4 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_wal_senders"] != null ? var.configuration_gen2["max_wal_senders"] >= 10 && var.configuration_gen2["max_wal_senders"] <= 40 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_wal_senders\"]` must be between 10 and 40, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_replication_slots"] != null ? var.configuration_gen2["max_replication_slots"] >= 10 && var.configuration_gen2["max_replication_slots"] <= 40 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_replication_slots\"]` must be between 10 and 40, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["wal_level"] != null ? contains(["replica", "logical"], var.configuration_gen2["wal_level"]) : true) : true
+    error_message = "Value for `configuration_gen2[\"wal_level\"]` must be either `replica` or `logical`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_min_duration_statement"] != null ? var.configuration_gen2["log_min_duration_statement"] >= -1 && var.configuration_gen2["log_min_duration_statement"] <= 3600000 : true) : true
+    error_message = "Value for `configuration_gen2[\"log_min_duration_statement\"]` must be between -1 and 3600000, if specified."
   }
 }
 
