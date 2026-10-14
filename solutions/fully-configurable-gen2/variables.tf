@@ -135,11 +135,18 @@ variable "configuration" {
     pgaudit_role                    = optional(string)
   })
   default = {
-    max_connections            = 115
-    max_prepared_transactions  = 0
-    log_connections            = false
-    log_disconnections         = false
-    log_min_duration_statement = 100
+    max_connections                 = 115
+    max_prepared_transactions       = 0
+    max_locks_per_transaction       = 64
+    max_worker_processes            = 8
+    max_logical_replication_workers = 4
+    wal_level                       = "logical"
+    max_wal_senders                 = 10
+    max_replication_slots           = 10
+    log_connections                 = false
+    log_disconnections              = false
+    log_min_duration_statement      = 100
+    pgaudit_log                     = "ddl"
   }
 }
 
