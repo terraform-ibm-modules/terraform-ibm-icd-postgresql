@@ -256,8 +256,13 @@ variable "configuration" {
     max_replication_slots      = optional(number)
     max_wal_senders            = optional(number)
   })
-  description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
+  description = "Database configuration parameters for classic (gen1) plans. See https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details. Not supported for gen2 plans — use `configuration_gen2` instead."
   default     = null
+
+  validation {
+    condition     = local.is_classic || var.configuration == null
+    error_message = "`configuration` is only supported for classic instances. Use `configuration_gen2` for gen2 plans."
+  }
 
   # uncomment below validation when max_locks_per_transaction provider bug is resolved
   # validation {
@@ -310,10 +315,76 @@ variable "configuration" {
     condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null ? var.configuration["max_wal_senders"] >= 12 : true) : true
     error_message = "Value for `configuration[\"max_wal_senders\"]` must be 12 or more, if specified."
   }
+}
+
+variable "configuration_gen2" {
+  type = object({
+    max_connections                 = optional(number)
+    max_prepared_transactions       = optional(number)
+    max_locks_per_transaction       = optional(number)
+    max_worker_processes            = optional(number)
+    max_logical_replication_workers = optional(number)
+    shared_buffers                  = optional(number)
+    wal_level                       = optional(string)
+    max_wal_senders                 = optional(number)
+    max_replication_slots           = optional(number)
+    log_connections                 = optional(bool)
+    log_disconnections              = optional(bool)
+    log_min_duration_statement      = optional(number)
+    pgaudit_log                     = optional(string)
+    pgaudit_role                    = optional(string)
+  })
+  description = "Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead."
+  default     = null
 
   validation {
-    condition     = local.is_classic || (local.is_gen2 && var.configuration == null)
-    error_message = "`configuration` is only supported for classic instances, remove `configuration` or select a classic `plan`."
+    condition     = local.is_gen2 || var.configuration_gen2 == null
+    error_message = "`configuration_gen2` is only supported for gen2 instances. Use `configuration` for classic plans."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_connections"] != null ? var.configuration_gen2["max_connections"] >= 25 && var.configuration_gen2["max_connections"] <= 500 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_connections\"]` must be between 25 and 500, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_prepared_transactions"] != null ? var.configuration_gen2["max_prepared_transactions"] >= 0 && var.configuration_gen2["max_prepared_transactions"] <= 500 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_prepared_transactions\"]` must be between 0 and 500, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_locks_per_transaction"] != null ? var.configuration_gen2["max_locks_per_transaction"] >= 10 && var.configuration_gen2["max_locks_per_transaction"] <= 1024 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_locks_per_transaction\"]` must be between 10 and 1024, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_worker_processes"] != null ? var.configuration_gen2["max_worker_processes"] >= 8 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_worker_processes\"]` must be 8 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_logical_replication_workers"] != null ? var.configuration_gen2["max_logical_replication_workers"] >= 4 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_logical_replication_workers\"]` must be 4 or more, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_wal_senders"] != null ? var.configuration_gen2["max_wal_senders"] >= 10 && var.configuration_gen2["max_wal_senders"] <= 40 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_wal_senders\"]` must be between 10 and 40, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_replication_slots"] != null ? var.configuration_gen2["max_replication_slots"] >= 10 && var.configuration_gen2["max_replication_slots"] <= 40 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_replication_slots\"]` must be between 10 and 40, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["wal_level"] != null ? contains(["replica", "logical"], var.configuration_gen2["wal_level"]) : true) : true
+    error_message = "Value for `configuration_gen2[\"wal_level\"]` must be either `replica` or `logical`, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["log_min_duration_statement"] != null ? var.configuration_gen2["log_min_duration_statement"] >= -1 && var.configuration_gen2["log_min_duration_statement"] <= 3600000 : true) : true
+    error_message = "Value for `configuration_gen2[\"log_min_duration_statement\"]` must be between -1 and 3600000, if specified."
   }
 }
 

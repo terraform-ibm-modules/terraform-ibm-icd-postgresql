@@ -116,6 +116,40 @@ variable "member_host_flavor" {
   }
 }
 
+variable "configuration" {
+  description = "Database configuration parameters for the PostgreSQL Gen2 instance. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details."
+  type = object({
+    max_connections                 = optional(number)
+    max_prepared_transactions       = optional(number)
+    max_locks_per_transaction       = optional(number)
+    max_worker_processes            = optional(number)
+    max_logical_replication_workers = optional(number)
+    shared_buffers                  = optional(number)
+    wal_level                       = optional(string)
+    max_wal_senders                 = optional(number)
+    max_replication_slots           = optional(number)
+    log_connections                 = optional(bool)
+    log_disconnections              = optional(bool)
+    log_min_duration_statement      = optional(number)
+    pgaudit_log                     = optional(string)
+    pgaudit_role                    = optional(string)
+  })
+  default = {
+    max_connections                 = 115
+    max_prepared_transactions       = 0
+    max_locks_per_transaction       = 64
+    max_worker_processes            = 8
+    max_logical_replication_workers = 4
+    wal_level                       = "logical"
+    max_wal_senders                 = 10
+    max_replication_slots           = 10
+    log_connections                 = false
+    log_disconnections              = false
+    log_min_duration_statement      = 100
+    pgaudit_log                     = "ddl"
+  }
+}
+
 variable "service_credential_names" {
   description = "A list of service credential resource keys to be created for the PostgreSQL instance. [Learn more](https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql/blob/main/solutions/fully-configurable/DA-types.md#svc-credential-name)"
   type = list(object({
