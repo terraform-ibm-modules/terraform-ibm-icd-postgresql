@@ -174,41 +174,42 @@ data "ibm_database_connection" "existing_connection" {
 }
 
 module "postgresql_db" {
-  count                             = var.existing_postgresql_instance_crn != null ? 0 : 1
-  source                            = "../.."
-  depends_on                        = [time_sleep.wait_for_authorization_policy]
-  resource_group_id                 = module.resource_group.resource_group_id
-  name                              = "${local.prefix}${var.name}"
-  region                            = var.region
-  remote_leader_crn                 = null # not supported by gen2
-  postgresql_version                = var.postgresql_version
-  plan                              = "standard-gen2" # this is the only gen2 plan
-  skip_iam_authorization_policy     = var.skip_postgresql_kms_auth_policy
-  use_ibm_owned_encryption_key      = local.use_ibm_owned_encryption_key
-  kms_key_crn                       = local.kms_key_crn
-  backup_encryption_key_crn         = null  # not supported by gen2
-  use_same_kms_key_for_backups      = false # not supported by gen2
-  use_default_backup_encryption_key = false # not supported by gen2
-  access_tags                       = var.access_tags
-  resource_tags                     = var.resource_tags
-  admin_pass                        = null # not supported by gen2
-  users                             = []   # not supported by gen2
-  members                           = var.members
-  member_host_flavor                = var.member_host_flavor
-  memory_mb                         = var.member_memory_mb
-  disk_mb                           = var.member_disk_mb
-  cpu_count                         = var.member_cpu_count
-  auto_scaling                      = null # not supported by gen2
-  configuration                     = null # not supported by gen2
-  service_credential_names          = var.service_credential_names
-  backup_crn                        = null # not supported by gen2
-  async_restore                     = var.async_restore
-  service_endpoints                 = "private" # this is the only supported service endpoint for gen2
-  deletion_protection               = var.deletion_protection
-  version_upgrade_skip_backup       = false
-  create_timeout                    = var.create_timeout
-  update_timeout                    = var.update_timeout
-  delete_timeout                    = var.delete_timeout
+  count                                 = var.existing_postgresql_instance_crn != null ? 0 : 1
+  source                                = "../.."
+  depends_on                            = [time_sleep.wait_for_authorization_policy]
+  resource_group_id                     = module.resource_group.resource_group_id
+  name                                  = "${local.prefix}${var.name}"
+  region                                = var.region
+  remote_leader_crn                     = null # not supported by gen2
+  postgresql_version                    = var.postgresql_version
+  plan                                  = "standard-gen2" # this is the only gen2 plan
+  skip_iam_authorization_policy         = var.skip_postgresql_kms_auth_policy
+  skip_independent_backup_auth_policies = var.skip_independent_backup_auth_policies
+  use_ibm_owned_encryption_key          = local.use_ibm_owned_encryption_key
+  kms_key_crn                           = local.kms_key_crn
+  backup_encryption_key_crn             = null  # not supported by gen2
+  use_same_kms_key_for_backups          = false # not supported by gen2
+  use_default_backup_encryption_key     = false # not supported by gen2
+  access_tags                           = var.access_tags
+  resource_tags                         = var.resource_tags
+  admin_pass                            = null # not supported by gen2
+  users                                 = []   # not supported by gen2
+  members                               = var.members
+  member_host_flavor                    = var.member_host_flavor
+  memory_mb                             = var.member_memory_mb
+  disk_mb                               = var.member_disk_mb
+  cpu_count                             = var.member_cpu_count
+  auto_scaling                          = null # not supported by gen2
+  configuration                         = null # not supported by gen2
+  service_credential_names              = var.service_credential_names
+  backup_crn                            = null # not supported by gen2
+  async_restore                         = var.async_restore
+  service_endpoints                     = "private" # this is the only supported service endpoint for gen2
+  deletion_protection                   = var.deletion_protection
+  version_upgrade_skip_backup           = false
+  create_timeout                        = var.create_timeout
+  update_timeout                        = var.update_timeout
+  delete_timeout                        = var.delete_timeout
 }
 
 locals {
