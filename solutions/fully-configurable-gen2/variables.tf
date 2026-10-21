@@ -67,20 +67,6 @@ variable "existing_postgresql_instance_crn" {
   }
 }
 
-variable "remote_leader_crn" {
-  type        = string
-  description = "A CRN of the leader database to make the replica(read-only) deployment. The leader database is created by a database deployment with the same service ID. A read-only replica is set up to replicate all of your data from the leader deployment to the replica deployment by using asynchronous replication. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-read-only-replicas)."
-  default     = null
-
-  validation {
-    condition = anytrue([
-      var.remote_leader_crn == null,
-      can(regex("^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$", var.remote_leader_crn))
-    ])
-    error_message = "The value provided for 'remote_leader_crn' is not valid."
-  }
-}
-
 variable "postgresql_version" {
   description = "The version of the Databases for PostgreSQL instance."
   type        = string

@@ -172,7 +172,7 @@ module "postgresql_db" {
   resource_group_id                     = module.resource_group.resource_group_id
   name                                  = "${local.prefix}${var.name}"
   region                                = var.region
-  remote_leader_crn                     = var.remote_leader_crn
+  remote_leader_crn                     = null # not supported by gen2
   postgresql_version                    = var.postgresql_version
   plan                                  = "standard-gen2" # this is the only gen2 plan
   skip_iam_authorization_policy         = var.skip_postgresql_kms_auth_policy

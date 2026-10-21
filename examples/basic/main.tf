@@ -87,6 +87,7 @@ module "database" {
 # adding a time sleep here.
 
 resource "time_sleep" "wait_time" {
+  count      = local.is_gen2 ? 0 : 1
   depends_on = [module.database]
 
   destroy_duration = "5m"
@@ -96,19 +97,18 @@ resource "time_sleep" "wait_time" {
 # ICD postgresql read-only-replica
 ##############################################################################
 module "read_only_replica_postgresql_db" {
-  count               = var.read_only_replicas_count
+  count               = local.is_gen2 ? 0 : var.read_only_replicas_count
   source              = "../.."
   resource_group_id   = module.resource_group.resource_group_id
   name                = "${var.prefix}-read-only-replica-${count.index}"
   region              = var.region
-  plan                = var.plan
   resource_tags       = var.resource_tags
   access_tags         = var.access_tags
   postgresql_version  = var.postgresql_version
   remote_leader_crn   = module.database.crn
   deletion_protection = false
-  member_host_flavor  = local.is_gen2 ? local.gen2_host_flavor : local.classic_host_flavor
-  memory_mb           = 4096  # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM. Ignored for Gen2, where memory is set by the host flavor.
+  member_host_flavor  = local.classic_host_flavor
+  memory_mb           = 4096  # Must be an increment of 384 megabytes. The minimum size of a read-only replica is 2 GB RAM, new hosting model minimum is 4 GB RAM.
   disk_mb             = 10240 # Must be an increment of 512 megabytes. The minimum size of a read-only replica is 5 GB of disk
-  depends_on          = [time_sleep.wait_time]
+  depends_on          = [time_sleep.wait_time[0]]
 }
