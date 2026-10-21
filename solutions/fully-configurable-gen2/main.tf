@@ -201,8 +201,7 @@ module "postgresql_db" {
   auto_scaling                      = null # not supported by gen2
   configuration                     = null # not supported by gen2
   service_credential_names          = var.service_credential_names
-  backup_crn                        = null # not supported by gen2
-  async_restore                     = var.async_restore
+  backup_crn                        = var.backup_crn
   service_endpoints                 = "private" # this is the only supported service endpoint for gen2
   deletion_protection               = var.deletion_protection
   version_upgrade_skip_backup       = false
