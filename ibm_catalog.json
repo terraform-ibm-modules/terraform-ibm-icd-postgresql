@@ -802,6 +802,16 @@
               ]
             },
             {
+              "key": "remote_leader_crn",
+              "value_constraints": [
+                {
+                  "type": "regex",
+                  "description": "The value provided for 'remote_leader_crn' is not valid.",
+                  "value": "^__NULL__$|^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}::$"
+                }
+              ]
+            },
+            {
               "key": "provider_visibility",
               "hidden": true
             },
