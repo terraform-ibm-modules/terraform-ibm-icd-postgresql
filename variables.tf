@@ -359,7 +359,7 @@ variable "auto_scaling" {
 
 variable "use_ibm_owned_encryption_key" {
   type        = bool
-  description = "IBM Cloud Databases will secure your deployment's data at rest automatically with an encryption key that IBM hold. Alternatively, you may select your own Key Management System instance and encryption key (Key Protect or Hyper Protect Crypto Services) by setting this to false. If setting to false, a value must be passed for the `kms_key_crn` input."
+  description = "IBM Cloud Databases will secure your deployment's data at rest automatically with an encryption key that IBM hold. Alternatively, you may select your own Key Management System instance and encryption key (Key Protect) by setting this to false. If setting to false, a value must be passed for the `kms_key_crn` input."
   default     = true
 
   validation {
@@ -405,7 +405,7 @@ variable "use_default_backup_encryption_key" {
 
 variable "kms_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key to encrypt your data. Applies only if `use_ibm_owned_encryption_key` is false. By default this key is used for both deployment data and backups, but this behaviour can be altered using the `use_same_kms_key_for_backups` and `backup_encryption_key_crn` inputs. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
+  description = "The CRN of a Key Protect encryption key to encrypt your data. Applies only if `use_ibm_owned_encryption_key` is false. By default this key is used for both deployment data and backups, but this behaviour can be altered using the `use_same_kms_key_for_backups` and `backup_encryption_key_crn` inputs. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)."
   default     = null
 
   validation {
@@ -414,19 +414,19 @@ variable "kms_key_crn" {
       can(regex(".*kms.*", var.kms_key_crn)),
       can(regex(".*hs-crypto.*", var.kms_key_crn)),
     ])
-    error_message = "Value must be the KMS key CRN from a Key Protect or Hyper Protect Crypto Services instance."
+    error_message = "Value must be the KMS key CRN from a Key Protect instance."
   }
 }
 
 variable "use_same_kms_key_for_backups" {
   type        = bool
-  description = "Set this to false if you wan't to use a different key that you own to encrypt backups. When set to false, a value is required for the `backup_encryption_key_crn` input. Alternatively set `use_default_backup_encryption_key` to true to use the IBM Cloud Databases default encryption. Applies only if `use_ibm_owned_encryption_key` is false. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
+  description = "Set this to false if you wan't to use a different key that you own to encrypt backups. When set to false, a value is required for the `backup_encryption_key_crn` input. Alternatively set `use_default_backup_encryption_key` to true to use the IBM Cloud Databases default encryption. Applies only if `use_ibm_owned_encryption_key` is false. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)."
   default     = true
 }
 
 variable "backup_encryption_key_crn" {
   type        = string
-  description = "The CRN of a Key Protect or Hyper Protect Crypto Services encryption key that you want to use for encrypting the disk that holds deployment backups. Applies only if `use_ibm_owned_encryption_key` is false and `use_same_kms_key_for_backups` is false. If no value is passed, and `use_same_kms_key_for_backups` is true, the value of `kms_key_crn` is used. Alternatively set `use_default_backup_encryption_key` to true to use the IBM Cloud Databases default encryption. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok) and [Using the HPCS Key for Backup encryption](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-hpcs#use-hpcs-backups)."
+  description = "The CRN of a Key Protect encryption key that you want to use for encrypting the disk that holds deployment backups. Applies only if `use_ibm_owned_encryption_key` is false and `use_same_kms_key_for_backups` is false. If no value is passed, and `use_same_kms_key_for_backups` is true, the value of `kms_key_crn` is used. Alternatively set `use_default_backup_encryption_key` to true to use the IBM Cloud Databases default encryption. Bare in mind that backups encryption is only available in certain regions. See [Bring your own key for backups](https://cloud.ibm.com/docs/cloud-databases?topic=cloud-databases-key-protect&interface=ui#key-byok)."
   default     = null
 
   validation {
@@ -435,7 +435,7 @@ variable "backup_encryption_key_crn" {
       can(regex(".*kms.*", var.backup_encryption_key_crn)),
       can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)),
     ])
-    error_message = "Value must be the KMS key CRN from a Key Protect or Hyper Protect Crypto Services instance in one of the supported backup regions."
+    error_message = "Value must be the KMS key CRN from a Key Protect instance in one of the supported backup regions."
   }
 
   validation {
@@ -446,7 +446,13 @@ variable "backup_encryption_key_crn" {
 
 variable "skip_iam_authorization_policy" {
   type        = bool
-  description = "Set to true to skip the creation of IAM authorization policies that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect or Hyper Protect Crypto Services key that was provided in the `kms_key_crn` and `backup_encryption_key_crn` inputs. This policy is required in order to enable KMS encryption, so only skip creation if there is one already present in your account. No policy is created if `use_ibm_owned_encryption_key` is true."
+  description = "Set to true to skip the creation of IAM authorization policies. When set to false (default), a policy that permits all Databases for PostgreSQL instances in the given resource group 'Reader' access to the Key Protect encryption key provided in the `kms_key_crn` and `backup_encryption_key_crn` inputs (required for KMS encryption) will be created. Skip only if one already exists in your account; no policy is created if `use_ibm_owned_encryption_key` is true."
+  default     = false
+}
+
+variable "skip_independent_backup_auth_policies" {
+  type        = bool
+  description = "Set to true to skip the creation of independent backup authorization policies. When set to false (default). The following 2 policies will be created - (1) a policy that permits Databases for PostgreSQL instances in the given resource group 'Editor' access to the independent backups service (`gen2_independent_backups_policy`), (2) a policy that permits Databases for PostgreSQL instances in the given resource group 'Viewer' access to the resource group (`gen2_resource_group_policy`)."
   default     = false
 }
 

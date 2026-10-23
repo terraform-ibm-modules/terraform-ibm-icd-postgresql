@@ -229,10 +229,10 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
+		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_eufr2_crn"], DataType: "string"},
+		{Name: "existing_backup_kms_key_crn", Value: permanentResources["kp_multitenant_us_south_root_key_crn"], DataType: "string"},
 		{Name: "kms_endpoint_type", Value: "private", DataType: "string"},
-		{Name: "existing_backup_kms_key_crn", Value: permanentResources["hpcs_south_root_key_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgreSQL version
 	}
 
 	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
@@ -296,8 +296,8 @@ func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschema
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_dedicated_us_south_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: "18", DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_multitenant_us_south_crn"], DataType: "string"},
+		{Name: "postgresql_version", Value: "18", DataType: "string"}, // Always lock this test into the latest supported PostgreSQL version
 	}
 
 	return options, uniqueResourceGroup
@@ -400,8 +400,8 @@ func TestRunFullyConfigurableWithKMSUpgradeSolution(t *testing.T) {
 		{Name: "admin_pass_secrets_manager_secret_name", Value: options.Prefix, DataType: "string"},
 		{Name: "admin_pass", Value: common.GetRandomPasswordWithPrefix(), DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
-		{Name: "existing_kms_instance_crn", Value: permanentResources["hpcs_south_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgresSQL version
+		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_multitenant_us_south_crn"], DataType: "string"},
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgreSQL version
 	}
 	err := sharedInfoSvc.WithNewResourceGroup(uniqueResourceGroup, func() error {
 		return options.RunSchematicUpgradeTest()
@@ -436,7 +436,7 @@ func TestPlanValidation(t *testing.T) {
 	// Test the DA when using an existing KMS instance
 	var fullyConfigurableWithExistingKms = map[string]interface{}{
 		"access_tags":               permanentResources["accessTags"],
-		"existing_kms_instance_crn": permanentResources["hpcs_south_crn"],
+		"existing_kms_instance_crn": permanentResources["kp_multitenant_us_south_crn"],
 		"kms_encryption_enabled":    true,
 	}
 

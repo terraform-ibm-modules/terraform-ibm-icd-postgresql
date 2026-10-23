@@ -67,8 +67,8 @@ locals {
   create_kms_auth_policy = !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy ? 1 : 0
   # only create backup auth policy if 'use_ibm_owned_encryption_key' is false, 'skip_iam_authorization_policy' is false and 'use_same_kms_key_for_backups' is false
   create_backup_kms_auth_policy = local.is_classic && !var.use_ibm_owned_encryption_key && !var.skip_iam_authorization_policy && !var.use_same_kms_key_for_backups ? 1 : 0
-  # only create gen2 auth policies if plan is gen2 and skip_iam_authorization_policy is false
-  create_gen2_auth_policies = local.is_gen2 && !var.skip_iam_authorization_policy ? 1 : 0
+  # only create gen2 independent backup auth policies if plan is gen2 and skip_independent_backup_auth_policies is false
+  create_gen2_auth_policies = local.is_gen2 && !var.skip_independent_backup_auth_policies ? 1 : 0
 }
 
 # Create IAM Authorization Policies to allow PostgreSQL to access KMS for the encryption key
@@ -406,7 +406,7 @@ resource "ibm_resource_tag" "access_tag" {
 module "cbr_rule" {
   count            = length(var.cbr_rules) > 0 ? length(var.cbr_rules) : 0
   source           = "terraform-ibm-modules/cbr/ibm//modules/cbr-rule-module"
-  version          = "1.36.9"
+  version          = "1.37.2"
   rule_description = var.cbr_rules[count.index].description
   enforcement_mode = var.cbr_rules[count.index].enforcement_mode
   rule_contexts    = var.cbr_rules[count.index].rule_contexts
@@ -486,4 +486,18 @@ data "ibm_database_connection" "database_connection" {
 data "ibm_database_point_in_time_recovery" "source_db_earliest_pitr_time" {
   count         = var.pitr_time != "" ? 0 : 1
   deployment_id = var.pitr_id
+}
+
+##############################################################################
+# Check Blocks
+##############################################################################
+
+check "warn_hpcs_deprecation" {
+  assert {
+    condition = !(
+      (var.kms_key_crn != null && can(regex(".*hs-crypto.*", var.kms_key_crn))) ||
+      (var.backup_encryption_key_crn != null && can(regex(".*hs-crypto.*", var.backup_encryption_key_crn)))
+    )
+    error_message = "WARNING (Non-fatal, execution will continue): An IBM Cloud Hyper Protect Crypto Services (hs-crypto) instance or key CRN was provided. Note that IBM Cloud Hyper Protect Crypto Services is deprecated. Consider migrating to a supported alternative."
+  }
 }
