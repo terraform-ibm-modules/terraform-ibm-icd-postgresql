@@ -315,6 +315,23 @@ variable "skip_postgresql_secrets_manager_auth_policy" {
   description = "Whether an IAM authorization policy is created for Secrets Manager instance to create a service credential secrets for Databases for PostgreSQL. If set to false, the Secrets Manager instance passed by the user is granted the Key Manager access to the PostgreSQL instance created by the Deployable Architecture. Set to `true` to use an existing policy. The value of this is ignored if any value for 'existing_secrets_manager_instance_crn' is not passed."
 }
 
+##############################################################
+# Backup
+##############################################################
+
+variable "backup_crn" {
+  type        = string
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. Supports only Gen2 independent backup CRNs in the format `crn:v1:<…>:databases-independent-backups:<…>`. If omitted, the database is provisioned empty."
+  default     = null
+
+  validation {
+    condition = anytrue([
+      var.backup_crn == null,
+      can(regex("^crn:.*:databases-independent-backups:", var.backup_crn))
+    ])
+    error_message = "backup_crn must be null, OR a Gen2 independent backup CRN containing ':databases-independent-backups:'"
+  }
+}
 
 ##############################################################
 # Endpoint Configuration

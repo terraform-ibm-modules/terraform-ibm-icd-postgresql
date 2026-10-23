@@ -557,3 +557,26 @@ func generateUniqueResourceGroupName(baseName string) string {
 	id := uuid.New().String()[:8] // Shorten UUID for readability
 	return fmt.Sprintf("%s-%s", baseName, id)
 }
+
+func TestRunRestoredDBGen2Example(t *testing.T) {
+	t.Parallel()
+	// ResourceGroup is intentionally not set so a unique group is created per run for this test.
+	// Independent backup policies may not be destroyed on failure, causing conflicts on re-runs within the same group.
+	options := testhelper.TestOptionsDefaultWithVars(&testhelper.TestOptions{
+		Testing:      t,
+		TerraformDir: "examples/backup",
+		Prefix:       "g2-restored",
+		TerraformVars: map[string]interface{}{
+			"plan":                  "standard-gen2",
+			"disk_mb":               permanentResources["postgresqlGen2DiskMb"],
+			"postgresql_version":    permanentResources["postgresqlGen2Version"],
+			"region":                permanentResources["postgresqlGen2Region"],
+			"existing_database_crn": permanentResources["postgresqlGen2Crn"],
+		},
+		CloudInfoService: sharedInfoSvc,
+	})
+
+	output, err := options.RunTestConsistency()
+	assert.Nil(t, err, "This should not have errored")
+	assert.NotNil(t, output, "Expected some output")
+}

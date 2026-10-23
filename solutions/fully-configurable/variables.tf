@@ -370,15 +370,15 @@ variable "use_default_backup_encryption_key" {
 
 variable "backup_crn" {
   type        = string
-  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. Supports classic backup CRNs in the format `crn:v1:<…>:backup:`. If omitted, the database is provisioned empty."
   default     = null
 
   validation {
     condition = anytrue([
       var.backup_crn == null,
-      can(regex("^crn:v\\d:(.*:){2}databases-for-postgresql:(.*:)([aos]\\/[\\w_\\-]+):[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}:backup:[0-9a-fA-F]{8}(?:-[0-9a-fA-F]{4}){3}-[0-9a-fA-F]{12}$", var.backup_crn))
+      can(regex("^crn:.*:backup:", var.backup_crn))
     ])
-    error_message = "backup_crn must be null OR starts with 'crn:' and contains ':backup:'"
+    error_message = "backup_crn must be null, OR a classic backup CRN containing ':backup:''"
   }
 }
 

@@ -26,6 +26,18 @@ variable "resource_group" {
   default     = null
 }
 
+variable "plan" {
+  type        = string
+  description = "The name of the service plan that you choose for your PostgreSQL instance"
+  default     = "standard"
+}
+
+variable "disk_mb" {
+  type        = number
+  description = "Allocated disk per member. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-resources-scaling)"
+  default     = 10240
+}
+
 variable "resource_tags" {
   type        = list(string)
   description = "Optional list of tags to be added to created resources"
@@ -40,6 +52,12 @@ variable "access_tags" {
 
 variable "postgresql_db_backup_crn" {
   type        = string
-  description = "The existing CRN of a backup resource to restore from. If null then it will create a new instance first and then create another instance pointing to the backup of the first instance."
+  description = "The existing CRN of a backup resource to restore from. If null, it will create a new instance first and then create another instance pointing to the backup of the first instance."
+  default     = null
+}
+
+variable "existing_database_crn" {
+  type        = string
+  description = "The existing CRN of a PostgreSQL instance to fetch the latest backup CRN."
   default     = null
 }
