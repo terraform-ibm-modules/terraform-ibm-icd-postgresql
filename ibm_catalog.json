@@ -772,6 +772,9 @@
               "key": "key_name"
             },
             {
+              "key": "async_restore"
+            },
+            {
               "key": "backup_crn",
               "value_constraints": [
                 {

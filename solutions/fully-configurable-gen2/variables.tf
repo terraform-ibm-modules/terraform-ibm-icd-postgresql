@@ -245,6 +245,12 @@ variable "key_name" {
   description = "The name for the key created for the Databases for PostgreSQL key. Applies only if not specifying an existing key. If a prefix input variable is specified, the prefix is added to the name in the `<prefix>-<name>` format."
 }
 
+variable "async_restore" {
+  type        = bool
+  description = "Set it to `true`, to initiate the restore as an asynchronous operation, which helps to reduce end-to-end restore time. This feature can only be used when the source and target PostgreSQL databases are running the same major version."
+  default     = false
+}
+
 #############################################################################
 # Secrets Manager Service Credentials
 #############################################################################
