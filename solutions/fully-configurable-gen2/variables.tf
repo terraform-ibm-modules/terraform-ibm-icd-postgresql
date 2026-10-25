@@ -148,6 +148,16 @@ variable "configuration" {
     log_min_duration_statement      = 100
     pgaudit_log                     = "ddl"
   }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_worker_processes"] != null && var.configuration["max_logical_replication_workers"] != null ? var.configuration["max_worker_processes"] >= var.configuration["max_logical_replication_workers"] + 4 : true) : true
+    error_message = "Value for `configuration[\"max_worker_processes\"]` must be greater than or equal to `configuration[\"max_logical_replication_workers\"]` + 4, if both are specified. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters#max_worker_processes)."
+  }
+
+  validation {
+    condition     = var.configuration != null ? (var.configuration["max_wal_senders"] != null && var.configuration["max_replication_slots"] != null ? var.configuration["max_wal_senders"] >= var.configuration["max_replication_slots"] : true) : true
+    error_message = "Value for `configuration[\"max_wal_senders\"]` must be greater than or equal to `configuration[\"max_replication_slots\"]`, if both are specified. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli#changing-configuration-max-replication-slots)."
+  }
 }
 
 variable "service_credential_names" {

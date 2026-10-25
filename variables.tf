@@ -368,6 +368,11 @@ variable "configuration_gen2" {
   }
 
   validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_worker_processes"] != null && var.configuration_gen2["max_logical_replication_workers"] != null ? var.configuration_gen2["max_worker_processes"] >= var.configuration_gen2["max_logical_replication_workers"] + 4 : true) : true
+    error_message = "Value for `configuration_gen2[\"max_worker_processes\"]` must be greater than or equal to `configuration_gen2[\"max_logical_replication_workers\"]` + 4, if both are specified. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters#max_worker_processes)."
+  }
+
+  validation {
     condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_wal_senders"] != null ? var.configuration_gen2["max_wal_senders"] >= 10 && var.configuration_gen2["max_wal_senders"] <= 40 : true) : true
     error_message = "Value for `configuration_gen2[\"max_wal_senders\"]` must be between 10 and 40, if specified."
   }
@@ -375,6 +380,11 @@ variable "configuration_gen2" {
   validation {
     condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_replication_slots"] != null ? var.configuration_gen2["max_replication_slots"] >= 10 && var.configuration_gen2["max_replication_slots"] <= 40 : true) : true
     error_message = "Value for `configuration_gen2[\"max_replication_slots\"]` must be between 10 and 40, if specified."
+  }
+
+  validation {
+    condition     = var.configuration_gen2 != null ? (var.configuration_gen2["max_wal_senders"] != null && var.configuration_gen2["max_replication_slots"] != null ? var.configuration_gen2["max_wal_senders"] >= var.configuration_gen2["max_replication_slots"] : true) : true
+    error_message = "Value for `configuration_gen2[\"max_wal_senders\"]` must be greater than or equal to `configuration_gen2[\"max_replication_slots\"]`, if both are specified. [Learn more](https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli#changing-configuration-max-replication-slots)."
   }
 
   validation {
