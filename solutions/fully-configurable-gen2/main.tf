@@ -161,16 +161,8 @@ data "ibm_database" "existing_db_instance" {
   count             = var.existing_postgresql_instance_crn != null ? 1 : 0
   name              = data.ibm_resource_instance.existing_instance_resource[0].name
   resource_group_id = data.ibm_resource_instance.existing_instance_resource[0].resource_group_id
-  location          = var.region
+  location          = data.ibm_resource_instance.existing_instance_resource[0].location
   service           = "databases-for-postgresql"
-}
-
-data "ibm_database_connection" "existing_connection" {
-  count         = var.existing_postgresql_instance_crn != null ? 1 : 0
-  endpoint_type = "private"
-  deployment_id = data.ibm_database.existing_db_instance[0].id
-  user_id       = data.ibm_database.existing_db_instance[0].adminuser
-  user_type     = "database"
 }
 
 module "postgresql_db" {
@@ -217,8 +209,8 @@ locals {
   postgresql_id       = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].id : module.postgresql_db[0].id
   postgresql_version  = var.existing_postgresql_instance_crn != null ? data.ibm_database.existing_db_instance[0].version : module.postgresql_db[0].version
   postgresql_crn      = var.existing_postgresql_instance_crn != null ? var.existing_postgresql_instance_crn : module.postgresql_db[0].crn
-  postgresql_hostname = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].hostname : module.postgresql_db[0].hostname
-  postgresql_port     = var.existing_postgresql_instance_crn != null ? data.ibm_database_connection.existing_connection[0].postgres[0].hosts[0].port : module.postgresql_db[0].port
+  postgresql_hostname = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].hostname
+  postgresql_port     = var.existing_postgresql_instance_crn != null ? null : module.postgresql_db[0].port
 }
 
 #######################################################################################################################
