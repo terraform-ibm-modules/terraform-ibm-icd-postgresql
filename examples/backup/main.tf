@@ -51,5 +51,5 @@ module "restored_icd_postgresql" {
   member_host_flavor  = local.is_gen2 ? local.gen2_host_flavor : local.classic_host_flavor
   disk_mb             = var.disk_mb
   backup_crn          = var.postgresql_db_backup_crn == null ? data.ibm_database_backups.backup_database[0].backups[0].backup_id : var.postgresql_db_backup_crn
-  async_restore       = true
+  async_restore       = !local.is_gen2 # ignored by the provider for Gen2 plans
 }
