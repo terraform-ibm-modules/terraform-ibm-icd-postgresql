@@ -21,12 +21,14 @@ module "postgresql_db" {
   source              = "../.."
   resource_group_id   = module.resource_group.resource_group_id
   name                = "${var.prefix}-postgres"
+  plan                = var.plan
+  member_host_flavor  = local.is_gen2 ? local.gen2_host_flavor : local.classic_host_flavor
+  disk_mb             = var.disk_mb
   postgresql_version  = var.postgresql_version
   region              = var.region
   resource_tags       = var.resource_tags
   access_tags         = var.access_tags
   deletion_protection = false
-  member_host_flavor  = "multitenant"
 }
 
 data "ibm_database_backups" "backup_database" {
