@@ -236,23 +236,27 @@ resource "time_sleep" "wait_for_gen2_authorization_policies" {
 
 # Create postgresql database
 resource "ibm_database" "postgresql_db" {
-  depends_on                           = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_gen2_authorization_policies]
-  name                                 = var.name
-  plan                                 = var.plan
-  location                             = var.region
-  service                              = "databases-for-postgresql"
-  version                              = var.postgresql_version
-  resource_group_id                    = var.resource_group_id
-  service_endpoints                    = var.service_endpoints
-  deletion_protection                  = var.deletion_protection
-  version_upgrade_skip_backup          = var.version_upgrade_skip_backup
-  tags                                 = var.resource_tags
-  adminpassword                        = var.admin_pass
-  key_protect_key                      = var.kms_key_crn
-  backup_encryption_key_crn            = local.backup_encryption_key_crn
-  backup_id                            = var.backup_crn
-  remote_leader_id                     = var.remote_leader_crn
-  configuration                        = var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null
+  depends_on                  = [time_sleep.wait_for_authorization_policy, time_sleep.wait_for_gen2_authorization_policies]
+  name                        = var.name
+  plan                        = var.plan
+  location                    = var.region
+  service                     = "databases-for-postgresql"
+  version                     = var.postgresql_version
+  resource_group_id           = var.resource_group_id
+  service_endpoints           = var.service_endpoints
+  deletion_protection         = var.deletion_protection
+  version_upgrade_skip_backup = var.version_upgrade_skip_backup
+  tags                        = var.resource_tags
+  adminpassword               = var.admin_pass
+  key_protect_key             = var.kms_key_crn
+  backup_encryption_key_crn   = local.backup_encryption_key_crn
+  backup_id                   = var.backup_crn
+  remote_leader_id            = var.remote_leader_crn
+  configuration = local.is_gen2 ? (var.configuration_gen2 != null ? jsonencode(merge(
+    { for k, v in var.configuration_gen2 : k => v if v != null && !contains(["pgaudit_log", "pgaudit_role"], k) },
+    var.configuration_gen2.pgaudit_log != null ? { "pgaudit.log" = var.configuration_gen2.pgaudit_log } : {},
+    var.configuration_gen2.pgaudit_role != null ? { "pgaudit.role" = var.configuration_gen2.pgaudit_role } : {},
+  )) : null) : (var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null)
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
   async_restore                        = var.async_restore
