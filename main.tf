@@ -21,6 +21,10 @@ locals {
   # Determine if gen2 plan is being used
   is_gen2    = can(regex("-gen2$", var.plan))
   is_classic = !local.is_gen2 # For code readability and maintenance
+
+  # The group block is omitted for classic restores (see workaround in ibm_database.postgresql_db).
+  # Gen2 restores must still set it, otherwise disk_mb/member_host_flavor are ignored and the service defaults apply.
+  set_group_block = !local.recovery_mode || local.is_gen2
 }
 
 ########################################################################################################################
@@ -279,7 +283,7 @@ resource "ibm_database" "postgresql_db" {
   ## This is used to conditionally add one, OR, the other group block depending on var.local.host_flavor_set
   ## This block is for if host_flavor IS set to specific pre-defined host sizes and not set to "multitenant"
   dynamic "group" {
-    for_each = local.host_flavor_set && var.member_host_flavor != "multitenant" && !local.recovery_mode ? [1] : []
+    for_each = local.host_flavor_set && var.member_host_flavor != "multitenant" && local.set_group_block ? [1] : []
     content {
       group_id = "member" # Only member type is allowed for IBM Cloud Databases
       host_flavor {
@@ -299,7 +303,7 @@ resource "ibm_database" "postgresql_db" {
 
   ## This block is for if host_flavor IS set to "multitenant"
   dynamic "group" {
-    for_each = local.host_flavor_set && var.member_host_flavor == "multitenant" && !local.recovery_mode ? [1] : []
+    for_each = local.host_flavor_set && var.member_host_flavor == "multitenant" && local.set_group_block ? [1] : []
     content {
       group_id = "member" # Only member type is allowed for IBM Cloud Databases
       host_flavor {
@@ -325,7 +329,7 @@ resource "ibm_database" "postgresql_db" {
 
   ## This block is for if host_flavor IS NOT set
   dynamic "group" {
-    for_each = local.host_flavor_set == false && !local.recovery_mode ? [1] : []
+    for_each = local.host_flavor_set == false && local.set_group_block ? [1] : []
     content {
       group_id = "member" # Only member type is allowed for IBM Cloud Databases
       memory {

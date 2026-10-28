@@ -370,7 +370,7 @@ variable "use_default_backup_encryption_key" {
 
 variable "backup_crn" {
   type        = string
-  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
+  description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. Supports classic backup CRNs in the format `crn:v1:<…>:backup:`. If omitted, the database is provisioned empty."
   default     = null
 
   validation {
