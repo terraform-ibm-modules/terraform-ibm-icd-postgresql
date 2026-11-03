@@ -1,10 +1,17 @@
-# Profile for IBM Cloud Framework for Financial Services
+# Wrapper for the IBM Cloud Databases for PostgreSQL module
 
-This code is a version of the [parent root module](../../) that includes a default configuration that complies with the relevant controls from the [IBM Cloud Framework for Financial Services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-about). See the [Example for IBM Cloud Framework for Financial Services](/examples/fscloud/) for logic that uses this module. The Databases for PostgreSQL service as well as the infrastructure that is deployed by this module is validated with the Framework for Financial Services. For more information, see the list of [Financial Services Validated services](https://cloud.ibm.com/docs/framework-financial-services?topic=framework-financial-services-vpc-architecture-about#financial-services-validated-services).
+This is a wrapper around the [parent root module](../). It configures the `ibm` provider using the `ibmcloud_api_key` and `region` inputs, calls the root module, and passes its inputs through to it. The module's outputs are re-exported unchanged. The default values of the inputs match those of the root module, except that the member sizing inputs are named `member_cpu_count`, `member_disk_mb` and `member_memory_mb`, which are passed to the root module's `cpu_count`, `disk_mb` and `memory_mb`.
 
-The default values in this profile were scanned by [IBM Code Risk Analyzer (CRA)](https://cloud.ibm.com/docs/code-risk-analyzer-cli-plugin?topic=code-risk-analyzer-cli-plugin-cra-cli-plugin#terraform-command) for compliance with the IBM Cloud Framework for Financial Services profile that is specified by the IBM Security and Compliance Center.
+## Usage
 
-The IBM Cloud Framework for Financial Services mandates the application of an inbound network-based allowlist in front of the IBM Cloud Databases for (ICD) PostgreSQL instance. You can comply with this requirement by using the `cbr_rules` variable in the module, which can be used to create a narrow context-based restriction rule that is scoped to the PostgreSQL instance.
+```hcl
+module "postgresql" {
+  source            = "git::https://github.com/terraform-ibm-modules/terraform-ibm-icd-postgresql.git//wrapper?ref=<release>"
+  resource_group_id = var.resource_group_id
+  name              = "my-postgresql"
+  region            = "us-south"
+}
+```
 
 <!-- BEGINNING OF PRE-COMMIT-TERRAFORM DOCS HOOK -->
 ### Requirements
