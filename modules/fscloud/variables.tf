@@ -161,6 +161,28 @@ variable "configuration" {
   default     = null
 }
 
+variable "configuration_gen2" {
+  type = object({
+    max_connections                 = optional(number)
+    max_prepared_transactions       = optional(number)
+    max_locks_per_transaction       = optional(number)
+    max_worker_processes            = optional(number)
+    max_logical_replication_workers = optional(number)
+    shared_buffers                  = optional(number)
+    wal_level                       = optional(string)
+    max_wal_senders                 = optional(number)
+    max_replication_slots           = optional(number)
+    log_connections                 = optional(bool)
+    log_disconnections              = optional(bool)
+    log_min_duration_statement      = optional(number)
+    pgaudit_log                     = optional(string)
+    pgaudit_role                    = optional(string)
+  })
+  description = "Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead."
+  default     = null
+}
+
+
 ##############################################################
 # Auto Scaling
 ##############################################################
@@ -238,6 +260,12 @@ variable "skip_iam_authorization_policy" {
   default     = false
 }
 
+variable "skip_independent_backup_auth_policies" {
+  type        = bool
+  description = "Set to true to skip the creation of independent backup authorization policies. When set to false (default). The following 2 policies will be created - (1) a policy that permits Databases for PostgreSQL instances in the given resource group 'Editor' access to the independent backups service (`gen2_independent_backups_policy`), (2) a policy that permits Databases for PostgreSQL instances in the given resource group 'Viewer' access to the resource group (`gen2_resource_group_policy`)."
+  default     = false
+}
+
 ##############################################################
 # Context-based restriction (CBR)
 ##############################################################
@@ -274,6 +302,18 @@ variable "cbr_rules" {
 variable "backup_crn" {
   type        = string
   description = "The CRN of a backup resource to restore from. The backup is created by a database deployment with the same service ID. The backup is loaded after provisioning and the new deployment starts up that uses that data. A backup CRN is in the format crn:v1:<…>:backup:. If omitted, the database is provisioned empty."
+  default     = null
+}
+
+variable "pitr_id" {
+  type        = string
+  description = "(Optional) The ID of the source deployment PostgreSQL instance that you want to recover back to. The PostgreSQL instance is expected to be in an up and in running state."
+  default     = null
+}
+
+variable "pitr_time" {
+  type        = string
+  description = "(Optional) The timestamp in UTC format (%Y-%m-%dT%H:%M:%SZ) for any time in the last 7 days that you want to restore to. If empty string (\"\") is passed, earliest_point_in_time_recovery_time will be used as pitr_time. To retrieve the timestamp, run the command (ibmcloud cdb postgresql earliest-pitr-timestamp <deployment name or CRN>). For more info on Point-in-time Recovery, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-pitr"
   default     = null
 }
 
