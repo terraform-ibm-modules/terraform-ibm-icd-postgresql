@@ -256,11 +256,11 @@ resource "ibm_database" "postgresql_db" {
   backup_encryption_key_crn   = local.backup_encryption_key_crn
   backup_id                   = var.backup_crn
   remote_leader_id            = var.remote_leader_crn
-  configuration = local.is_gen2 ? (var.configuration_gen2 != null ? jsonencode(merge(
-    { for k, v in var.configuration_gen2 : k => v if v != null && !contains(["pgaudit_log", "pgaudit_role"], k) },
-    var.configuration_gen2.pgaudit_log != null ? { "pgaudit.log" = var.configuration_gen2.pgaudit_log } : {},
-    var.configuration_gen2.pgaudit_role != null ? { "pgaudit.role" = var.configuration_gen2.pgaudit_role } : {},
-  )) : null) : (var.configuration != null ? jsonencode({ for k, v in var.configuration : k => v if v != null }) : null)
+  configuration = var.configuration != null ? jsonencode(merge(
+    { for k, v in var.configuration : k => v if v != null && !contains(["pgaudit_log", "pgaudit_role"], k) },
+    var.configuration.pgaudit_log != null ? { "pgaudit.log" = var.configuration.pgaudit_log } : {},
+    var.configuration.pgaudit_role != null ? { "pgaudit.role" = var.configuration.pgaudit_role } : {},
+  )) : null
   point_in_time_recovery_deployment_id = var.pitr_id
   point_in_time_recovery_time          = var.pitr_time
   async_restore                        = var.async_restore
