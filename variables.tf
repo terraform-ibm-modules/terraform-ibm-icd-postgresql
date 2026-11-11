@@ -285,6 +285,11 @@ variable "configuration" {
   ##############################################################
 
   validation {
+    condition     = var.configuration == null ? true : (var.configuration.shared_buffers == null ? true : (local.is_gen2 ? (can(regex("[0-9]+x([0-9]+)", var.member_host_flavor)) ? (var.configuration.shared_buffers >= tonumber(regex("[0-9]+x([0-9]+)", var.member_host_flavor)[0]) * 32768 && var.configuration.shared_buffers <= floor(tonumber(regex("[0-9]+x([0-9]+)", var.member_host_flavor)[0]) * 52428.8)) : (var.member_host_flavor == null ? (var.configuration.shared_buffers >= 655360 && var.configuration.shared_buffers <= 1048576) : true)) : true))
+    error_message = "Value for `configuration[\"shared_buffers\"]` must be between 25% RAM and 40% RAM in 8 kB blocks for gen2 instances, if specified."
+  }
+
+  validation {
     condition     = var.configuration == null ? true : (var.configuration.log_connections == null ? true : (local.is_gen2 ? (var.configuration.log_connections == true || var.configuration.log_connections == false) : (var.configuration.log_connections == "on" || var.configuration.log_connections == "off")))
     error_message = "Value for `configuration[\"log_connections\"]` must be a boolean for gen2 instances, or either `on` or `off` for classic instances, if specified."
   }
