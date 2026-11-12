@@ -32,7 +32,7 @@ module "kms" {
   }
   count                       = local.create_new_kms_key ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.6.18"
+  version                     = "5.6.20"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -192,7 +192,7 @@ module "postgresql_db" {
   disk_mb                               = var.member_disk_mb
   cpu_count                             = var.member_cpu_count
   auto_scaling                          = null # not supported by gen2
-  configuration_gen2                    = var.configuration
+  configuration                         = var.configuration
   service_credential_names              = var.service_credential_names
   backup_crn                            = var.backup_crn
   async_restore                         = var.async_restore
@@ -279,7 +279,7 @@ locals {
 module "secrets_manager_service_credentials" {
   count                       = length(local.secrets) > 0 && var.existing_secrets_manager_instance_crn != null ? 1 : 0
   source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "3.1.2"
+  version                     = "3.2.2"
   existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
