@@ -265,6 +265,7 @@ locals {
           service_credential_secret_description       = secret.service_credential_secret_description
           service_credentials_source_service_role_crn = secret.service_credentials_source_service_role_crn
           service_credentials_source_service_crn      = local.postgresql_crn
+          service_credentials_parameters              = { role_crn = secret.service_credentials_source_service_role_crn }
           secret_type                                 = "service_credentials"
         }
       ]
@@ -278,8 +279,7 @@ locals {
 
 module "secrets_manager_service_credentials" {
   count                       = length(local.secrets) > 0 && var.existing_secrets_manager_instance_crn != null ? 1 : 0
-  source                      = "terraform-ibm-modules/secrets-manager/ibm//modules/secrets"
-  version                     = "3.1.2"
+  source                      = "../../../terraform-ibm-secrets-manager/modules/secrets" # TEMP: local test of service_credentials_parameters
   existing_sm_instance_guid   = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_guid"] : local.existing_secrets_manager_instance_guid
   existing_sm_instance_region = local.create_secrets_manager_auth_policy > 0 ? time_sleep.wait_for_postgresql_authorization_policy[0].triggers["secrets_manager_region"] : local.existing_secrets_manager_instance_region
   endpoint_type               = var.existing_secrets_manager_endpoint_type
