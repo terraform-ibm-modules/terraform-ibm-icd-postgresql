@@ -135,12 +135,12 @@ variable "service_credential_names" {
     role     = optional(string, "Viewer")
     endpoint = optional(string, "private")
   }))
-  description = "List of service credentials to create for the database, including name and optionally role and endpoint type."
+  description = "List of service credentials to create for the database, including name and optionally role and endpoint type. For classic instances, valid roles are `Administrator`, `Operator`, `Viewer` and `Editor`. For Gen2 instances, valid roles are `Manager`, `Writer` and `Reader`."
   default     = []
 
   validation {
-    condition     = local.is_classic || (local.is_gen2 && alltrue([for credential in var.service_credential_names : contains(["Manager", "Writer"], credential.role)]))
-    error_message = "`service_credential_names` role must be one of the following: `Manager` or `Writer` for Gen2 instances."
+    condition     = local.is_classic || (local.is_gen2 && alltrue([for credential in var.service_credential_names : contains(["Manager", "Writer", "Reader"], credential.role)]))
+    error_message = "`service_credential_names` role must be one of the following: `Manager`, `Writer` or `Reader` for Gen2 instances."
   }
 
   validation {
