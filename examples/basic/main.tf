@@ -17,6 +17,11 @@ locals {
       name     = "postgresql_writer"
       role     = "Writer"
       endpoint = local.endpoint_type
+    },
+    {
+      name     = "postgresql_reader"
+      role     = "Reader"
+      endpoint = local.endpoint_type
     }
   ]
   classic_service_credential_names = [
