@@ -32,7 +32,7 @@ module "kms" {
   }
   count                       = local.create_new_kms_key ? 1 : 0
   source                      = "terraform-ibm-modules/kms-all-inclusive/ibm"
-  version                     = "5.6.18"
+  version                     = "5.6.20"
   create_key_protect_instance = false
   region                      = local.kms_region
   existing_kms_instance_crn   = var.existing_kms_instance_crn
@@ -192,7 +192,7 @@ module "postgresql_db" {
   disk_mb                               = var.member_disk_mb
   cpu_count                             = var.member_cpu_count
   auto_scaling                          = null # not supported by gen2
-  configuration_gen2                    = var.configuration
+  configuration                         = var.configuration
   service_credential_names              = var.service_credential_names
   backup_crn                            = var.backup_crn
   async_restore                         = var.async_restore
