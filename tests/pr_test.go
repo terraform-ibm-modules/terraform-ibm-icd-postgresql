@@ -44,7 +44,7 @@ var permanentResources map[string]interface{}
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var validICDRegions = []string{
 	"eu-de",
-	"us-south",
+	"au-syd",
 }
 
 func GetLatestAndOldestVersions(icdAvailableVersions []string) (string, string) {
@@ -128,7 +128,7 @@ func GetVersionsGen2(region string, plan string) (string, string) {
 func TestRunBasicGen2Example(t *testing.T) {
 	t.Parallel()
 
-	latestVersion, _ := GetVersionsGen2("ca-mon", "standard-gen2")
+	latestVersion, _ := GetVersionsGen2("ca-tor", "standard-gen2")
 	fmt.Println("Latest version is ", latestVersion)
 
 	// ResourceGroup is intentionally not set so a unique group is created per run for this test.
@@ -138,8 +138,8 @@ func TestRunBasicGen2Example(t *testing.T) {
 		TerraformDir:       "examples/basic",
 		Prefix:             "pg-gen2",
 		BestRegionYAMLPath: regionSelectionPath,
-		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal
-			"region":             "ca-mon",
+		TerraformVars: map[string]interface{}{ // Limited gen2 to Toronto
+			"region":             "ca-tor",
 			"plan":               "standard-gen2",
 			"postgresql_version": latestVersion,
 			"service_endpoints":  "private",
@@ -213,7 +213,7 @@ func TestRunFullyConfigurableSolutionSchematics(t *testing.T) {
 		},
 	}
 
-	region := "us-south"
+	region := "au-syd"
 	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
@@ -283,7 +283,7 @@ func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschema
 	}
 
 	// Temporary external issues. Hardcoding can be removed when external features are addressed
-	// Hard code region ca-mon, the test function to lookup latest does not work in Montreal, no classic endpoint
+	// Hard code region ca-tor, the test function to lookup latest does not work in Montreal, no classic endpoint
 	// Hard code version 18, because latest can not be looked (see also region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
@@ -291,7 +291,7 @@ func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschema
 		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "deletion_protection", Value: false, DataType: "bool"},
 		{Name: "existing_resource_group_name", Value: uniqueResourceGroup, DataType: "string"},
-		{Name: "region", Value: "ca-mon", DataType: "string"},
+		{Name: "region", Value: "ca-tor", DataType: "string"},
 		{Name: "service_credential_names", Value: serviceCredentialNames, DataType: "list(object)"},
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
@@ -384,7 +384,7 @@ func TestRunFullyConfigurableWithKMSUpgradeSolution(t *testing.T) {
 
 	uniqueResourceGroup := generateUniqueResourceGroupName(options.Prefix)
 
-	region := "us-south"
+	region := "au-syd"
 	latestVersion, _ := GetRegionVersions(region)
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
