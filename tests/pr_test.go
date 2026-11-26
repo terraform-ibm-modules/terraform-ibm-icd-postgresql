@@ -44,7 +44,7 @@ var permanentResources map[string]interface{}
 var sharedInfoSvc *cloudinfo.CloudInfoService
 var validICDRegions = []string{
 	"eu-de",
-	"au-syd",
+	"us-south",
 }
 
 func GetLatestAndOldestVersions(icdAvailableVersions []string) (string, string) {
