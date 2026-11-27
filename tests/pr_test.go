@@ -128,7 +128,7 @@ func GetVersionsGen2(region string, plan string) (string, string) {
 func TestRunBasicGen2Example(t *testing.T) {
 	t.Parallel()
 
-	latestVersion, _ := GetVersionsGen2("ca-mon", "standard-gen2")
+	latestVersion, _ := GetVersionsGen2("ca-tor", "standard-gen2")
 	fmt.Println("Latest version is ", latestVersion)
 
 	// ResourceGroup is intentionally not set so a unique group is created per run for this test.
@@ -138,8 +138,8 @@ func TestRunBasicGen2Example(t *testing.T) {
 		TerraformDir:       "examples/basic",
 		Prefix:             "pg-gen2",
 		BestRegionYAMLPath: regionSelectionPath,
-		TerraformVars: map[string]interface{}{ // Limited gen2 to Montreal
-			"region":             "ca-mon",
+		TerraformVars: map[string]interface{}{
+			"region":             "ca-tor",
 			"plan":               "standard-gen2",
 			"postgresql_version": latestVersion,
 			"service_endpoints":  "private",
@@ -263,12 +263,12 @@ func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschema
 			"secret_group_name": fmt.Sprintf("%s-secret-group", options.Prefix),
 			"service_credentials": []map[string]string{
 				{
-					"secret_name": fmt.Sprintf("%s-cred-reader", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Viewer",
+					"secret_name": fmt.Sprintf("%s-cred-manager", options.Prefix),
+					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Manager",
 				},
 				{
 					"secret_name": fmt.Sprintf("%s-cred-writer", options.Prefix),
-					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Editor",
+					"service_credentials_source_service_role_crn": "crn:v1:bluemix:public:iam::::role:Writer",
 				},
 			},
 		},
@@ -282,22 +282,21 @@ func setupFullyConfigurableGen2Options(t *testing.T, prefix string) (*testschema
 		},
 	}
 
-	// Temporary external issues. Hardcoding can be removed when external features are addressed
-	// Hard code region ca-mon, the test function to lookup latest does not work in Montreal, no classic endpoint
-	// Hard code version 18, because latest can not be looked (see also region)
+	region := "ca-tor"
+	latestVersion, _ := GetVersionsGen2(region, "standard-gen2")
 	options.TerraformVars = []testschematic.TestSchematicTerraformVar{
 		{Name: "prefix", Value: options.Prefix, DataType: "string"},
 		{Name: "ibmcloud_api_key", Value: options.RequiredEnvironmentVars["TF_VAR_ibmcloud_api_key"], DataType: "string", Secure: true},
 		{Name: "access_tags", Value: permanentResources["accessTags"], DataType: "list(string)"},
 		{Name: "deletion_protection", Value: false, DataType: "bool"},
 		{Name: "existing_resource_group_name", Value: uniqueResourceGroup, DataType: "string"},
-		{Name: "region", Value: "ca-mon", DataType: "string"},
+		{Name: "region", Value: region, DataType: "string"},
 		{Name: "service_credential_names", Value: serviceCredentialNames, DataType: "list(object)"},
 		{Name: "service_credential_secrets", Value: serviceCredentialSecrets, DataType: "list(object)"},
 		{Name: "existing_secrets_manager_instance_crn", Value: permanentResources["secretsManagerCRN"], DataType: "string"},
 		{Name: "kms_encryption_enabled", Value: true, DataType: "bool"},
 		{Name: "existing_kms_instance_crn", Value: permanentResources["kp_multitenant_us_south_crn"], DataType: "string"},
-		{Name: "postgresql_version", Value: "18", DataType: "string"}, // Always lock this test into the latest supported PostgreSQL version
+		{Name: "postgresql_version", Value: latestVersion, DataType: "string"}, // Always lock this test into the latest supported PostgreSQL version
 	}
 
 	return options, uniqueResourceGroup

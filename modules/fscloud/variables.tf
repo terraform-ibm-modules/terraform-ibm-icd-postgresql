@@ -137,51 +137,36 @@ variable "delete_timeout" {
 
 variable "configuration" {
   type = object({
-    shared_buffers  = optional(number)
-    max_connections = optional(number)
-    # below field gives error when sent to provider
-    # tracking issue: https://github.com/IBM-Cloud/terraform-provider-ibm/issues/5403
-    # max_locks_per_transaction  = optional(number)
+    # Supported by both classic (gen1) and gen2 plans (valid values differ per generation)
+    shared_buffers             = optional(number)
+    max_connections            = optional(number)
     max_prepared_transactions  = optional(number)
-    synchronous_commit         = optional(string)
-    effective_io_concurrency   = optional(number)
-    deadlock_timeout           = optional(number)
-    log_connections            = optional(string)
-    log_disconnections         = optional(string)
-    log_min_duration_statement = optional(number)
-    tcp_keepalives_idle        = optional(number)
-    tcp_keepalives_interval    = optional(number)
-    tcp_keepalives_count       = optional(number)
-    archive_timeout            = optional(number)
     wal_level                  = optional(string)
-    max_replication_slots      = optional(number)
     max_wal_senders            = optional(number)
-  })
-  description = "Database configuration parameters, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api for more details."
-  default     = null
-}
+    max_replication_slots      = optional(number)
+    log_min_duration_statement = optional(number)
+    log_connections            = optional(any) # classic: string (`on`/`off`), gen2: bool
+    log_disconnections         = optional(any) # classic: string (`on`/`off`), gen2: bool
 
-variable "configuration_gen2" {
-  type = object({
-    max_connections                 = optional(number)
-    max_prepared_transactions       = optional(number)
+    # Classic (gen1) plans only
+    synchronous_commit       = optional(string)
+    effective_io_concurrency = optional(number)
+    deadlock_timeout         = optional(number)
+    tcp_keepalives_idle      = optional(number)
+    tcp_keepalives_interval  = optional(number)
+    tcp_keepalives_count     = optional(number)
+    archive_timeout          = optional(number)
+
+    # Gen2 plans only
     max_locks_per_transaction       = optional(number)
     max_worker_processes            = optional(number)
     max_logical_replication_workers = optional(number)
-    shared_buffers                  = optional(number)
-    wal_level                       = optional(string)
-    max_wal_senders                 = optional(number)
-    max_replication_slots           = optional(number)
-    log_connections                 = optional(bool)
-    log_disconnections              = optional(bool)
-    log_min_duration_statement      = optional(number)
     pgaudit_log                     = optional(string)
     pgaudit_role                    = optional(string)
   })
-  description = "Database configuration parameters for gen2 plans. See https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli for more details. Not supported for classic plans — use `configuration` instead."
+  description = "Database configuration parameters. Supported parameters and values differ between classic (gen1) and gen2 plans. For classic, see https://cloud.ibm.com/docs/databases-for-postgresql?topic=databases-for-postgresql-changing-configuration&interface=api. For gen2, see https://cloud.ibm.com/docs/databases-for-postgresql-gen2?topic=databases-for-postgresql-gen2-configure-parameters&interface=cli. Classic only: `synchronous_commit`, `effective_io_concurrency`, `deadlock_timeout`, `tcp_keepalives_idle`, `tcp_keepalives_interval`, `tcp_keepalives_count`, `archive_timeout`. Gen2 only: `max_locks_per_transaction`, `max_worker_processes`, `max_logical_replication_workers`, `pgaudit_log`, `pgaudit_role`. `log_connections` and `log_disconnections` are strings (`on`/`off`) for classic and booleans for gen2."
   default     = null
 }
-
 
 ##############################################################
 # Auto Scaling

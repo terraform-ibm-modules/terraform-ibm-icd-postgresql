@@ -25,7 +25,6 @@ module "postgresql_db" {
   access_tags                           = var.access_tags
   cbr_rules                             = var.cbr_rules
   configuration                         = var.configuration
-  configuration_gen2                    = var.configuration_gen2
   memory_mb                             = var.member_memory_mb
   disk_mb                               = var.member_disk_mb
   cpu_count                             = var.member_cpu_count

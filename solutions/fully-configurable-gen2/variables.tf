@@ -345,6 +345,15 @@ variable "service_credential_secrets" {
   }
 
   validation {
+    condition = alltrue([
+      for group in var.service_credential_secrets : alltrue([
+        for credential in group.service_credentials : can(regex(":(serviceRole|role):(Manager|Writer)$", credential.service_credentials_source_service_role_crn))
+      ])
+    ])
+    error_message = "service_credentials_source_service_role_crn must end with `Manager` or `Writer` for Gen2 instances (for example `crn:v1:bluemix:public:iam::::role:Writer`)."
+  }
+
+  validation {
     condition = (
       length(var.service_credential_secrets) == 0 ||
       var.existing_secrets_manager_instance_crn != null
